@@ -14,6 +14,7 @@ const methodData: Record<
     icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
   }
 > = {
+  momo: { name: "Mobile Money", icon: CreditCard },
   bank: { name: "Bank transfer", icon: Landmark },
   card: { name: "Debit card", icon: CreditCard },
   manual: { name: "Manual deposit", icon: FileText },

@@ -3,9 +3,13 @@
 import { motion } from "framer-motion";
 import { useMemo, Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Clock } from "lucide-react";
+import { Clock, CheckCircle2, XCircle, ShieldAlert, ArrowRight, Info, Loader2 } from "lucide-react";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { isDevMode } from "@/lib/dev";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +18,10 @@ interface DepositData {
   methodName: string;
   amount: string;
   referenceCode: string;
+  status?: string;
+  displayText?: string;
+  phone?: string;
+  providerName?: string;
 }
 
 function DepositStatusContent() {
@@ -50,10 +58,9 @@ function DepositStatusContent() {
 
     const forceBlocked = searchParams.get("force_blocked");
     if (forceBlocked) {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
       setBlocked(true);
       setErrorMsg(
-        "Your account has been blocked. This deposit cannot be processed. Please contact support."
+        "Your account requires security compliance verification. This deposit cannot be automatically credited. Please contact customer support."
       );
     }
   }, [userId, isLoaded, user, router, searchParams]);
@@ -61,21 +68,47 @@ function DepositStatusContent() {
   if (!depositData) {
     return (
       <div className="min-h-screen bg-[#0C0F14] flex items-center justify-center">
-        <p className="text-gray-400">Loading...</p>
+        <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
       </div>
     );
   }
 
+  // Determine status and style configurations
+  const isSuccess = depositData.status?.toLowerCase() === "success";
+  const isFailed = depositData.status?.toLowerCase() === "failed";
+  const isMomo = depositData.method === "momo";
+
   return (
-    <div className="min-h-screen bg-[#0C0F14] flex flex-col">
-      <main className="flex-1 px-5 py-12 flex flex-col items-center justify-center">
+    <div className="min-h-screen bg-[#0C0F14] text-white flex flex-col relative overflow-hidden">
+      {/* Decorative Radial Backgrounds */}
+      {blocked ? (
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-red-500/5 blur-[120px] pointer-events-none" />
+      ) : isSuccess ? (
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-emerald-500/5 blur-[120px] pointer-events-none" />
+      ) : (
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-amber-500/5 blur-[120px] pointer-events-none" />
+      )}
+      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-blue-500/5 blur-[120px] pointer-events-none" />
+
+      <main className="flex-grow flex flex-col items-center justify-center px-5 py-12 max-w-lg mx-auto w-full z-10">
+        {/* Compliance Error Banner */}
         {blocked && errorMsg && (
-          <div className="w-full max-w-lg mb-6 px-4">
-            <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
-              <p className="text-sm text-red-300">{errorMsg}</p>
-            </div>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="w-full mb-6"
+          >
+            <Alert variant="destructive" className="bg-red-500/10 border border-red-500/20 text-red-400 rounded-2xl p-5">
+              <ShieldAlert className="w-5 h-5 text-red-500" />
+              <AlertTitle className="text-sm font-semibold">Account Blocked</AlertTitle>
+              <AlertDescription className="text-xs leading-relaxed mt-1">
+                {errorMsg}
+              </AlertDescription>
+            </Alert>
+          </motion.div>
         )}
+
+        {/* Status Icon Indicator */}
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
@@ -87,122 +120,191 @@ function DepositStatusContent() {
           }}
           className="mb-6"
         >
-          <div className="w-24 h-24 rounded-full bg-amber-500/20 flex items-center justify-center">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              <Clock className="w-14 h-14 text-amber-400" strokeWidth={2} />
-            </motion.div>
-          </div>
+          {blocked ? (
+            <div className="w-24 h-24 rounded-full bg-red-500/20 flex items-center justify-center border border-red-500/30">
+              <ShieldAlert className="w-12 h-12 text-red-400" strokeWidth={2} />
+            </div>
+          ) : isSuccess ? (
+            <div className="w-24 h-24 rounded-full bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
+              <CheckCircle2 className="w-12 h-12 text-emerald-400" strokeWidth={2} />
+            </div>
+          ) : isFailed ? (
+            <div className="w-24 h-24 rounded-full bg-red-500/20 flex items-center justify-center border border-red-500/30">
+              <XCircle className="w-12 h-12 text-red-400" strokeWidth={2} />
+            </div>
+          ) : (
+            <div className="w-24 h-24 rounded-full bg-amber-500/20 flex items-center justify-center border border-amber-500/30 relative">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0 rounded-full border border-amber-500/20 border-t-amber-500/60"
+              />
+              <Clock className="w-12 h-12 text-amber-400" strokeWidth={2} />
+            </div>
+          )}
         </motion.div>
 
+        {/* Text Header Status */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
+          transition={{ delay: 0.2 }}
           className="text-center mb-8"
         >
-          <h1 className="text-3xl font-bold text-white mb-2">
-            Deposit pending
+          <h1 className="text-2xl font-bold tracking-tight text-white mb-2">
+            {blocked
+              ? "Deposit Suspended"
+              : isSuccess
+              ? "Deposit Successful"
+              : isFailed
+              ? "Deposit Failed"
+              : "Deposit Pending"}
           </h1>
-          <p className="text-gray-400">We&apos;re waiting for your transfer</p>
+          <p className="text-sm text-gray-400 px-4">
+            {blocked
+              ? "Compliance holding process active"
+              : isSuccess
+              ? "Your funds have been credited to your wallet"
+              : isFailed
+              ? "We could not process this payment request"
+              : isMomo
+              ? "Complete the network approval prompt on your phone"
+              : "Awaiting wire confirmation from Vaulta settlement"}
+          </p>
         </motion.div>
 
+        {/* Details Card */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
+          transition={{ delay: 0.3 }}
           className="w-full space-y-4"
         >
           {/* Amount Card */}
-          <div className="bg-[#151A1F] rounded-xl p-6 text-center">
-            <p className="text-sm text-gray-400 mb-1">Expected deposit</p>
-            <p className="text-5xl font-bold text-white mb-2">
-              ${parseFloat(depositData.amount).toFixed(2)}
-            </p>
-            <p className="text-sm text-gray-400">
-              via {depositData.methodName}
-            </p>
-          </div>
+          <Card className="bg-white/[0.02] backdrop-blur-xl border border-white/[0.06] shadow-xl text-center relative overflow-hidden">
+            <CardHeader className="pb-4">
+              <CardDescription className="text-xs font-semibold uppercase tracking-widest text-emerald-400">
+                Amount
+              </CardDescription>
+              <CardTitle className="text-4xl font-bold mt-1 text-white tracking-tight">
+                GH₵ {parseFloat(depositData.amount).toFixed(2)}
+              </CardTitle>
+              <div className="mt-2 flex justify-center">
+                <Badge variant="outline" className="text-xs border-white/10 bg-white/5 text-gray-300 rounded-md">
+                  {depositData.methodName}
+                </Badge>
+              </div>
+            </CardHeader>
+          </Card>
 
-          {/* Status Details */}
-          <div className="bg-[#151A1F] rounded-xl divide-y divide-white/5">
-            <div className="p-4 flex items-center justify-between">
-              <p className="text-sm text-gray-400">Reference code</p>
-              <p className="text-white font-mono text-sm">
-                {depositData.referenceCode}
-              </p>
-            </div>
-            <div className="p-4 flex items-center justify-between">
-              <p className="text-sm text-gray-400">Status</p>
-              <span className="px-3 py-1 bg-amber-500/20 text-amber-400 rounded-full text-xs font-medium">
-                Pending
-              </span>
-            </div>
-            <div className="p-4 flex items-center justify-between">
-              <p className="text-sm text-gray-400">Estimated time</p>
-              <p className="text-white text-sm">2-3 business days</p>
-            </div>
-          </div>
+          {/* Details Table */}
+          <Card className="bg-white/[0.02] backdrop-blur-xl border border-white/[0.06] divide-y divide-white/5 overflow-hidden">
+            <CardContent className="p-0">
+              <div className="p-4 flex items-center justify-between text-sm">
+                <span className="text-gray-400">Reference code</span>
+                <span className="text-white font-mono font-medium">{depositData.referenceCode}</span>
+              </div>
+              
+              <div className="p-4 flex items-center justify-between text-sm">
+                <span className="text-gray-400">Payment status</span>
+                {blocked ? (
+                  <Badge variant="outline" className="bg-red-500/10 border-red-500/20 text-red-400 font-semibold rounded-md">
+                    Compliance Hold
+                  </Badge>
+                ) : isSuccess ? (
+                  <Badge variant="outline" className="bg-emerald-500/10 border-emerald-500/20 text-emerald-400 font-semibold rounded-md">
+                    Success
+                  </Badge>
+                ) : isFailed ? (
+                  <Badge variant="outline" className="bg-red-500/10 border-red-500/20 text-red-400 font-semibold rounded-md">
+                    Failed
+                  </Badge>
+                ) : (
+                  <Badge variant="outline" className="bg-amber-500/10 border-amber-500/20 text-amber-400 font-semibold rounded-md animate-pulse">
+                    Pending
+                  </Badge>
+                )}
+              </div>
 
-          {/* Info Notice */}
-          <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
-            <p className="text-sm text-blue-300 mb-2 font-medium">
-              What happens next?
-            </p>
-            <ul className="space-y-1.5 text-xs text-blue-300/80">
-              <li>
-                • Your deposit will be processed once we receive the transfer
-              </li>
-              <li>
-                • You&apos;ll receive a notification when funds are available
-              </li>
-              <li>• Track status in your transaction history</li>
-            </ul>
-          </div>
+              {depositData.phone && (
+                <div className="p-4 flex items-center justify-between text-sm">
+                  <span className="text-gray-400">Payment wallet</span>
+                  <span className="text-white font-mono">{depositData.phone} ({depositData.providerName})</span>
+                </div>
+              )}
+
+              <div className="p-4 flex items-center justify-between text-sm">
+                <span className="text-gray-400">Processing speed</span>
+                <span className="text-white font-medium">
+                  {blocked
+                    ? "Suspended"
+                    : isSuccess
+                    ? "Completed"
+                    : isMomo
+                    ? "Instant (typically < 1 min)"
+                    : "2-3 business days"}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Dynamic feedback from paystack */}
+          {depositData.displayText && !blocked && (
+            <Alert className="bg-blue-500/[0.02] border-blue-500/20 text-blue-300 rounded-2xl p-5">
+              <Info className="w-5 h-5 text-blue-400" />
+              <AlertTitle className="text-sm font-semibold">Gateway Feedback</AlertTitle>
+              <AlertDescription className="text-xs leading-relaxed mt-1 text-blue-300/80">
+                {depositData.displayText}
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {/* Guide Box */}
+          {!blocked && !isSuccess && !isFailed && (
+            <Alert className="bg-emerald-500/[0.02] border-emerald-500/20 text-emerald-300 rounded-2xl p-5">
+              <Info className="w-5 h-5 text-emerald-400" />
+              <AlertTitle className="text-sm font-semibold">Next Steps</AlertTitle>
+              <AlertDescription className="text-xs leading-relaxed mt-1 text-gray-400">
+                <ul className="space-y-1.5 list-disc pl-3.5">
+                  <li>Keep your mobile phone close by to approve the prompt.</li>
+                  <li>Funds will be automatically credited to your balance upon authorization.</li>
+                  <li>You can monitor the status of this transfer in your dashboard account logs.</li>
+                </ul>
+              </AlertDescription>
+            </Alert>
+          )}
         </motion.div>
-      </main>
 
-      {/* Bottom Actions */}
-      <div className="px-5 pb-8 space-y-3">
-        {blocked ? (
-          <>
-            <div className="w-full bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-center">
-              <p className="text-sm text-red-300">
-                Your account is blocked and this deposit cannot be processed.
-                Please contact support for assistance.
-              </p>
-            </div>
-            <button
-              onClick={() => router.push("/dashboard")}
-              className="w-full bg-[#00E660] hover:bg-[#00cc55] text-black font-semibold py-4 rounded-xl transition-colors"
-            >
-              Back to dashboard
-            </button>
-          </>
-        ) : (
-          <>
-            <button
-              onClick={() => router.push("/dashboard")}
-              className="w-full bg-[#00E660] hover:bg-[#00cc55] text-black font-semibold py-4 rounded-xl transition-colors"
-            >
-              Back to dashboard
-            </button>
-            <button
+        {/* Footer CTAs */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="w-full mt-8 space-y-3"
+        >
+          <Button
+            onClick={() => router.push("/dashboard")}
+            className="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-semibold py-6 rounded-xl transition-all duration-300 shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-2"
+          >
+            Return to Dashboard
+            <ArrowRight className="w-4 h-4" />
+          </Button>
+
+          {(!blocked && !isSuccess && !isFailed) && (
+            <Button
               onClick={() =>
                 router.push(
                   "/deposit/instructions?data=" + searchParams.get("data")
                 )
               }
-              className="w-full bg-transparent border border-white/10 hover:bg-white/5 text-white font-medium py-4 rounded-xl transition-colors"
+              variant="outline"
+              className="w-full bg-transparent border-white/10 hover:bg-white/5 hover:text-white py-6 rounded-xl transition-all duration-300"
             >
-              View instructions again
-            </button>
-          </>
-        )}
-      </div>
+              View details & instructions
+            </Button>
+          )}
+        </motion.div>
+      </main>
     </div>
   );
 }
@@ -212,7 +314,7 @@ export default function DepositStatusPage() {
     <Suspense
       fallback={
         <div className="min-h-screen bg-[#0C0F14] flex items-center justify-center">
-          <div className="w-8 h-8 border-2 border-[#00E660] border-t-transparent rounded-full animate-spin" />
+          <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
         </div>
       }
     >

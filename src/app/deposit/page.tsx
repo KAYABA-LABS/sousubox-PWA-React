@@ -3,30 +3,37 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Landmark, CreditCard } from "lucide-react";
+import { ArrowLeft, Landmark, CreditCard, Shield, ChevronRight, Loader2, Sparkles } from "lucide-react";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { isDevMode } from "@/lib/dev";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { api } from "@/lib/api";
 
 const depositMethods = [
   {
     id: "momo",
     name: "Mobile Money",
-    description: "MTN, Vodafone, AirtelTigo",
+    description: "MTN, Vodafone/Telecel, AirtelTigo",
     icon: CreditCard,
     processingTime: "Instant",
+    badge: "Recommended",
+    badgeColor: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
   },
   {
     id: "bank",
-    name: "Bank transfer",
-    description: "Link your bank account",
+    name: "Bank Transfer",
+    description: "Direct bank wire / ACH transfer",
     icon: Landmark,
     processingTime: "2-3 business days",
+    badge: "No Fee",
+    badgeColor: "bg-blue-500/10 text-blue-400 border-blue-500/20",
   },
   {
     id: "card",
-    name: "Debit card",
-    description: "Instant with card",
+    name: "Debit Card",
+    description: "Instant via Visa or MasterCard",
     icon: CreditCard,
     processingTime: "Instant",
   },
@@ -36,12 +43,32 @@ export default function DepositPage() {
   const router = useRouter();
   const { userId, isLoaded } = useAuth();
   const { user } = useUser();
-  const [balance] = useState<number>(0);
+  const [balance, setBalance] = useState<number>(0);
+  const [loadingProfile, setLoadingProfile] = useState<boolean>(true);
 
   useEffect(() => {
     if (!isLoaded) return;
     if (!userId && !isDevMode()) {
       router.push("/signin");
+      return;
+    }
+
+    if (userId) {
+      api.getUserProfile(userId)
+        .then((res) => {
+          if (res.success && res.data) {
+            // Using totalAmountSaved or 0 as current balance display
+            setBalance(res.data.stats?.totalAmountSaved || 0);
+          }
+        })
+        .catch((err) => {
+          console.error("Failed to load user profile in deposit:", err);
+        })
+        .finally(() => {
+          setLoadingProfile(false);
+        });
+    } else {
+      setLoadingProfile(false);
     }
   }, [userId, isLoaded, user, router]);
 
@@ -50,91 +77,138 @@ export default function DepositPage() {
   };
 
   return (
-    <main id="main-content" role="main" className="min-h-screen bg-[#0C0F14] flex flex-col">
+    <main id="main-content" role="main" className="min-h-screen bg-[#0C0F14] text-white flex flex-col relative overflow-hidden">
+      {/* Decorative Gradient Glows */}
+      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-emerald-500/5 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-blue-500/5 blur-[120px] pointer-events-none" />
+
       {/* Header */}
-      <header role="banner" className="bg-[#0C0F14] px-5 pt-6 pb-4 border-b border-white/5">
-        <div className="flex items-center gap-4 mb-2">
+      <header role="banner" className="bg-[#0C0F14]/80 backdrop-blur-md sticky top-0 z-50 px-5 pt-6 pb-4 border-b border-white/5 flex items-center justify-between">
+        <div className="flex items-center gap-4">
           <Button
             onClick={() => router.push("/dashboard")}
-            className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors"
+            variant="ghost"
+            size="icon"
+            className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 hover:text-white flex items-center justify-center transition-colors"
             aria-label="Go back"
           >
             <ArrowLeft className="w-5 h-5 text-white" strokeWidth={2} />
           </Button>
           <div>
-            <h1 className="text-xl font-semibold text-white">Deposit</h1>
-            <p className="text-sm text-gray-400">Add funds to your account</p>
+            <h1 className="text-xl font-semibold text-white tracking-tight flex items-center gap-2">
+              Deposit Funds
+            </h1>
+            <p className="text-xs text-gray-400">Add capital to your Susu account</p>
           </div>
         </div>
+        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
       </header>
 
-      <main className="flex-1 px-5 py-6">
+      <div className="flex-grow flex flex-col items-center justify-start px-5 py-8 max-w-2xl mx-auto w-full z-10">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          className="space-y-6"
+          transition={{ duration: 0.4 }}
+          className="space-y-6 w-full"
         >
-          {/* Current Balance */}
-          <div className="bg-[#151A1F] rounded-xl p-5 text-center">
-            <p className="text-sm text-gray-400 mb-1">Current balance</p>
-            <p className="text-3xl font-bold text-white">
-              $
-              {balance.toLocaleString("en-US", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}
-            </p>
-          </div>
+          {/* Current Balance Card */}
+          <Card className="bg-white/[0.02] backdrop-blur-xl border border-white/[0.06] shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
+            <CardHeader className="text-center pb-2">
+              <CardDescription className="text-xs font-medium tracking-wider uppercase text-emerald-400/80 flex items-center justify-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" />
+                Available Balance
+              </CardDescription>
+              <CardTitle className="text-4xl font-bold mt-1 text-white tracking-tight">
+                {loadingProfile ? (
+                  <div className="flex items-center justify-center py-2">
+                    <Loader2 className="w-6 h-6 animate-spin text-emerald-500" />
+                  </div>
+                ) : (
+                  `GH₵ ${balance.toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}`
+                )}
+              </CardTitle>
+            </CardHeader>
+          </Card>
 
-          {/* Deposit Methods */}
-          <div>
-            <h2 className="text-sm font-medium text-gray-400 mb-3">
-              Choose deposit method
+          {/* Deposit Methods Section */}
+          <div className="space-y-3">
+            <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider pl-1">
+              Select Deposit Method
             </h2>
-            <div className="space-y-3">
-              {depositMethods.map((method) => {
+            <div className="grid gap-4">
+              {depositMethods.map((method, index) => {
                 const Icon = method.icon;
                 return (
-                  <Button
+                  <motion.div
                     key={method.id}
-                    onClick={() => handleMethodSelect(method.id)}
-                    className="w-full bg-[#151A1F] hover:bg-[#1A1F25] rounded-xl p-4 flex items-center gap-4 transition-colors"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
                   >
-                    <div className="w-12 h-12 rounded-full bg-[#00E660]/10 flex items-center justify-center shrink-0">
-                      <Icon
-                        className="w-6 h-6 text-[#00E660]"
-                        strokeWidth={1.5}
-                      />
-                    </div>
-                    <div className="flex-1 text-left">
-                      <p className="text-white font-medium mb-0.5">
-                        {method.name}
-                      </p>
-                      <p className="text-sm text-gray-400">
-                        {method.description}
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {method.processingTime}
-                      </p>
-                    </div>
-                  </Button>
+                    <button
+                      onClick={() => handleMethodSelect(method.id)}
+                      className="w-full text-left bg-white/[0.02] hover:bg-white/[0.04] active:bg-white/[0.06] border border-white/[0.06] hover:border-emerald-500/30 rounded-2xl p-5 flex items-center gap-4 transition-all duration-300 group relative overflow-hidden"
+                    >
+                      <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] bg-gradient-to-tr from-emerald-500/0 via-emerald-500/0 to-emerald-500/[0.02] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                      
+                      <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300 border border-emerald-500/20">
+                        <Icon className="w-6 h-6 text-emerald-400" strokeWidth={1.5} />
+                      </div>
+                      
+                      <div className="flex-grow min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-semibold text-white tracking-tight group-hover:text-emerald-300 transition-colors">
+                            {method.name}
+                          </span>
+                          {method.badge && (
+                            <Badge variant="outline" className={`text-[10px] px-2 py-0.5 font-semibold rounded-md border ${method.badgeColor}`}>
+                              {method.badge}
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-xs text-gray-400 mt-1 line-clamp-1">
+                          {method.description}
+                        </p>
+                      </div>
+
+                      <div className="flex flex-col items-end gap-1.5 shrink-0 pl-2">
+                        <span className="text-[10px] text-gray-500 font-medium">
+                          {method.processingTime}
+                        </span>
+                        <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all duration-300" />
+                      </div>
+                    </button>
+                  </motion.div>
                 );
               })}
             </div>
           </div>
 
           {/* Info Notice */}
-          <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
-            <p className="text-sm text-blue-300 mb-2 font-medium">
-              Withdrawal requirements
-            </p>
-            <p className="text-xs text-blue-300/80">
-              A minimum deposit of $350.00 is required before you can make
-              withdrawals from your account
-            </p>
-          </div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="bg-emerald-500/[0.02] border border-emerald-500/10 rounded-2xl p-5 flex items-start gap-4 shadow-xl"
+          >
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0 border border-emerald-500/20">
+              <Shield className="w-5 h-5 text-emerald-400" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-emerald-400 mb-1 flex items-center gap-1.5">
+                Withdrawal Unlock Requirements
+              </p>
+              <p className="text-xs text-gray-400 leading-relaxed">
+                A minimum cumulative deposit of <span className="text-white font-medium">GH₵ 350.00</span> is required to fully activate and unlock your withdrawal capabilities.
+              </p>
+            </div>
+          </motion.div>
         </motion.div>
-      </main>
+      </div>
     </main>
   );
 }
