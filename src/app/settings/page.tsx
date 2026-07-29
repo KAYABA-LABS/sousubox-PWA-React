@@ -40,22 +40,27 @@ import {
   LogOut,
   ChevronRight,
   CheckCircle2,
+  ShieldAlert,
 } from "lucide-react";
 import { useAuth, useUser, useClerk } from "@clerk/nextjs";
 import { isDevMode } from "@/lib/dev";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useKycService } from "@/services/kycService";
 
 export default function Settings() {
   const router = useRouter();
-  const { isLoaded } = useAuth();
+  const { isLoaded, userId } = useAuth();
   const { user } = useUser();
   const { signOut } = useClerk();
+  const kycService = useKycService();
+
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [userInitials, setUserInitials] = useState("U");
   const [isLoading, setIsLoading] = useState(true);
-  const [isVerified] = useState(true);
+  const [isVerified, setIsVerified] = useState(false);
+  const [kycStatusStr, setKycStatusStr] = useState("NOT_SUBMITTED");
 
   const getInitials = (fullName: string) => {
     const names = fullName.trim().split(" ");
@@ -72,7 +77,6 @@ export default function Settings() {
 
     if (user) {
       const email = user.emailAddresses?.[0]?.emailAddress || "";
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setUserEmail(email);
 
       let displayName = "User";
@@ -94,10 +98,22 @@ export default function Settings() {
 
       setUserName(displayName);
       setUserInitials(initials);
+
+      // Load actual KYC status from the backend
+      const loadKyc = async () => {
+        try {
+          const kycRes = await kycService.getStatus(user.id);
+          setIsVerified(kycRes.status === "VERIFIED");
+          setKycStatusStr(kycRes.status);
+        } catch (err) {
+          console.error("Failed to load KYC status in settings:", err);
+        }
+      };
+      loadKyc();
     }
 
     setIsLoading(false);
-  }, [isLoaded, user]);
+  }, [isLoaded, user, kycService]);
 
   const handleLogout = async () => {
     await signOut();
@@ -108,58 +124,94 @@ export default function Settings() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-[#0C0F14] flex items-center justify-center relative">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,230,96,0.05),transparent_60%)]" />
+        <div className="w-8 h-8 border-2 border-[#00E660] border-t-transparent rounded-full animate-spin z-10" />
       </div>
     );
   }
 
   return (
-    <main id="main-content" role="main" className="min-h-screen bg-gray-50 flex flex-col px-5 pt-6 pb-32">
+    <main
+      id="main-content"
+      role="main"
+      className="min-h-screen bg-[#0C0F14] text-white flex flex-col px-6 pt-8 pb-32 relative overflow-hidden"
+    >
+      {/* Background glow effects */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(0,230,96,0.06),transparent_60%)] pointer-events-none" />
+
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-6"
+        className="mb-8"
       >
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+        <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
+          Settings
+        </h1>
+        <p className="text-zinc-500 text-sm">Manage your profile, cards, notifications and application preferences.</p>
       </motion.div>
 
+      {/* Profile Card */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05 }}
+        className="mb-8"
       >
-        <Button
+        <div
           onClick={() => router.push("/settings/profile")}
-          className="bg-white rounded-2xl p-5 mb-6 hover:bg-gray-100 transition-colors w-full"
+          className="bg-white/[0.02] border border-white/[0.08] backdrop-blur-md rounded-2xl p-6 hover:bg-white/[0.05] transition-all duration-300 w-full flex items-center justify-between cursor-pointer group hover:shadow-[0_0_30px_rgba(0,230,96,0.08)]"
         >
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-full bg-linear-to-br from-[#00E660] to-[#00B84D] flex items-center justify-center">
-              <span className="text-lg font-semibold text-black">
+          <div className="flex items-center gap-5">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#00E660] to-[#00B84D] flex items-center justify-center shadow-[0_0_20px_rgba(0,230,96,0.3)] group-hover:scale-105 transition-transform duration-300">
+              <span className="text-xl font-bold text-black select-none">
                 {userInitials}
               </span>
             </div>
-            <div className="flex-1 text-left">
-              <div className="flex items-center gap-2">
-                <p className="text-base font-semibold text-gray-900">{userName}</p>
-                {isVerified && (
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            <div className="text-left">
+              <div className="flex items-center gap-2.5">
+                <p className="text-lg font-bold text-white tracking-tight">{userName}</p>
+                {isVerified ? (
+                  <div className="flex items-center gap-1 bg-[#00E660]/10 border border-[#00E660]/20 rounded-full px-2 py-0.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#00E660]" />
+                    <span className="text-[10px] text-[#00E660] font-semibold uppercase tracking-wider">Verified</span>
+                  </div>
+                ) : (
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push("/kyc");
+                    }}
+                    className="flex items-center gap-1 bg-rose-500/10 border border-rose-500/20 rounded-full px-2 py-0.5 cursor-pointer hover:bg-rose-500/20 transition-all"
+                  >
+                    <ShieldAlert className="w-3.5 h-3.5 text-rose-500" />
+                    <span className="text-[10px] text-rose-500 font-semibold uppercase tracking-wider">Verify Identity</span>
+                  </div>
                 )}
               </div>
-              <p className="text-sm text-gray-500 mt-0.5">{userEmail}</p>
+              <p className="text-sm text-zinc-400 mt-1 font-medium">{userEmail}</p>
             </div>
-            <ChevronRight className="w-5 h-5 text-gray-500" />
           </div>
-        </Button>
+          <ChevronRight className="w-6 h-6 text-zinc-500 group-hover:text-white group-hover:translate-x-1 transition-all duration-300" />
+        </div>
       </motion.div>
 
-      <div className="space-y-6">
+      {/* Settings Sections */}
+      <div className="space-y-8 max-w-4xl">
         <SettingsSection title="Account">
           <SettingsRow
             icon={<User className="w-5 h-5" />}
             label="Personal Information"
-            subtitle="Name, email, phone"
-            onClick={() => router.push("/settings/personal")}
+            subtitle="Update your name, email, phone, and address"
+            onClick={() => router.push("/settings/profile")}
+          />
+          <SettingsRow
+            icon={<CheckCircle2 className="w-5 h-5" />}
+            label="Identity Verification (KYC)"
+            subtitle="Unlock exclusive features & limits"
+            badge={isVerified ? "Verified" : kycStatusStr === "NOT_SUBMITTED" ? "Get Started" : kycStatusStr}
+            badgeColor={isVerified ? "emerald" : kycStatusStr === "NOT_SUBMITTED" ? "amber" : "neutral"}
+            onClick={() => router.push("/kyc")}
           />
           <SettingsRow
             icon={<UserX className="w-5 h-5" />}
@@ -172,14 +224,14 @@ export default function Settings() {
         <SettingsSection title="Security & Privacy">
           <SettingsRow
             icon={<Lock className="w-5 h-5" />}
-            label="Security & Privacy Overview"
-            subtitle="Manage your security settings"
+            label="Security Overview"
+            subtitle="Manage your credentials and security protocols"
             onClick={() => router.push("/settings/security-overview")}
           />
           <SettingsRow
             icon={<Eye className="w-5 h-5" />}
             label="Privacy Controls"
-            subtitle="Data sharing preferences"
+            subtitle="Preferences for sharing data"
             onClick={() => router.push("/settings/privacy-controls")}
           />
         </SettingsSection>
@@ -188,26 +240,27 @@ export default function Settings() {
           <SettingsRow
             icon={<CreditCard className="w-5 h-5" />}
             label="Virtual Cards"
-            subtitle="Manage digital cards"
+            subtitle="Manage digital transaction cards"
             badge="2 Active"
+            badgeColor="emerald"
             onClick={() => router.push("/settings/virtual-cards")}
           />
           <SettingsRow
             icon={<CreditCard className="w-5 h-5" />}
             label="Physical Card"
-            subtitle="Order or replace card"
+            subtitle="Order, activate, or replace your card"
             onClick={() => router.push("/settings/physical-card")}
           />
           <SettingsRow
             icon={<Snowflake className="w-5 h-5" />}
             label="Freeze Card"
-            subtitle="Temporarily disable card"
+            subtitle="Temporarily pause all transactions"
             onClick={() => router.push("/settings/freeze")}
           />
           <SettingsRow
             icon={<Landmark className="w-5 h-5" />}
             label="Linked Bank Accounts"
-            subtitle="External accounts"
+            subtitle="View connected external institutions"
             onClick={() => router.push("/settings/linked-accounts")}
           />
           <SettingsRow
@@ -221,26 +274,27 @@ export default function Settings() {
           <SettingsRow
             icon={<Bell className="w-5 h-5" />}
             label="Push Notifications"
-            subtitle="Transaction alerts, updates"
-            badge="On"
+            subtitle="Configure transaction alerts"
+            badge="Enabled"
+            badgeColor="emerald"
             onClick={() => router.push("/settings/push")}
           />
           <SettingsRow
             icon={<Mail className="w-5 h-5" />}
             label="Email Notifications"
-            subtitle="Account activity emails"
+            subtitle="Activity updates and statements"
             onClick={() => router.push("/settings/email-notif")}
           />
           <SettingsRow
             icon={<MessageSquare className="w-5 h-5" />}
             label="SMS Notifications"
-            subtitle="Text message alerts"
+            subtitle="Text message security codes"
             onClick={() => router.push("/settings/sms")}
           />
           <SettingsRow
             icon={<Moon className="w-5 h-5" />}
             label="Quiet Hours"
-            subtitle="Pause notifications"
+            subtitle="Schedule notification blackout"
             onClick={() => router.push("/settings/quiet-hours")}
           />
         </SettingsSection>
@@ -249,31 +303,31 @@ export default function Settings() {
           <SettingsRow
             icon={<TrendingUp className="w-5 h-5" />}
             label="Spending Limits"
-            subtitle="Daily, weekly limits"
+            subtitle="Set daily and weekly caps"
             onClick={() => router.push("/settings/spending-limits")}
           />
           <SettingsRow
             icon={<ArrowUpDown className="w-5 h-5" />}
             label="Transfer Limits"
-            subtitle="Maximum transfer amounts"
+            subtitle="Set deposit and withdrawal bounds"
             onClick={() => router.push("/settings/transfer-limits")}
           />
           <SettingsRow
             icon={<Banknote className="w-5 h-5" />}
             label="ATM Withdrawal Limits"
-            subtitle="Daily cash withdrawal"
+            subtitle="Daily cash withdrawal thresholds"
             onClick={() => router.push("/settings/atm-limits")}
           />
           <SettingsRow
             icon={<Store className="w-5 h-5" />}
             label="Merchant Categories"
-            subtitle="Block specific categories"
+            subtitle="Allow or block merchant types"
             onClick={() => router.push("/settings/merchant-categories")}
           />
           <SettingsRow
             icon={<Ban className="w-5 h-5" />}
             label="Blocked Merchants"
-            subtitle="Prevent specific charges"
+            subtitle="Prevent specific vendors from charging you"
             onClick={() => router.push("/settings/blocked-merchants")}
           />
         </SettingsSection>
@@ -282,25 +336,25 @@ export default function Settings() {
           <SettingsRow
             icon={<FileCheck className="w-5 h-5" />}
             label="Statements"
-            subtitle="Monthly account statements"
+            subtitle="Download monthly statement papers"
             onClick={() => router.push("/settings/statements")}
           />
           <SettingsRow
             icon={<Receipt className="w-5 h-5" />}
             label="Tax Documents"
-            subtitle="1099-INT, forms"
+            subtitle="View 1099 interest statements"
             onClick={() => router.push("/settings/tax-docs")}
           />
           <SettingsRow
             icon={<FileSignature className="w-5 h-5" />}
             label="Account Agreements"
-            subtitle="Terms, disclosures"
+            subtitle="Disclosures and legal terms"
             onClick={() => router.push("/settings/agreements")}
           />
           <SettingsRow
             icon={<Download className="w-5 h-5" />}
             label="Download Data"
-            subtitle="Export account data"
+            subtitle="Export and download all telemetry and history"
             onClick={() => router.push("/settings/download-data")}
           />
         </SettingsSection>
@@ -321,19 +375,19 @@ export default function Settings() {
           <SettingsRow
             icon={<Palette className="w-5 h-5" />}
             label="App Theme"
-            subtitle="Dark mode"
+            subtitle="Dark Mode (Impeccable)"
             onClick={() => router.push("/settings/theme")}
           />
           <SettingsRow
             icon={<SettingsIcon className="w-5 h-5" />}
             label="Accessibility"
-            subtitle="Font size, contrast"
+            subtitle="Contrast, motion, and font customization"
             onClick={() => router.push("/settings/accessibility")}
           />
           <SettingsRow
             icon={<Database className="w-5 h-5" />}
             label="Data Usage"
-            subtitle="Cache, storage"
+            subtitle="Cache storage controls"
             onClick={() => router.push("/settings/data-usage")}
           />
         </SettingsSection>
@@ -342,19 +396,19 @@ export default function Settings() {
           <SettingsRow
             icon={<HelpCircle className="w-5 h-5" />}
             label="Help Center"
-            subtitle="FAQs, tutorials"
+            subtitle="Browse documentation and video tutorials"
             onClick={() => router.push("/settings/help")}
           />
           <SettingsRow
             icon={<Phone className="w-5 h-5" />}
             label="Contact Support"
-            subtitle="Get assistance"
+            subtitle="Live chat and compliance specialists"
             onClick={() => router.push("/settings/contact")}
           />
           <SettingsRow
             icon={<AlertCircle className="w-5 h-5" />}
             label="Report a Problem"
-            subtitle="Technical issues"
+            subtitle="Submit bug reports or feedback"
             onClick={() => router.push("/settings/report")}
           />
           <SettingsRow
@@ -370,7 +424,7 @@ export default function Settings() {
           <SettingsRow
             icon={<Info className="w-5 h-5" />}
             label="About"
-            subtitle="Version 1.0.0"
+            subtitle="SusuChain Client v1.0.0"
             onClick={() => router.push("/settings/about")}
           />
         </SettingsSection>
@@ -378,21 +432,19 @@ export default function Settings() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
+          transition={{ delay: 0.3 }}
         >
           <Button
             onClick={handleLogout}
-            className="w-full bg-red-500/10 rounded-2xl p-4 hover:bg-red-500/20 transition-colors mt-6"
+            className="w-full bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/20 transition-all rounded-2xl py-6 mt-4 flex items-center justify-center gap-3 cursor-pointer text-rose-500 font-bold"
           >
-            <div className="flex items-center justify-center gap-2">
-              <LogOut className="w-5 h-5 text-red-500" strokeWidth={2} />
-              <span className="text-sm font-medium text-red-500">Log Out</span>
-            </div>
+            <LogOut className="w-5 h-5" strokeWidth={2} />
+            <span className="text-sm tracking-wide">Log Out</span>
           </Button>
         </motion.div>
       </div>
 
-      <Dock activeItem="" onItemClick={(href) => router.push(href)} />
+      <Dock activeItem="settings" onItemClick={(href) => router.push(href)} />
     </main>
   );
 }
@@ -408,12 +460,12 @@ function SettingsSection({
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-2"
+      className="space-y-3"
     >
-      <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-1 mb-3">
+      <h2 className="text-xs font-bold text-zinc-500 uppercase tracking-widest px-1">
         {title}
       </h2>
-      <div className="bg-white rounded-2xl overflow-hidden divide-y divide-gray-200">
+      <div className="bg-white/[0.02] border border-white/[0.06] backdrop-blur-md rounded-2xl overflow-hidden divide-y divide-white/[0.04]">
         {children}
       </div>
     </motion.div>
@@ -425,6 +477,7 @@ function SettingsRow({
   label,
   subtitle,
   badge,
+  badgeColor = "neutral",
   destructive,
   onClick,
 }: {
@@ -432,39 +485,51 @@ function SettingsRow({
   label: string;
   subtitle?: string;
   badge?: string;
+  badgeColor?: "emerald" | "amber" | "neutral";
   destructive?: boolean;
   onClick: () => void;
 }) {
+  const getBadgeClass = () => {
+    switch (badgeColor) {
+      case "emerald":
+        return "bg-[#00E660]/10 text-[#00E660] border border-[#00E660]/20";
+      case "amber":
+        return "bg-amber-500/10 text-amber-400 border border-amber-500/20";
+      default:
+        return "bg-zinc-800 text-zinc-300 border border-zinc-700";
+    }
+  };
+
   return (
-    <Button
+    <div
       onClick={onClick}
-      className="w-full flex items-center gap-3 p-4 hover:bg-gray-100 transition-colors"
+      className="w-full flex items-center gap-4 p-4.5 hover:bg-white/[0.04] transition-all duration-200 cursor-pointer group"
     >
       <div
-        className={`${destructive ? "text-red-500" : "text-gray-500"} shrink-0`}
+        className={`${destructive ? "text-rose-500" : "text-zinc-400 group-hover:text-white"} shrink-0 transition-colors duration-200`}
       >
         {icon}
       </div>
       <div className="flex-1 text-left">
         <p
-          className={`text-sm font-medium ${
-            destructive ? "text-red-500" : "text-gray-900"
+          className={`text-sm font-semibold tracking-tight ${
+            destructive ? "text-rose-500" : "text-white"
           }`}
         >
           {label}
         </p>
-        {subtitle && <p className="text-xs text-gray-500 mt-0.5">{subtitle}</p>}
+        {subtitle && <p className="text-xs text-zinc-400 mt-1 font-medium">{subtitle}</p>}
       </div>
       {badge && (
-        <Badge className="px-2 py-1 bg-emerald-50 text-emerald-600 text-xs font-medium rounded-full">
+        <Badge className={`px-2.5 py-1 text-xs font-semibold rounded-full ${getBadgeClass()}`}>
           {badge}
         </Badge>
       )}
       <ChevronRight
-        className={`w-5 h-5 shrink-0 ${
-          destructive ? "text-red-500/50" : "text-gray-500"
+        className={`w-5 h-5 shrink-0 transition-all duration-200 ${
+          destructive ? "text-rose-500/50" : "text-zinc-500 group-hover:text-white group-hover:translate-x-0.5"
         }`}
       />
-    </Button>
+    </div>
   );
 }

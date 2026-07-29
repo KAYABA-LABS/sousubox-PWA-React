@@ -9,5 +9,10 @@ export function useUserService() {
       if (!result.success) throw new Error(result.error || "Failed to fetch profile");
       return result.data;
     },
+    updateUserProfile: async (userId: string, data: Record<string, string>): Promise<UserProfile> => {
+      const result = await api.updateProfile(userId, data);
+      if (!result.success) throw new Error(result.error || "Failed to update profile");
+      return result.data;
+    },
   };
 }
