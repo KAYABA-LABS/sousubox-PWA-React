@@ -12,7 +12,7 @@ export default function VerifyPage() {
   }, [router]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#1C1C1E]">
+    <div className="min-h-screen flex items-center justify-center bg-[#0C0F14]">
       <Loader2 className="w-8 h-8 animate-spin text-[#00E660]" />
     </div>
   );
