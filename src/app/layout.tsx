@@ -40,6 +40,11 @@ export const viewport: Viewport = {
 
 const devBypass = process.env.DEV_BYPASS === "true";
 
+if (devBypass && typeof window === "undefined") {
+  // Server-side: log that bypass is active
+  console.log("[DEV] Clerk authentication bypassed");
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
