@@ -1,19 +1,25 @@
 "use client";
 
 import { useEffect } from "react";
-import { setAuthTokenGetter } from "@/lib/api";
-
-const devBypass = process.env.DEV_BYPASS === "true";
-
-let Clerk: any = null;
-if (!devBypass) {
-  Clerk = require("@clerk/nextjs");
-}
+import { useAuth, useUser } from "@clerk/nextjs";
+import { setApiUserIdGetter, setAuthTokenGetter } from "@/lib/api";
 
 export function AuthTokenProvider({ children }: { children: React.ReactNode }) {
+  const { getToken } = useAuth();
+  const { user } = useUser();
+
   useEffect(() => {
-    setAuthTokenGetter(() => Promise.resolve(null));
-  }, []);
+    setAuthTokenGetter(() => getToken());
+    setApiUserIdGetter(() => {
+      const databaseUserId = user?.unsafeMetadata?.userId;
+      return typeof databaseUserId === "string" ? databaseUserId : null;
+    });
+
+    return () => {
+      setAuthTokenGetter(() => Promise.resolve(null));
+      setApiUserIdGetter(() => null);
+    };
+  }, [getToken, user]);
 
   return <>{children}</>;
 }

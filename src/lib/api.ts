@@ -1,9 +1,25 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api/v1";
+const API_BASE =
+  typeof window === "undefined"
+    ? process.env.NEXT_PUBLIC_API_URL || "http://192.168.100.24:8000/api/v1"
+    : "/api/backend";
 
 let authTokenGetter: (() => Promise<string | null>) | null = null;
+let apiUserIdGetter: (() => string | null) | null = null;
 
 export function setAuthTokenGetter(getter: () => Promise<string | null>) {
   authTokenGetter = getter;
+}
+
+export function setApiUserIdGetter(getter: () => string | null) {
+  apiUserIdGetter = getter;
+}
+
+function resolveUserId(userId: string) {
+  const backendUserId = apiUserIdGetter?.();
+  if (!backendUserId) {
+    throw new Error("Backend user ID is not available");
+  }
+  return backendUserId;
 }
 
 async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
@@ -166,67 +182,78 @@ export interface KycSession {
 
 export const api = {
   // User
+  registerUser: (data: {
+    phoneNumber: string;
+    createdUserId: string;
+    createdSessionId: string;
+    email?: string;
+  }) =>
+    apiFetch<{ success: boolean; message?: string; error?: string; user?: { id?: string } }>("/registerUser", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
   getUserProfile: (userId: string) =>
-    apiFetch<BackendEnvelope<UserProfile>>(`/getUserProfile/${userId}`),
+    apiFetch<BackendEnvelope<UserProfile>>(`/getUserProfile/${resolveUserId(userId)}`),
 
   updateProfile: (userId: string, data: Record<string, string>) =>
     apiFetch<BackendEnvelope<UserProfile>>("/updateProfile", {
       method: "PUT",
-      body: JSON.stringify({ userId, ...data }),
+      body: JSON.stringify({ userId: resolveUserId(userId), ...data }),
     }),
 
   // Pools
   discoverPools: (userId: string) =>
-    apiFetch<BackendEnvelope<DiscoverPool[]>>(`/discoverPools/${userId}`),
+    apiFetch<BackendEnvelope<DiscoverPool[]>>(`/discoverPools/${resolveUserId(userId)}`),
 
   joinPool: (userId: string, poolId: string) =>
-    apiFetch<BackendEnvelope<void>>(`/joinPool/${userId}/${poolId}`, { method: "POST" }),
+    apiFetch<BackendEnvelope<void>>(`/joinPool/${resolveUserId(userId)}/${poolId}`, { method: "POST" }),
 
   getUserPools: (userId: string) =>
-    apiFetch<BackendEnvelope<UserPoolMembership[]>>(`/getUserPools/${userId}`),
+    apiFetch<BackendEnvelope<UserPoolMembership[]>>(`/getUserPools/${resolveUserId(userId)}`),
 
   getPoolDetails: (poolId: string) =>
     apiFetch<BackendEnvelope<Record<string, unknown>>>(`/${poolId}/details`),
 
   // Savings - Personal Instruments
   getSavingsInstruments: (userId: string) =>
-    apiFetch<BackendEnvelope<Record<string, unknown>[]>>(`/getAllUserPersonalSavingsInstruments/${userId}`),
+    apiFetch<BackendEnvelope<Record<string, unknown>[]>>(`/getAllUserPersonalSavingsInstruments/${resolveUserId(userId)}`),
 
   getSavingsInstrumentById: (userId: string, instrumentId: string) =>
-    apiFetch<BackendEnvelope<Record<string, unknown>>>(`/getPersonalSavingsInstrument/${userId}/${instrumentId}`),
+    apiFetch<BackendEnvelope<Record<string, unknown>>>(`/getPersonalSavingsInstrument/${resolveUserId(userId)}/${instrumentId}`),
 
   getAutoSaveInstrument: (userId: string) =>
-    apiFetch<BackendEnvelope<Record<string, unknown>>>(`/getUserAutoSaveInstrument/${userId}`),
+    apiFetch<BackendEnvelope<Record<string, unknown>>>(`/getUserAutoSaveInstrument/${resolveUserId(userId)}`),
 
   getTimeLockInstrument: (userId: string) =>
-    apiFetch<BackendEnvelope<Record<string, unknown>>>(`/getUserTimeLockInstrument/${userId}`),
+    apiFetch<BackendEnvelope<Record<string, unknown>>>(`/getUserTimeLockInstrument/${resolveUserId(userId)}`),
 
   getFlexibleSavingsInstrument: (userId: string) =>
-    apiFetch<BackendEnvelope<Record<string, unknown>>>(`/getUserFlexibleSavingsInstrument/${userId}`),
+    apiFetch<BackendEnvelope<Record<string, unknown>>>(`/getUserFlexibleSavingsInstrument/${resolveUserId(userId)}`),
 
   getTargetFundInstrument: (userId: string) =>
-    apiFetch<BackendEnvelope<Record<string, unknown>>>(`/getUserTargetFundInstrument/${userId}`),
+    apiFetch<BackendEnvelope<Record<string, unknown>>>(`/getUserTargetFundInstrument/${resolveUserId(userId)}`),
 
   activateAutoSave: (userId: string, instrumentId: string, data: Record<string, unknown>) =>
-    apiFetch<BackendEnvelope<Record<string, unknown>>>(`/activateAutoSaveInstrument/${userId}/${instrumentId}`, {
+    apiFetch<BackendEnvelope<Record<string, unknown>>>(`/activateAutoSaveInstrument/${resolveUserId(userId)}/${instrumentId}`, {
       method: "PATCH",
       body: JSON.stringify(data),
     }),
 
   activateTimeLock: (userId: string, instrumentId: string, data: Record<string, unknown>) =>
-    apiFetch<BackendEnvelope<Record<string, unknown>>>(`/activateTimeLockInstrument/${userId}/${instrumentId}`, {
+    apiFetch<BackendEnvelope<Record<string, unknown>>>(`/activateTimeLockInstrument/${resolveUserId(userId)}/${instrumentId}`, {
       method: "PATCH",
       body: JSON.stringify(data),
     }),
 
   activateFlexibleSavings: (userId: string, instrumentId: string, data: Record<string, unknown>) =>
-    apiFetch<BackendEnvelope<Record<string, unknown>>>(`/activateFlexibleSavingsInstrument/${userId}/${instrumentId}`, {
+    apiFetch<BackendEnvelope<Record<string, unknown>>>(`/activateFlexibleSavingsInstrument/${resolveUserId(userId)}/${instrumentId}`, {
       method: "PATCH",
       body: JSON.stringify(data),
     }),
 
   activateTargetFund: (userId: string, instrumentId: string, data: Record<string, unknown>) =>
-    apiFetch<BackendEnvelope<Record<string, unknown>>>(`/activateTargetFundInstrument/${userId}/${instrumentId}`, {
+    apiFetch<BackendEnvelope<Record<string, unknown>>>(`/activateTargetFundInstrument/${resolveUserId(userId)}/${instrumentId}`, {
       method: "PATCH",
       body: JSON.stringify(data),
     }),
@@ -246,21 +273,21 @@ export const api = {
 
   // Pool Contributions
   contributeToPool: (userId: string, poolId: string, amount: number) =>
-    apiFetch<BackendEnvelope<Record<string, unknown>>>(`/${userId}/${poolId}/contribute`, {
+    apiFetch<BackendEnvelope<Record<string, unknown>>>(`/${resolveUserId(userId)}/${poolId}/contribute`, {
       method: "POST",
       body: JSON.stringify({ amount }),
     }),
 
   // Savings Contributions
   contributeToSavings: (userId: string, instrumentId: string, amount: number) =>
-    apiFetch<BackendEnvelope<Record<string, unknown>>>(`/contribute/${userId}/${instrumentId}`, {
+    apiFetch<BackendEnvelope<Record<string, unknown>>>(`/contribute/${resolveUserId(userId)}/${instrumentId}`, {
       method: "POST",
       body: JSON.stringify({ amount }),
     }),
 
   // KYC
   getKycStatus: (userId: string) =>
-    apiFetch<BackendEnvelope<KycStatus>>(`/kyc/status/${userId}`),
+    apiFetch<BackendEnvelope<KycStatus>>(`/kyc/status/${resolveUserId(userId)}`),
 
   createKycSession: (userId: string, options?: {
     callback?: string;
@@ -270,6 +297,6 @@ export const api = {
   }) =>
     apiFetch<BackendEnvelope<KycSession>>("/kyc/session", {
       method: "POST",
-      body: JSON.stringify({ userId, ...options }),
+      body: JSON.stringify({ userId: resolveUserId(userId), ...options }),
     }),
 };

@@ -18,10 +18,8 @@ import {
   ChevronRight,
   Loader2,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { Dock } from "@/components/dashboard/Dock";
 import type { ProfileStats } from "@/services/profileService";
 
 export default function ProfilePage() {
@@ -63,158 +61,147 @@ export default function ProfilePage() {
     : userName.charAt(0).toUpperCase();
 
   const statCards = [
-    { label: "Active Pools", value: stats?.activePoolsCount ?? "—", icon: Users, color: "#3B82F6" },
-    { label: "Saving Streak", value: stats?.savingStreak ?? "—", icon: Flame, color: "#F59E0B" },
-    { label: "Total Saved", value: stats ? `$${stats.totalSaved.toLocaleString()}` : "—", icon: TrendingUp, color: "#10B981" },
-    { label: "KYC Status", value: kycStatus?.replace("_", " ") || "Not Started", icon: Shield, color: "#8B5CF6" },
-    { label: "Account Tier", value: stats?.accountTier || "SILVER", icon: Medal, color: "#EF4444" },
-    { label: "Referrals", value: stats?.referralCount ?? "—", icon: Share2, color: "#06B6D4" },
+    { label: "Active pools", value: stats?.activePoolsCount ?? "—", icon: Users },
+    { label: "Saving streak", value: stats?.savingStreak ?? "—", icon: Flame },
+    { label: "Total saved", value: stats ? `GHS ${stats.totalSaved.toLocaleString()}` : "—", icon: TrendingUp },
+    { label: "KYC status", value: kycStatus?.replace("_", " ") || "Not started", icon: Shield },
+    { label: "Account tier", value: stats?.accountTier || "SILVER", icon: Medal },
+    { label: "Referrals", value: stats?.referralCount ?? "—", icon: Share2 },
   ];
 
   if (!isLoaded || isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
+      <div className="min-h-screen bg-[#FBF6EF] flex items-center justify-center">
+        <Loader2 className="w-7 h-7 animate-spin text-emerald-700" />
       </div>
     );
   }
 
   return (
-    <main id="main-content" role="main" className="min-h-screen bg-gray-50 flex flex-col pb-32">
-      <motion.header
-        role="banner"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="px-5 pt-6 pb-4"
-      >
-        <h1 className="text-2xl font-bold text-gray-900">Profile</h1>
-      </motion.header>
+    <div className="min-h-screen bg-[#FBF6EF] flex flex-col pb-32 font-sans">
+      <header className="px-5 pt-6 pb-4 max-w-xl mx-auto w-full">
+        <h1 className="text-2xl font-bold text-emerald-950 tracking-tight">Profile</h1>
+      </header>
 
-      <main className="flex-1 px-5 space-y-6">
+      <main className="flex-1 px-5 space-y-5 max-w-xl mx-auto w-full">
+        {/* ── IDENTITY CARD ── */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-[24px] p-5 flex items-center gap-4 border border-emerald-950/[0.04] shadow-[0_2px_8px_rgba(20,60,40,0.06)]"
         >
-          <Card className="bg-white border-gray-200 rounded-2xl p-5 flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-emerald-600 flex items-center justify-center text-black text-xl font-bold">
-              {userInitials}
+          <div className="w-16 h-16 rounded-full bg-emerald-700 flex items-center justify-center text-white text-xl font-bold shrink-0">
+            {userInitials}
+          </div>
+          <div className="flex-1 min-w-0">
+            <h2 className="text-lg font-bold text-emerald-950 truncate">{userName}</h2>
+            <p className="text-sm text-emerald-950/50 truncate">
+              {user?.emailAddresses?.[0]?.emailAddress}
+            </p>
+            <div className="flex items-center gap-2 mt-1.5">
+              <span className="px-2.5 py-0.5 bg-amber-100 text-amber-800 rounded-full text-[11px] font-bold">
+                {stats?.accountTier || "SILVER"}
+              </span>
+              {stats?.reputationScore && (
+                <span className="text-xs text-emerald-950/45">
+                  Score: {stats.reputationScore}
+                </span>
+              )}
             </div>
-            <div className="flex-1">
-              <h2 className="text-lg font-semibold text-gray-900">{userName}</h2>
-              <p className="text-sm text-gray-500">
-                {user?.emailAddresses?.[0]?.emailAddress}
-              </p>
-              <div className="flex items-center gap-2 mt-1">
-                <Badge className="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded text-xs font-medium">
-                  {stats?.accountTier || "SILVER"}
-                </Badge>
-                {stats?.reputationScore && (
-                  <span className="text-xs text-gray-500">
-                    Score: {stats.reputationScore}
-                  </span>
-                )}
-              </div>
-            </div>
-          </Card>
+          </div>
         </motion.div>
 
+        {/* ── STAT GRID ── */}
         <div className="grid grid-cols-3 gap-3">
           {statCards.map((stat, index) => {
             const Icon = stat.icon;
             return (
               <motion.div
                 key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
+                className="bg-white rounded-[20px] p-3.5 text-center border border-emerald-950/[0.04] shadow-[0_2px_8px_rgba(20,60,40,0.06)]"
               >
-                <Card className="bg-white border-gray-200 rounded-2xl p-3 text-center">
-                  <div
-                    className="w-8 h-8 rounded-lg flex items-center justify-center mx-auto mb-2"
-                    style={{ backgroundColor: `${stat.color}20` }}
-                  >
-                    <Icon className="w-4 h-4" style={{ color: stat.color }} />
-                  </div>
-                  <p className="text-sm font-semibold text-gray-900">{stat.value}</p>
-                  <p className="text-[10px] text-gray-500 mt-0.5">{stat.label}</p>
-                </Card>
+                <div className="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-2">
+                  <Icon className="w-4 h-4 text-amber-700" strokeWidth={2} />
+                </div>
+                <p className="text-sm font-bold text-emerald-950">{stat.value}</p>
+                <p className="text-[10px] text-emerald-950/45 mt-0.5">{stat.label}</p>
               </motion.div>
             );
           })}
         </div>
 
+        {/* ── REPUTATION ── */}
         {stats && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
+            className="bg-white rounded-[24px] p-5 border border-emerald-950/[0.04] shadow-[0_2px_8px_rgba(20,60,40,0.06)]"
           >
-            <Card className="bg-white border-gray-200 rounded-2xl p-5">
-              <h3 className="text-sm font-medium text-gray-500 mb-3">Reputation</h3>
-              <div className="space-y-3">
-                {[
-                  { label: "Reliability", value: stats.reliabilityScore, max: 100 },
-                  { label: "Completion Rate", value: stats.completionRate, max: 100 },
-                  { label: "Reputation", value: stats.reputationScore, max: 1000 },
-                ].map((item) => (
-                  <div key={item.label}>
-                    <div className="flex justify-between text-xs mb-1">
-                      <span className="text-gray-500">{item.label}</span>
-                      <span className="text-gray-900">{item.value}/{item.max}</span>
-                    </div>
-                    <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-emerald-600 rounded-full"
-                        style={{ width: `${Math.min((item.value / item.max) * 100, 100)}%` }}
-                      />
-                    </div>
+            <h3 className="text-xs font-bold text-emerald-950/50 uppercase tracking-wide mb-4">Reputation</h3>
+            <div className="space-y-4">
+              {[
+                { label: "Reliability", value: stats.reliabilityScore, max: 100 },
+                { label: "Completion rate", value: stats.completionRate, max: 100 },
+                { label: "Reputation", value: stats.reputationScore, max: 1000 },
+              ].map((item) => (
+                <div key={item.label}>
+                  <div className="flex justify-between text-xs mb-1.5">
+                    <span className="text-emerald-950/55 font-medium">{item.label}</span>
+                    <span className="text-emerald-950 font-bold">{item.value}/{item.max}</span>
                   </div>
-                ))}
-              </div>
-            </Card>
+                  <div className="h-1.5 bg-[#FBF6EF] rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-emerald-700 rounded-full"
+                      style={{ width: `${Math.min((item.value / item.max) * 100, 100)}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
           </motion.div>
         )}
 
-        <div className="space-y-2">
+        {/* ── ACTIONS ── */}
+        <div className="space-y-2.5">
           {[
             { label: "Settings", icon: Settings, href: "/settings" },
-            { label: "KYC Verification", icon: Shield, href: "/kyc" },
+            { label: "KYC verification", icon: Shield, href: "/kyc" },
           ].map((item) => {
             const Icon = item.icon;
             return (
-              <motion.div
+              <motion.button
                 key={item.label}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
+                onClick={() => router.push(item.href)}
+                className="w-full flex items-center justify-between p-4 bg-white border border-emerald-950/[0.04] rounded-2xl hover:border-emerald-700/20 transition-colors shadow-[0_2px_8px_rgba(20,60,40,0.06)]"
               >
-                <Button
-                  onClick={() => router.push(item.href)}
-                  className="w-full flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl hover:border-emerald-200 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <Icon className="w-5 h-5 text-gray-500" />
-                    <span className="text-sm text-gray-900">{item.label}</span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-gray-500" />
-                </Button>
-              </motion.div>
+                <div className="flex items-center gap-3">
+                  <Icon className="w-[18px] h-[18px] text-emerald-950/50" strokeWidth={1.75} />
+                  <span className="text-sm font-medium text-emerald-950">{item.label}</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-emerald-950/30" />
+              </motion.button>
             );
           })}
 
-          <motion.div
+          <motion.button
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
+            onClick={() => signOut()}
+            className="w-full flex items-center gap-3 p-4 bg-red-50 border border-red-100 rounded-2xl hover:bg-red-100/70 transition-colors"
           >
-            <Button
-              onClick={() => signOut()}
-              className="w-full flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/20 rounded-xl hover:bg-red-500/20 transition-colors"
-            >
-              <LogOut className="w-5 h-5 text-red-500" />
-              <span className="text-sm text-red-500">Sign Out</span>
-            </Button>
-          </motion.div>
+            <LogOut className="w-[18px] h-[18px] text-red-600" strokeWidth={1.75} />
+            <span className="text-sm font-medium text-red-600">Sign out</span>
+          </motion.button>
         </div>
       </main>
-    </main>
+
+      <Dock activeItem="profile" onItemClick={(href) => router.push(href)} />
+    </div>
   );
 }

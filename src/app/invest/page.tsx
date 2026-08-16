@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { Dock } from "@/components/dashboard/Dock";
 import type { SavingsGoal } from "@/lib/api";
 
 const SAVINGS_PLANS = [
@@ -112,7 +113,7 @@ export default function InvestPage() {
 
   if (kycStatus !== "VERIFIED") {
     return (
-      <main id="main-content" role="main" className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-5">
+      <main id="main-content" role="main" className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-5 pb-32">
         <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center mb-4">
           <Shield className="w-8 h-8 text-emerald-600" />
         </div>
@@ -126,6 +127,7 @@ export default function InvestPage() {
         >
           Start Verification
         </Button>
+        <Dock activeItem="invest" onItemClick={(href) => router.push(href)} />
       </main>
     );
   }
@@ -322,6 +324,8 @@ export default function InvestPage() {
           </div>
         </div>
       )}
+
+      <Dock activeItem="invest" onItemClick={(href) => router.push(href)} />
     </main>
   );
 }

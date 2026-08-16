@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Bell,
-  Plus,
   ArrowUp,
   ArrowDown,
   ArrowRightLeft,
@@ -13,10 +12,7 @@ import {
   ShieldAlert,
   Calendar,
   Lock,
-  Flag,
-  TrendingUp,
   ChevronRight,
-  Sparkles,
   Users,
   ShieldCheck,
   CheckCircle2,
@@ -28,55 +24,6 @@ import { usePoolService } from "@/services/poolService";
 import { useSavingsService } from "@/services/savingsService";
 import { useKycService } from "@/services/kycService";
 import { api, type UserPoolMembership, type SavingsGoal, type UserProfile } from "@/lib/api";
-
-// ─── SVG Progress Ring Component ──────────────────────────────────────────────
-interface CircularProgressProps {
-  percent: number;
-  size?: number;
-  strokeWidth?: number;
-  color?: string;
-  isDark?: boolean;
-}
-
-function CircularProgress({
-  percent,
-  size = 40,
-  strokeWidth = 3.5,
-  color = "#10b981",
-}: CircularProgressProps) {
-  const radius = (size - strokeWidth) / 2;
-  const circumference = radius * 2 * Math.PI;
-  const offset = circumference - (percent / 100) * circumference;
-
-  return (
-    <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
-      <svg className="transform -rotate-95" width={size} height={size}>
-        {/* Background track */}
-        <circle
-          className="text-white/10"
-          stroke="currentColor"
-          strokeWidth={strokeWidth}
-          fill="transparent"
-          r={radius}
-          cx={size / 2}
-          cy={size / 2}
-        />
-        {/* Progress indicator */}
-        <circle
-          style={{ strokeDasharray: circumference, strokeDashoffset: offset }}
-          stroke={color}
-          strokeWidth={strokeWidth}
-          strokeLinecap="round"
-          fill="transparent"
-          r={radius}
-          cx={size / 2}
-          cy={size / 2}
-        />
-      </svg>
-      <div className="absolute text-[10px] font-bold text-white">{percent}%</div>
-    </div>
-  );
-}
 
 export default function ClientDashboard() {
   const router = useRouter();
@@ -126,7 +73,7 @@ export default function ClientDashboard() {
 
         setPools(poolsData || []);
         setSavings(savingsData || []);
-        
+
         const kycPassed = kycStatusData?.status === "VERIFIED";
         setIsKycVerified(kycPassed);
 
@@ -169,8 +116,8 @@ export default function ClientDashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#0C0F14] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-[#00E660]" />
+      <div className="min-h-screen bg-[#FBF6EF] flex items-center justify-center">
+        <Loader2 className="w-7 h-7 animate-spin text-emerald-700" />
       </div>
     );
   }
@@ -178,11 +125,11 @@ export default function ClientDashboard() {
   // Calculate totals from live profile stats or dynamic states
   const totalLockedInPools = pools.reduce((acc, p) => acc + (p.totalContributed || 0), 0);
   const totalPersonalSavings = savings.reduce((acc, s) => acc + (s.balance || 0), 0);
-  
-  // Available balance falls back to profile stat totalAmountSaved or remains computed
-  const availableBalance = profile?.stats?.totalAmountSaved 
+
+  // Do not invent a balance when the backend has not returned one.
+  const availableBalance = profile?.stats?.totalAmountSaved
     ? profile.stats.totalAmountSaved - totalLockedInPools - totalPersonalSavings
-    : 4300; // fallback cash for sandbox testing
+    : 0;
 
   const totalBalance = availableBalance + totalLockedInPools + totalPersonalSavings;
 
@@ -192,33 +139,29 @@ export default function ClientDashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-[#0C0F14] text-white flex flex-col pb-32 relative overflow-hidden font-sans">
-      {/* Decorative Glow Blobs */}
-      <div className="absolute top-[-10%] right-[-10%] w-[300px] h-[300px] rounded-full bg-emerald-500/10 blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-[20%] left-[-10%] w-[350px] h-[350px] rounded-full bg-yellow-500/5 blur-[120px] pointer-events-none" />
-
+    <div className="min-h-screen bg-[#FBF6EF] flex flex-col pb-32 font-sans">
       {/* ── HEADER ── */}
-      <header className="px-5 pt-6 pb-4 z-10">
-        <div className="flex items-center justify-between">
+      <header className="px-5 pt-6 pb-4">
+        <div className="flex items-center justify-between max-w-xl mx-auto w-full">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#00E660] to-[#00B84D] border border-white/10 flex items-center justify-center text-black font-bold text-lg shadow-lg shadow-emerald-500/20">
+            <div className="w-11 h-11 rounded-full bg-emerald-700 flex items-center justify-center text-white font-bold text-lg">
               {userName.charAt(0).toUpperCase()}
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 tracking-widest uppercase font-semibold">Akwaaba</p>
-              <p className="text-base font-bold text-white flex items-center gap-1">
+              <p className="text-[10px] text-emerald-950/45 tracking-widest uppercase font-semibold">Akwaaba</p>
+              <p className="text-base font-bold text-emerald-950 flex items-center gap-1.5">
                 {userName}
-                {isKycVerified && <CheckCircle2 className="w-4 h-4 text-emerald-400" />}
+                {isKycVerified && <CheckCircle2 className="w-4 h-4 text-emerald-700" />}
               </p>
             </div>
           </div>
 
           <button
             onClick={() => router.push("/activity")}
-            className="w-10 h-10 rounded-xl bg-[#1C202B] hover:bg-[#252A39] flex items-center justify-center border border-white/5 relative transition-colors"
+            className="w-10 h-10 rounded-full bg-white hover:bg-emerald-50 flex items-center justify-center border border-emerald-950/[0.06] relative transition-colors shadow-[0_1px_3px_rgba(20,60,40,0.06)]"
           >
-            <Bell className="w-5 h-5 text-gray-400" strokeWidth={1.5} />
-            <div className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-amber-500 border-2 border-[#0C0F14]" />
+            <Bell className="w-[18px] h-[18px] text-emerald-950/60" strokeWidth={1.75} />
+            <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-amber-500 border-2 border-white" />
           </button>
         </div>
       </header>
@@ -227,12 +170,12 @@ export default function ClientDashboard() {
       <AnimatePresence>
         {showWelcome && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: -16 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="mx-5 mb-4 bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 rounded-2xl px-4 py-3 shadow-lg flex items-center gap-3"
+            exit={{ opacity: 0, y: -16 }}
+            className="mx-5 mb-4 max-w-xl lg:mx-auto w-auto lg:w-full bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl px-4 py-3 flex items-center gap-3"
           >
-            <ShieldCheck className="w-5 h-5 shrink-0" />
+            <ShieldCheck className="w-5 h-5 shrink-0 text-emerald-700" />
             <div className="text-sm">
               <span className="font-semibold">Verification complete!</span> Welcome aboard SusuChain.
             </div>
@@ -240,29 +183,28 @@ export default function ClientDashboard() {
         )}
       </AnimatePresence>
 
-      <main className="flex-1 px-5 space-y-6 z-10 max-w-xl mx-auto w-full">
+      <main className="flex-1 px-5 space-y-5 max-w-xl mx-auto w-full">
         {/* ── KYC VERIFICATION PROMPT ── */}
         {!isKycVerified && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.97 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="rounded-2xl p-5 border border-amber-500/20 bg-gradient-to-br from-[#1C1810] to-[#120F0A] relative overflow-hidden"
+            className="rounded-[24px] p-5 bg-white border border-emerald-950/[0.04] shadow-[0_2px_8px_rgba(20,60,40,0.06)]"
           >
-            <div className="absolute top-[-40px] right-[-40px] w-24 h-24 rounded-full bg-amber-500/5 blur-xl" />
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 border border-amber-500/20 shrink-0">
-                <ShieldAlert className="w-5 h-5" />
+              <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 shrink-0">
+                <ShieldAlert className="w-5 h-5" strokeWidth={2} />
               </div>
               <div className="space-y-1">
-                <h3 className="text-sm font-bold text-amber-400">Complete KYC Verification</h3>
-                <p className="text-xs text-gray-400 leading-relaxed">
+                <h3 className="text-sm font-bold text-emerald-950">Complete KYC verification</h3>
+                <p className="text-[13px] text-emerald-950/55 leading-relaxed">
                   Verify your identity to unlock group savings circles, deposits, transfers, and platinum access.
                 </p>
                 <button
                   onClick={() => router.push("/kyc")}
-                  className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 bg-amber-500 hover:bg-amber-600 active:scale-95 text-black text-xs font-bold rounded-xl transition-all shadow-lg shadow-amber-500/15"
+                  className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 active:scale-95 text-white text-xs font-bold rounded-full transition-all"
                 >
-                  Start Verification
+                  Start verification
                   <ChevronRight className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -270,13 +212,13 @@ export default function ClientDashboard() {
           </motion.div>
         )}
 
-        {/* ── BALANCE CARD (Premium Deco Ring Design) ── */}
-        <div className={`relative rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 ${!isKycVerified ? "opacity-60" : ""}`}>
-          <div className="absolute inset-0 bg-gradient-to-br from-[#08362A] via-[#0D4F3C] to-[#156B53] z-0" />
-          
-          {/* Custom SVG Rings matching mobile deco */}
-          <div className="absolute right-[-40px] top-[-40px] w-[180px] h-[180px] rounded-full bg-yellow-500/10 z-0" />
-          <svg className="absolute left-[-20px] bottom-[-40px] w-[160px] h-[160px] opacity-10 text-white z-0" viewBox="0 0 100 100">
+        {/* ── BALANCE CARD ── */}
+        <div className={`relative rounded-[28px] overflow-hidden shadow-[0_4px_16px_rgba(20,60,40,0.12),0_16px_40px_rgba(20,60,40,0.10)] transition-opacity duration-300 ${!isKycVerified ? "opacity-60" : ""}`}>
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-800 via-emerald-700 to-emerald-600 z-0" />
+
+          {/* Decorative rings, kept subtle against the new base */}
+          <div className="absolute right-[-40px] top-[-40px] w-[180px] h-[180px] rounded-full bg-amber-400/10 z-0" />
+          <svg className="absolute left-[-20px] bottom-[-40px] w-[160px] h-[160px] opacity-[0.08] text-white z-0" viewBox="0 0 100 100">
             <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" strokeWidth="1" />
             <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" strokeWidth="0.7" />
           </svg>
@@ -285,34 +227,34 @@ export default function ClientDashboard() {
             {/* Top Row */}
             <div className="flex justify-between items-start">
               <div className="space-y-1">
-                <span className="text-[10px] text-white/70 uppercase tracking-widest font-semibold">Available Balance</span>
-                <h1 className="text-3xl font-black tracking-tight text-white">
+                <span className="text-[10px] text-white/65 uppercase tracking-widest font-semibold">Available balance</span>
+                <h1 className="text-3xl font-bold tracking-tight text-white">
                   GHS {totalBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                 </h1>
               </div>
-              <div className="flex items-center gap-1 px-3 py-1 bg-yellow-500/20 border border-yellow-500/30 rounded-full">
-                <div className="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse" />
-                <span className="text-[9px] font-black text-yellow-100 tracking-wider">
+              <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-400/20 border border-amber-300/25 rounded-full">
+                <div className="w-1.5 h-1.5 rounded-full bg-amber-300" />
+                <span className="text-[9px] font-bold text-amber-100 tracking-wider">
                   {isKycVerified ? "VERIFIED" : "PENDING"}
                 </span>
               </div>
             </div>
 
             {/* Split Locked Details */}
-            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/10">
+            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/15">
               <div className="space-y-0.5">
                 <div className="flex items-center gap-1.5 text-white/60">
                   <Users className="w-3.5 h-3.5" />
-                  <span className="text-[9px] font-bold uppercase tracking-wider">Locked in Pools</span>
+                  <span className="text-[9px] font-bold uppercase tracking-wider">Locked in pools</span>
                 </div>
                 <p className="text-sm font-bold text-white">
                   GHS {totalLockedInPools.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                 </p>
               </div>
-              <div className="border-l border-white/10 pl-4 space-y-0.5">
+              <div className="border-l border-white/15 pl-4 space-y-0.5">
                 <div className="flex items-center gap-1.5 text-white/60">
                   <Lock className="w-3.5 h-3.5" />
-                  <span className="text-[9px] font-bold uppercase tracking-wider">Personal Savings</span>
+                  <span className="text-[9px] font-bold uppercase tracking-wider">Personal savings</span>
                 </div>
                 <p className="text-sm font-bold text-white">
                   GHS {totalPersonalSavings.toLocaleString("en-US", { minimumFractionDigits: 2 })}
@@ -320,7 +262,7 @@ export default function ClientDashboard() {
               </div>
             </div>
 
-            {/* Quick Action Rows */}
+            {/* Quick Action Row */}
             <div className="grid grid-cols-4 gap-2 pt-2">
               <QuickActionButton icon={ArrowDown} label="Deposit" onClick={handleDeposit} enabled={isKycVerified} />
               <QuickActionButton icon={ArrowUp} label="Withdraw" onClick={handleWithdraw} enabled={isKycVerified} />
@@ -332,151 +274,22 @@ export default function ClientDashboard() {
 
         {/* ── DUE SOON BANNER ── */}
         {isKycVerified && dueSoon && (
-          <div className="rounded-2xl p-4 bg-gradient-to-r from-[#F6E9C4]/15 to-[#F6E9C4]/5 border border-yellow-500/20 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-yellow-500 flex items-center justify-center text-black shrink-0 shadow-lg shadow-yellow-500/20">
-              <Calendar className="w-5 h-5" />
+          <div className="rounded-[24px] p-4 bg-white border border-emerald-950/[0.04] shadow-[0_2px_8px_rgba(20,60,40,0.06)] flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 shrink-0">
+              <Calendar className="w-5 h-5" strokeWidth={2} />
             </div>
             <div className="flex-1 min-w-0">
-              <h4 className="text-xs font-black text-yellow-300 uppercase tracking-wide">Settle Up</h4>
-              <p className="text-xs text-white/80 font-medium truncate mt-0.5">
+              <h4 className="text-[11px] font-bold text-emerald-950 uppercase tracking-wide">Settle up</h4>
+              <p className="text-xs text-emerald-950/55 font-medium truncate mt-0.5">
                 {dueSoon.pool.template.name} — contribution due soon
               </p>
             </div>
             <button
               onClick={() => router.push(`/pools/${dueSoon.pool.id}`)}
-              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-black font-black text-xs rounded-xl shadow-lg transition-all"
+              className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 active:scale-95 text-white font-bold text-xs rounded-full transition-all shrink-0"
             >
-              Pay Now
+              Pay now
             </button>
-          </div>
-        )}
-
-        {/* ── ACTIVE POOLS (Susu Circles) ── */}
-        {isKycVerified && (
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <h2 className="text-sm font-black uppercase tracking-wider text-gray-400">My Active Pools</h2>
-              <button onClick={() => router.push("/pools")} className="text-xs font-semibold text-[#00E660] hover:underline">
-                See all
-              </button>
-            </div>
-
-            {pools.length > 0 ? (
-              <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-none snap-x">
-                {pools.map((membership) => {
-                  const pool = membership.pool;
-                  const percent = Math.round((pool.currentMemberCount / pool.maxMembers) * 100);
-                  return (
-                    <div
-                      key={pool.id}
-                      onClick={() => router.push(`/pools/${pool.id}`)}
-                      className="w-[240px] shrink-0 snap-start bg-[#161A24] border border-white/5 rounded-2xl p-4 hover:border-white/10 transition-colors cursor-pointer space-y-4"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div className="space-y-0.5 max-w-[140px]">
-                          <h4 className="text-xs font-bold text-white truncate">{pool.template.name}</h4>
-                          <p className="text-[10px] text-gray-500">
-                            Cycle {pool.currentCycle} of {pool.totalCycles}
-                          </p>
-                        </div>
-                        <CircularProgress percent={percent} size={38} color="#00E660" />
-                      </div>
-
-                      <div className="flex justify-between items-end">
-                        <div className="space-y-0.5">
-                          <span className="text-[9px] text-gray-500 uppercase font-medium">Contribution</span>
-                          <p className="text-xs font-extrabold text-white">
-                            GHS {pool.contributionAmount}
-                            <span className="text-[10px] text-gray-500 font-normal">/{pool.frequency}</span>
-                          </p>
-                        </div>
-                        <span
-                          className={`text-[9px] font-black tracking-wide uppercase px-2 py-0.5 rounded-full ${
-                            pool.status === "DUE" || pool.status === "due"
-                              ? "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"
-                              : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                          }`}
-                        >
-                          {pool.status}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center p-6 bg-[#161A24] rounded-2xl border border-white/5 text-center">
-                <Users className="w-8 h-8 text-gray-600 mb-2" />
-                <p className="text-xs text-gray-400">You are not in any savings circles yet.</p>
-                <button
-                  onClick={() => router.push("/pools/discover")}
-                  className="mt-3 text-xs font-black text-[#00E660]"
-                >
-                  Join a Pool
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ── SAVINGS GOALS (Personal) ── */}
-        {isKycVerified && (
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <h2 className="text-sm font-black uppercase tracking-wider text-gray-400">My Savings Goals</h2>
-              <button
-                onClick={() => router.push("/settings/personal")}
-                className="text-xs font-semibold text-[#00E660] hover:underline"
-              >
-                New goal
-              </button>
-            </div>
-
-            {savings.length > 0 ? (
-              <div className="space-y-2">
-                {savings.map((goal) => {
-                  const percent = goal.target > 0 ? Math.round((goal.balance / goal.target) * 100) : 0;
-                  return (
-                    <div
-                      key={goal.id}
-                      onClick={() => router.push("/settings/personal")}
-                      className="bg-[#161A24] border border-white/5 rounded-2xl p-4 hover:border-white/10 transition-colors cursor-pointer space-y-3"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
-                          {goal.type === "AUTOSAVE" ? <Sparkles className="w-5 h-5" /> : <Lock className="w-5 h-5" />}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-xs font-bold text-white truncate">{goal.name}</h4>
-                          <p className="text-[10px] text-gray-500 mt-0.5">
-                            {goal.type} · Next in {goal.dueDays || "no"} days
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <span className="text-xs font-extrabold text-white">{percent}%</span>
-                          <p className="text-[10px] text-gray-500 mt-0.5">GHS {goal.balance}</p>
-                        </div>
-                      </div>
-                      {/* Linear Progress Bar */}
-                      <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                        <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${percent}%` }} />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center p-6 bg-[#161A24] rounded-2xl border border-white/5 text-center">
-                <Flag className="w-8 h-8 text-gray-600 mb-2" />
-                <p className="text-xs text-gray-400">No personal savings goals set yet.</p>
-                <button
-                  onClick={() => router.push("/settings/personal")}
-                  className="mt-3 text-xs font-black text-[#00E660]"
-                >
-                  Create Savings Plan
-                </button>
-              </div>
-            )}
           </div>
         )}
       </main>
@@ -502,14 +315,14 @@ function QuickActionButton({ icon: Icon, label, onClick, enabled }: QuickActionB
       disabled={!enabled}
       className={`flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl transition-all ${
         enabled
-          ? "bg-white/5 hover:bg-white/10 active:scale-95 cursor-pointer"
-          : "bg-white/2 opacity-40 cursor-not-allowed"
+          ? "bg-white/10 hover:bg-white/15 active:scale-95 cursor-pointer"
+          : "bg-white/5 opacity-40 cursor-not-allowed"
       }`}
     >
-      <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center">
-        <Icon className="w-5 h-5 text-white" strokeWidth={1.5} />
+      <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+        <Icon className="w-5 h-5 text-white" strokeWidth={1.75} />
       </div>
-      <span className="text-[10px] text-white/80 font-semibold">{label}</span>
+      <span className="text-[10px] text-white/85 font-semibold">{label}</span>
     </button>
   );
 }

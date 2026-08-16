@@ -52,25 +52,29 @@ export default function RootLayout({
 }>) {
   const content = (
     <ThemeProvider>
-      <AuthTokenProvider>
-        <html lang="en">
-          <body
-            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-          >
-            <a href="#main-content" className="skip-link">
-              Skip to main content
-            </a>
-            <div id="app-root">
-              {children}
-            </div>
-            <Toaster position="top-center" theme="light" />
-            <SWRegistration />
-            <SpeedInsights />
-          </body>
-        </html>
-      </AuthTokenProvider>
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          <a href="#main-content" className="skip-link">
+            Skip to main content
+          </a>
+          <div id="app-root">
+            {children}
+          </div>
+          <Toaster position="top-center" theme="light" />
+          <SWRegistration />
+          <SpeedInsights />
+        </body>
+      </html>
     </ThemeProvider>
   );
 
-  return devBypass ? content : <ClerkProvider>{content}</ClerkProvider>;
+  if (devBypass) return content;
+
+  return (
+    <ClerkProvider>
+      <AuthTokenProvider>{content}</AuthTokenProvider>
+    </ClerkProvider>
+  );
 }
