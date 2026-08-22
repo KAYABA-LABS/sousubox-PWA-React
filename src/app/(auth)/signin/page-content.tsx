@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { useSignIn } from "@clerk/nextjs/legacy";
+import { useSignIn } from "@clerk/nextjs";
 import { PhoneCodeSwitcher } from "@/components/ui/phone-code-switcher";
 import { Loader2, ArrowRight, ShieldCheck, PhoneCall } from "lucide-react";
 import Link from "next/link";

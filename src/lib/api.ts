@@ -1,6 +1,6 @@
 const API_BASE =
   typeof window === "undefined"
-    ? process.env.NEXT_PUBLIC_API_URL || "http://192.168.100.24:8000/api/v1"
+    ? process.env.NEXT_PUBLIC_API_URL || "http://192.168.0.165:8000/api/v1"
     : "/api/backend";
 
 let authTokenGetter: (() => Promise<string | null>) | null = null;
@@ -15,11 +15,7 @@ export function setApiUserIdGetter(getter: () => string | null) {
 }
 
 function resolveUserId(userId: string) {
-  const backendUserId = apiUserIdGetter?.();
-  if (!backendUserId) {
-    throw new Error("Backend user ID is not available");
-  }
-  return backendUserId;
+  return apiUserIdGetter?.() || userId;
 }
 
 async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
