@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import { usePoolStore } from "@/stores/usePoolStore";
 import { usePoolService } from "@/services/poolService";
 import { PoolDetailModal } from "@/components/PoolDetailModal";
@@ -17,16 +17,21 @@ import type { DiscoverPool } from "@/lib/api";
 export default function DiscoverPoolsPage() {
   const router = useRouter();
   const { userId, isLoaded } = useAuth();
+
+    const { user } = useUser();
+    const databaseUserId =
+      typeof user?.unsafeMetadata?.userId === "string" ? user.unsafeMetadata.userId : null;
+
   const poolService = usePoolService();
   const { discoverPools, setDiscoverPools, isLoading, setLoading } = usePoolStore();
   const [selectedPool, setSelectedPool] = useState<DiscoverPool | null>(null);
   const [joining, setJoining] = useState<string | null>(null);
 
   const loadPools = async () => {
-    if (!userId) return;
+    if (!databaseUserId) return;
     setLoading(true);
     try {
-      const pools = await poolService.getDiscoverPools(userId);
+      const pools = await poolService.getDiscoverPools(databaseUserId || "");
       setDiscoverPools(pools);
     } catch {
       toast.error("Failed to discover pools");
@@ -35,16 +40,16 @@ export default function DiscoverPoolsPage() {
   };
 
   useEffect(() => {
-    if (!isLoaded || !userId) return;
+    if (!isLoaded || !databaseUserId) return;
     loadPools();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoaded, userId]);
+  }, [isLoaded, databaseUserId]);
 
   const handleJoin = async (poolId: string) => {
-    if (!userId) return;
+    if (!databaseUserId) return;
     setJoining(poolId);
     try {
-      await poolService.joinPool(userId, poolId);
+      await poolService.joinPool(databaseUserId || "", poolId);
       setDiscoverPools(discoverPools.filter((p) => p.id !== poolId));
       setSelectedPool(null);
       router.push("/pools");

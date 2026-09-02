@@ -29,6 +29,8 @@ export default function ClientDashboard() {
   const router = useRouter();
   const { userId, isLoaded } = useAuth();
   const { user } = useUser();
+  const databaseUserId =
+    typeof user?.unsafeMetadata?.userId === "string" ? user.unsafeMetadata.userId : null;
   const searchParams = useSearchParams();
 
   const poolService = usePoolService();
@@ -65,10 +67,10 @@ export default function ClientDashboard() {
     const fetchBackendData = async () => {
       try {
         const [poolsData, savingsData, kycStatusData, profileData] = await Promise.all([
-          poolService.getUserPools(userId),
-          savingsService.getSavingsGoals(userId),
-          kycService.getStatus(userId),
-          api.getUserProfile(userId).catch(() => null),
+          poolService.getUserPools(databaseUserId || ""),
+          savingsService.getSavingsGoals(databaseUserId || ""),
+          kycService.getStatus(databaseUserId || ""),
+          api.getUserProfile(databaseUserId || "").catch(() => null),
         ]);
 
         setPools(poolsData || []);

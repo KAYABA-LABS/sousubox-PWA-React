@@ -38,12 +38,12 @@ export const viewport: Viewport = {
   themeColor: "#FAFAFA",
 };
 
-const devBypass = process.env.DEV_BYPASS === "true";
+// const devBypass = process.env.DEV_BYPASS === "true";
 
-if (devBypass && typeof window === "undefined") {
-  // Server-side: log that bypass is active
-  console.log("[DEV] Clerk authentication bypassed");
-}
+// if (devBypass && typeof window === "undefined") {
+//   // Server-side: log that bypass is active
+//   console.log("[DEV] Clerk authentication bypassed");
+// }
 
 export default function RootLayout({
   children,
@@ -70,7 +70,7 @@ export default function RootLayout({
     </ThemeProvider>
   );
 
-  if (devBypass) return content;
+  // if (devBypass) return content;
 
   return (
     <ClerkProvider>

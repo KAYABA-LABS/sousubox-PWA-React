@@ -200,7 +200,7 @@ export const api = {
 
   // Pools
   discoverPools: (userId: string) =>
-    apiFetch<BackendEnvelope<DiscoverPool[]>>(`/discoverPools/${resolveUserId(userId)}`),
+    apiFetch<BackendEnvelope<DiscoverPool[]>>(`/getUserAvailablePoolsList/${resolveUserId(userId)}`),
 
   joinPool: (userId: string, poolId: string) =>
     apiFetch<BackendEnvelope<void>>(`/joinPool/${resolveUserId(userId)}/${poolId}`, { method: "POST" }),

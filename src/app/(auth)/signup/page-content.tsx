@@ -299,6 +299,34 @@ export default function SignUpPageContent() {
 
         console.log(backendUserId)
 
+
+    /*
+     * unsafeMetadata is copied onto the created user once
+     * finalize() completes below - no active session is
+     * required at this point, unlike clerk.user.update().
+     */
+    // const result = await signUp.update({
+    //   unsafeMetadata: {
+    //     userId: backendUserId,
+    //   },
+    // });
+
+    // if (result.error) {
+    //   throw result.error;
+    // }
+
+    // console.log("Profile details updated");
+
+
+    /*
+     * Finalize the signup.
+     */
+    const finalized = await signUp.finalize();
+
+    if (finalized.error) {
+      throw finalized.error;
+    }
+
           /*
           * Do not finalize here. Finalizing activates the Clerk
           * session, and middleware redirects any authenticated
@@ -386,9 +414,9 @@ export default function SignUpPageContent() {
      * finalize() completes below - no active session is
      * required at this point, unlike clerk.user.update().
      */
-    const result = await signUp.update({
-      firstName: firstName.trim(),
-      lastName: lastName.trim(),
+    const result = await user?.update({
+      // firstName: firstName.trim(),
+      // lastName: lastName.trim(),
       unsafeMetadata: {
         userId: backendUserId,
       },
@@ -404,13 +432,13 @@ export default function SignUpPageContent() {
     /*
      * Finalize the signup.
      */
-    const finalized = await signUp.finalize();
+    // const finalized = await signUp.finalize();
 
-    if (finalized.error) {
-      throw finalized.error;
-    }
+    // if (finalized.error) {
+    //   throw finalized.error;
+    // }
 
-    console.log("Signup finalized");
+    // console.log("Signup finalized");
 
     /*
      * Navigate to application.
