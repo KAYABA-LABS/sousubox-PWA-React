@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
+import { isDevMode } from "@/lib/dev";
 
 interface RouteGuardProps {
   children: React.ReactNode;
@@ -20,7 +21,7 @@ export function RouteGuard({
   useEffect(() => {
     if (!isLoaded) return;
 
-    if (!userId) {
+    if (!userId && !isDevMode()) {
       router.push(redirectTo);
       return;
     }

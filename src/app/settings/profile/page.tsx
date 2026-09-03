@@ -51,8 +51,8 @@ export default function ProfileSettings() {
 
     const loadProfileData = async () => {
       try {
-        if (userId) {
-          const profile = await userService.getUserProfile(userId);
+        if (userId || isDevMode()) {
+          const profile = await userService.getUserProfile(userId || "");
           
           const backendName = [profile.firstName, profile.lastName].filter(Boolean).join(" ");
           setFullName(backendName || (user ? [user.firstName, user.lastName].filter(Boolean).join(" ") : ""));
@@ -91,7 +91,7 @@ export default function ProfileSettings() {
   }, [userId, isLoaded, user, router, userService]);
 
   const handleSave = async () => {
-    if (!userId) return;
+    if (!userId && !isDevMode()) return;
     setIsSaving(true);
     setSaveSuccess(false);
 
@@ -100,7 +100,7 @@ export default function ProfileSettings() {
       const firstName = first || "";
       const lastName = last.join(" ") || "";
 
-      await userService.updateUserProfile(userId, {
+      await userService.updateUserProfile(userId || "", {
         firstName,
         lastName,
         phoneNumber: phone,

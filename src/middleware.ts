@@ -1,4 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
 const isPublicRoute = createRouteMatcher([
   "/",
@@ -16,7 +17,15 @@ const isPublicRoute = createRouteMatcher([
 
 export default clerkMiddleware(async (auth, request) => {
   // Skip auth if dev bypass enabled
-  if (process.env.DEV_BYPASS === "true") {
+  if (process.env.NEXT_PUBLIC_DEV_BYPASS === "true") {
+    if (
+      request.nextUrl.pathname === "/signin" ||
+      request.nextUrl.pathname === "/signup"
+    ) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/dashboard";
+      return NextResponse.redirect(url);
+    }
     return;
   }
 
@@ -32,7 +41,7 @@ export default clerkMiddleware(async (auth, request) => {
   if (userId && isPublicRoute(request) && !isSignUpRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
-    return Response.redirect(url);
+    return NextResponse.redirect(url);
   }
 
   // Protect all non-public routes

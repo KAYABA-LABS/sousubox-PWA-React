@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { useAuth, useUser, useClerk } from "@clerk/nextjs";
 import { useProfileService } from "@/services/profileService";
 import { useKycService } from "@/services/kycService";
+import { isDevMode } from "@/lib/dev";
 import {
   Users,
   Flame,
@@ -35,11 +36,11 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
 
   const loadProfileData = async () => {
-    if (!userId) return;
+    if (!userId && !isDevMode()) return;
     try {
       const [profileStats, kyc] = await Promise.all([
-        profileService.getUserStats(userId),
-        kycService.getStatus(userId).catch(() => ({ status: "NOT_SUBMITTED" })),
+        profileService.getUserStats(userId || ""),
+        kycService.getStatus(userId || "").catch(() => ({ status: "NOT_SUBMITTED" })),
       ]);
       setStats(profileStats);
       setKycStatus(kyc.status);
@@ -50,7 +51,7 @@ export default function ProfilePage() {
   };
 
   useEffect(() => {
-    if (!isLoaded || !userId) return;
+    if (!isLoaded || (!userId && !isDevMode())) return;
     loadProfileData();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded, userId]);

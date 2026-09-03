@@ -55,10 +55,10 @@ const PLANS: Record<string, {
     ],
     exampleReturn: { principal: 1000, months: 12, earned: 98 },
   },
-  fixed: {
-    id: "fixed",
-    name: "Fixed Savings",
-    shortName: "Fixed",
+  vault: {
+    id: "vault",
+    name: "Lock Vault",
+    shortName: "Vault",
     tagline: "Lock your money and earn higher returns.",
     description:
       "Commit to a fixed term and unlock significantly higher returns. Ideal for funds you won't need in the near term.",
@@ -79,10 +79,10 @@ const PLANS: Record<string, {
     ],
     exampleReturn: { principal: 1000, months: 12, earned: 145 },
   },
-  goal: {
-    id: "goal",
-    name: "Goal Booster",
-    shortName: "Goal",
+  target: {
+    id: "target",
+    name: "Target Goal",
+    shortName: "Target",
     tagline: "Save towards a target and stay on track.",
     description:
       "Set a savings target and a deadline. We'll help you automate contributions and hit your goal with smart nudges.",

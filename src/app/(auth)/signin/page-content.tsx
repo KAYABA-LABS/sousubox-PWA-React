@@ -5,12 +5,14 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSignIn } from "@clerk/nextjs";
 import { PhoneCodeSwitcher } from "@/components/ui/phone-code-switcher";
+import { api } from "@/lib/api";
 import { Loader2, ArrowRight, ShieldCheck, PhoneCall } from "lucide-react";
 import Link from "next/link";
 
 export default function SignInPageContent() {
   const router = useRouter();
-  const { isLoaded, signIn, setActive } = useSignIn();
+  const { signIn, fetchStatus } = useSignIn();
+  const isClerkLoaded = fetchStatus === "idle";
   const [countryCode, setCountryCode] = useState("+233");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [step, setStep] = useState<"phone" | "verify">("phone");
@@ -36,46 +38,135 @@ export default function SignInPageContent() {
     return `${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6, 10)}`;
   };
 
-  const handleSendOTP = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isLoaded || !phoneNumber.trim()) return;
-    setIsLoading(true);
-    setError("");
-    try {
-      const fullPhone = phoneNumber.replace(/\s/g, "");
-      const localPhone = fullPhone.replace(/^0+/, "");
-      const formattedPhone = fullPhone.startsWith("+") ? fullPhone : `${countryCode}${localPhone}`;
-      const result = await signIn.create({ identifier: formattedPhone });
-      const phoneId = result.supportedFirstFactors?.find((f) => f.strategy === "phone_code")?.phoneNumberId;
-      if (phoneId) {
-        await signIn.prepareFirstFactor({ strategy: "phone_code", phoneNumberId: phoneId });
-        setStep("verify");
-      }
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to send code");
+  const loginBackendUser = async () => {
+    const rawPhone = phoneNumber.replace(/\s/g, "");
+    const localPhone = rawPhone.replace(/^0+/, "");
+
+    const formattedPhone = rawPhone.startsWith("+")
+      ? rawPhone
+      : `${countryCode}${localPhone}`;
+
+    const result = await api.loginUser(formattedPhone);
+
+    console.log("Backend login result:", result);
+
+    if (!result.success) {
+      throw new Error(result.message || result.error || "Could not log you in");
     }
-    setIsLoading(false);
+
+    return result.user?.id || null;
   };
 
-  const handleVerifyCode = async (e: React.FormEvent, submittedCode?: string) => {
+  const handleSendOTP = async (e: React.FormEvent) => {
     e.preventDefault();
-    const fullCode = submittedCode ?? code.join("");
-    if (!isLoaded || fullCode.length < 6) return;
+
+    if (!isClerkLoaded || !signIn || !phoneNumber.trim()) {
+      return;
+    }
+
     setIsLoading(true);
     setError("");
+
     try {
-      const result = await signIn.attemptFirstFactor({ strategy: "phone_code", code: fullCode });
-      if (result.status === "complete") {
-        await setActive({ session: result.createdSessionId });
-        router.push("/dashboard");
-      } else {
-        setError("Verification incomplete. Please try again.");
+      const rawPhone = phoneNumber.replace(/\s/g, "");
+      const localPhone = rawPhone.replace(/^0+/, "");
+
+      const formattedPhone = rawPhone.startsWith("+")
+        ? rawPhone
+        : `${countryCode}${localPhone}`;
+
+      console.log("Creating Clerk signin:", formattedPhone);
+
+      const result = await signIn.create({
+        identifier: formattedPhone,
+      });
+
+      if (result.error) {
+        throw result.error;
       }
-    } catch (err: unknown) {
+
+      console.log("Sign-in created successfully");
+
+      const codeResult = await signIn.phoneCode.sendCode();
+
+      if (codeResult.error) {
+        throw codeResult.error;
+      }
+
+      console.log("OTP sent successfully");
+
+      setStep("verify");
+
+      setCode(["", "", "", "", "", ""]);
       autoSubmitRef.current = false;
-      setError(err instanceof Error ? err.message : "Invalid code");
+    } catch (err: unknown) {
+      console.error("SEND OTP ERROR:", err);
+
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Failed to send verification code");
+      }
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
+  };
+
+  const handleVerifyCode = async (
+    e: React.FormEvent,
+    submittedCode?: string
+  ) => {
+    e.preventDefault();
+
+    const fullCode = submittedCode ?? code.join("");
+
+    if (
+      !isClerkLoaded ||
+      !signIn ||
+      fullCode.length !== 6 ||
+      isLoading
+    ) {
+      return;
+    }
+
+    setIsLoading(true);
+    setError("");
+
+    try {
+      console.log("Verifying phone code...");
+
+      const verification = await signIn.phoneCode.verifyCode({
+        code: fullCode,
+      });
+
+      if (verification.error) {
+        throw verification.error;
+      }
+
+      console.log("Phone verification successful");
+
+      await loginBackendUser();
+
+      const finalized = await signIn.finalize();
+
+      if (finalized.error) {
+        throw finalized.error;
+      }
+
+      router.push("/dashboard");
+    } catch (err: unknown) {
+      console.error("VERIFY OTP ERROR:", err);
+
+      autoSubmitRef.current = false;
+
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Invalid verification code");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCodeChange = (index: number, value: string) => {
@@ -91,7 +182,12 @@ export default function SignInPageContent() {
       const nextEmpty = newCode.findIndex((digit, i) => i > index && !digit);
       inputRefs.current[nextEmpty === -1 ? Math.min(index + digits.length, 5) : nextEmpty]?.focus();
     }
-    if (newCode.every(Boolean) && !autoSubmitRef.current) {
+    if (
+      newCode.every(Boolean) &&
+      newCode.join("").length === 6 &&
+      !autoSubmitRef.current &&
+      !isLoading
+    ) {
       autoSubmitRef.current = true;
       setTimeout(() => handleVerifyCode({ preventDefault: () => {} } as React.FormEvent, newCode.join("")), 0);
     }
@@ -119,7 +215,13 @@ export default function SignInPageContent() {
     const nextEmpty = newCode.findIndex((d) => !d);
     const focusIndex = nextEmpty === -1 ? 5 : nextEmpty;
     inputRefs.current[focusIndex]?.focus();
-    if (newCode.every((d) => d) && newCode.join("").length === 6) {
+    if (
+      newCode.every((d) => d) &&
+      newCode.join("").length === 6 &&
+      !autoSubmitRef.current &&
+      !isLoading
+    ) {
+      autoSubmitRef.current = true;
       setTimeout(() => handleVerifyCode({ preventDefault: () => {} } as React.FormEvent, newCode.join("")), 0);
     }
   };

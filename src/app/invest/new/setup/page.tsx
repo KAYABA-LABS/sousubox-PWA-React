@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { useAuth } from "@clerk/nextjs";
 import { useSavingsService } from "@/services/savingsService";
+import { isDevMode } from "@/lib/dev";
 import {
   ArrowLeft,
   Loader2,
@@ -55,10 +56,10 @@ export default function PlanSetupPage() {
     return { earned: earned.toFixed(2), total: (numericAmount + earned).toFixed(2) };
   }, [numericAmount, plan.rate]);
 
-  const canSubmit = name.trim() && numericAmount >= plan.minAmount && userId;
+  const canSubmit = name.trim() && numericAmount >= plan.minAmount && (userId || isDevMode());
 
   const handleSubmit = async () => {
-    if (!canSubmit || !userId) return;
+    if (!canSubmit || (!userId && !isDevMode())) return;
     setIsSubmitting(true);
     setError("");
 
@@ -75,7 +76,7 @@ export default function PlanSetupPage() {
 
       switch (planId) {
         case "flex":
-          await savingsService.activateFlexibleSavings(userId, instrumentId, {
+          await savingsService.activateFlexibleSavings(userId || "", instrumentId, {
             ...baseData,
             configuration: {
               maxWithdrawalsPerMonth: 3,
@@ -86,7 +87,7 @@ export default function PlanSetupPage() {
           });
           break;
         case "fixed":
-          await savingsService.activateTimeLock(userId, instrumentId, {
+          await savingsService.activateTimeLock(userId || "", instrumentId, {
             ...baseData,
             configuration: {
               lockPeriodDays: 365,
@@ -96,7 +97,7 @@ export default function PlanSetupPage() {
           });
           break;
         case "goal":
-          await savingsService.activateTargetFund(userId, instrumentId, {
+          await savingsService.activateTargetFund(userId || "", instrumentId, {
             ...baseData,
             targetDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
             configuration: {
@@ -105,7 +106,7 @@ export default function PlanSetupPage() {
           });
           break;
         case "auto":
-          await savingsService.activateAutoSave(userId, instrumentId, {
+          await savingsService.activateAutoSave(userId || "", instrumentId, {
             ...baseData,
             configuration: {
               deductionSource: "SAVINGS_ACCOUNT",

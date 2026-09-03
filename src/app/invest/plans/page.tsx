@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useAuth } from "@clerk/nextjs";
 import { useSavingsService } from "@/services/savingsService";
+import { isDevMode } from "@/lib/dev";
 import { ArrowLeft, Loader2, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -25,9 +26,9 @@ export default function AllActivePlansPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   const loadPlans = async () => {
-    if (!userId) return;
+    if (!userId && !isDevMode()) return;
     try {
-      const data = await savingsService.getSavingsGoals(userId);
+      const data = await savingsService.getSavingsGoals(userId || "");
       setGoals(data.filter((g) => g.status === "ACTIVE"));
     } catch {
       toast.error("Failed to load plans");
@@ -36,7 +37,7 @@ export default function AllActivePlansPage() {
   };
 
   useEffect(() => {
-    if (!isLoaded || !userId) return;
+    if (!isLoaded || (!userId && !isDevMode())) return;
     loadPlans();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded, userId]);

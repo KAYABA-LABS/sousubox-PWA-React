@@ -7,6 +7,7 @@ import { useAuth } from "@clerk/nextjs";
 import { useSavingsStore } from "@/stores/useSavingsStore";
 import { useSavingsService } from "@/services/savingsService";
 import { useKycService } from "@/services/kycService";
+import { isDevMode } from "@/lib/dev";
 import {
   Lock,
   Target,
@@ -28,6 +29,24 @@ import type { SavingsGoal } from "@/lib/api";
 
 const SAVINGS_PLANS = [
   {
+    id: "auto",
+    planId: "auto",
+    name: "Auto Save Plan",
+    description: "Build savings automatically without thinking.",
+    rate: "10% p.a.",
+    color: "#7C3AED",
+    icon: RefreshCw,
+  },
+  {
+    id: "vault",
+    planId: "vault",
+    name: "Lock Vault",
+    description: "Lock your money for a set period and earn returns.",
+    rate: "12% p.a.",
+    color: "#4A80F0",
+    icon: Lock,
+  },
+  {
     id: "flex",
     planId: "flex",
     name: "Flex Save",
@@ -37,31 +56,13 @@ const SAVINGS_PLANS = [
     icon: Wallet,
   },
   {
-    id: "fixed",
-    planId: "fixed",
-    name: "Fixed Savings",
-    description: "Lock your money and earn higher returns.",
-    rate: "12% p.a.",
-    color: "#4A80F0",
-    icon: Lock,
-  },
-  {
-    id: "goal",
-    planId: "goal",
-    name: "Goal Booster",
+    id: "target",
+    planId: "target",
+    name: "Target Goal",
     description: "Save towards a target and stay on track.",
     rate: "10% p.a.",
     color: "#F59E0B",
     icon: Target,
-  },
-  {
-    id: "auto",
-    planId: "auto",
-    name: "Auto Save Plan",
-    description: "Build savings automatically without thinking.",
-    rate: "10% p.a.",
-    color: "#7C3AED",
-    icon: RefreshCw,
   },
 ];
 
@@ -77,14 +78,14 @@ export default function InvestPage() {
   const [kycLoading, setKycLoading] = useState(true);
 
   const initializeScreen = async () => {
-    if (!userId) return;
+    if (!userId && !isDevMode()) return;
     setLoading(true);
     try {
-      const status = await kycService.getStatus(userId);
+      const status = await kycService.getStatus(userId || "");
       setKycStatus(status?.status || "NOT_SUBMITTED");
 
       if (status?.status === "VERIFIED") {
-        const data = await savingsService.getSavingsGoals(userId);
+        const data = await savingsService.getSavingsGoals(userId || "");
         setGoals(data);
       }
     } catch {
@@ -95,7 +96,7 @@ export default function InvestPage() {
   };
 
   useEffect(() => {
-    if (!isLoaded || !userId) return;
+    if (!isLoaded || (!userId && !isDevMode())) return;
     initializeScreen();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded, userId]);
@@ -119,7 +120,7 @@ export default function InvestPage() {
         </div>
         <h2 className="text-lg font-semibold text-gray-900 mb-2">Complete KYC Verification</h2>
         <p className="text-sm text-gray-500 text-center mb-6">
-          Verify your identity to create and manage investment plans
+          Verify your identity to create and manage saving plans
         </p>
         <Button
           onClick={() => router.push("/kyc")}

@@ -24,6 +24,7 @@ import { usePoolService } from "@/services/poolService";
 import { useSavingsService } from "@/services/savingsService";
 import { useKycService } from "@/services/kycService";
 import { api, type UserPoolMembership, type SavingsGoal, type UserProfile } from "@/lib/api";
+import { isDevMode } from "@/lib/dev";
 
 export default function ClientDashboard() {
   const router = useRouter();
@@ -49,7 +50,7 @@ export default function ClientDashboard() {
 
   useEffect(() => {
     if (!isLoaded) return;
-    if (!userId) {
+    if (!userId && !isDevMode()) {
       router.push("/signin");
       return;
     }

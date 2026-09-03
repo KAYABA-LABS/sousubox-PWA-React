@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useAuth } from "@clerk/nextjs";
 import { useSavingsService } from "@/services/savingsService";
+import { isDevMode } from "@/lib/dev";
 import { ArrowLeft, TrendingUp, Loader2, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -21,9 +22,9 @@ export default function PortfolioPage() {
   const [balanceVisible, setBalanceVisible] = useState(true);
 
   const loadPortfolio = async () => {
-    if (!userId) return;
+    if (!userId && !isDevMode()) return;
     try {
-      const data = await savingsService.getSavingsGoals(userId);
+      const data = await savingsService.getSavingsGoals(userId || "");
       setGoals(data);
     } catch {
       toast.error("Failed to load portfolio");
@@ -32,7 +33,7 @@ export default function PortfolioPage() {
   };
 
   useEffect(() => {
-    if (!isLoaded || !userId) return;
+    if (!isLoaded || (!userId && !isDevMode())) return;
     loadPortfolio();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded, userId]);

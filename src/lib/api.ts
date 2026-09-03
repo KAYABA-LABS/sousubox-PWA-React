@@ -18,6 +18,15 @@ function resolveUserId(userId: string) {
   return apiUserIdGetter?.() || userId;
 }
 
+export class ApiError extends Error {
+  code?: string;
+  constructor(message: string, code?: string) {
+    super(message);
+    this.name = "ApiError";
+    this.code = code;
+  }
+}
+
 async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = authTokenGetter ? await authTokenGetter() : null;
 
@@ -32,7 +41,7 @@ async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> 
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    throw new Error(body.message || body.error || `API error ${res.status}`);
+    throw new ApiError(body.message || body.error || `API error ${res.status}`, body.error);
   }
 
   return res.json();
@@ -140,6 +149,139 @@ export interface UserPoolMembership {
   };
 }
 
+// ── Pools: Active tab ────────────────────────────────────────────────────────
+
+export interface PoolMemberRef {
+  id: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  photoUrl: string | null;
+}
+
+export interface ActivePoolListItem {
+  id: string;
+  currentCycle: number;
+  totalCycles: number;
+  contributionAmount: number;
+  nextContributionDue: string | null;
+  contributionStatus: string;
+  template: { name: string; tier: string };
+}
+
+export interface ActivePoolPayoutEntry {
+  cycleNumber: number;
+  user: PoolMemberRef;
+  amount: number;
+  completed: boolean;
+  projected: boolean;
+}
+
+export interface ActivePoolContributionEntry {
+  cycleNumber: number;
+  user: PoolMemberRef;
+  amount: number;
+  cycleStatus: string;
+  completed: boolean;
+  isMine: boolean;
+  prepaid: boolean;
+}
+
+export interface ActivePoolDetails {
+  id: string;
+  nickname: string;
+  tier: string;
+  status: string;
+  healthLabel: "ON_TRACK" | "AT_RISK";
+  currentCycle: number;
+  totalCycles: number;
+  daysLeftInCycle: number | null;
+  cyclePot: { currency: string; amount: number };
+  contributedCount: number;
+  totalMembers: number;
+  // Exact shape of the backend's `_deriveMemberContributionStates` helper is not
+  // documented — render defensively (Array.isArray + optional chaining) rather
+  // than assuming field names.
+  members: Record<string, unknown>[];
+  myContribution: { amount: number; isEarly: boolean; status: string; paidThisCycle: boolean } | null;
+  payoutTimeline: ActivePoolPayoutEntry[];
+  contributionTimeline: ActivePoolContributionEntry[];
+}
+
+// ── Pools: Joined tab ────────────────────────────────────────────────────────
+
+export interface JoinedPoolTemplate {
+  id: string;
+  name: string;
+  tier: string;
+  contributionAmount: number;
+  frequency: string;
+  maxMembers: number;
+  description: string;
+}
+
+export interface JoinedPoolListItem {
+  id: string;
+  status: string;
+  currentMemberCount: number;
+  spotsRemaining: number;
+  contributionAmount: number;
+  payoutAmount: number;
+  frequency: string;
+  totalCycles: number;
+  template: JoinedPoolTemplate;
+}
+
+export interface JoinedPoolDetails {
+  id: string;
+  status: string;
+  currentMemberCount: number;
+  spotsRemaining: number;
+  contributionAmount: number;
+  payoutAmount: number;
+  frequency: string;
+  totalCycles: number;
+  startDate: string | null;
+  nextContributionDue: string | null;
+  joinedAt: string;
+  memberStatus: string;
+  template: JoinedPoolTemplate & { joiningFee: number };
+}
+
+// ── Pools: Discover tab ──────────────────────────────────────────────────────
+
+export interface AvailablePoolTemplate {
+  id: string;
+  name: string;
+  tier: string;
+  contributionAmount: number;
+  joiningFee: number;
+  frequency: string;
+  maxMembers: number;
+  description: string;
+}
+
+export interface AvailablePoolDetails {
+  id: string;
+  status: string;
+  currentMemberCount: number;
+  spotsRemaining: number;
+  contributionAmount: number;
+  payoutAmount: number;
+  frequency: string;
+  totalCycles: number;
+  startDate: string | null;
+  nextContributionDue: string | null;
+  template: AvailablePoolTemplate;
+}
+
+export interface PoolDetailsEnvelope<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  message?: string;
+}
+
 // ── Savings ───────────────────────────────────────────────────────────────────
 
 export type InstrumentType = "AUTOSAVE" | "TIMELOCK_VAULT" | "FLEXIBLE_SAVINGS" | "TARGET_FUND";
@@ -189,6 +331,32 @@ export const api = {
       body: JSON.stringify(data),
     }),
 
+  loginUser: (phoneNumber: string) =>
+    apiFetch<{
+      success: boolean;
+      message?: string;
+      error?: string;
+      suggestion?: string;
+      user?: {
+        id: string;
+        phoneNumber: string;
+        email: string | null;
+        firstName: string;
+        lastName: string;
+        username: string;
+        walletAddress: string | null;
+        status: string;
+        tier: string;
+        maxPersonalInstruments: number;
+        maxPoolInstruments: number;
+        createdAt: string;
+        lastLoginAt: string;
+      };
+    }>("/loginUser", {
+      method: "POST",
+      body: JSON.stringify({ phoneNumber }),
+    }),
+
   getUserProfile: (userId: string) =>
     apiFetch<BackendEnvelope<UserProfile>>(`/getUserProfile/${resolveUserId(userId)}`),
 
@@ -210,6 +378,21 @@ export const api = {
 
   getPoolDetails: (poolId: string) =>
     apiFetch<BackendEnvelope<Record<string, unknown>>>(`/${poolId}/details`),
+
+  getActivePools: (userId: string) =>
+    apiFetch<BackendEnvelope<ActivePoolListItem[]>>(`/getUserActivePoolList/${resolveUserId(userId)}`),
+
+  getActivePoolDetails: (userId: string, poolId: string) =>
+    apiFetch<PoolDetailsEnvelope<ActivePoolDetails>>(`/${poolId}/activePoolDetails/${resolveUserId(userId)}`),
+
+  getJoinedPools: (userId: string) =>
+    apiFetch<BackendEnvelope<JoinedPoolListItem[]>>(`/getUserJoinedPoolsList/${resolveUserId(userId)}`),
+
+  getJoinedPoolDetails: (userId: string, poolId: string) =>
+    apiFetch<PoolDetailsEnvelope<JoinedPoolDetails>>(`/${poolId}/joinedPoolDetails/${resolveUserId(userId)}`),
+
+  getAvailablePoolDetails: (userId: string, poolId: string) =>
+    apiFetch<PoolDetailsEnvelope<AvailablePoolDetails>>(`/${poolId}/availablePoolDetails/${resolveUserId(userId)}`),
 
   // Savings - Personal Instruments
   getSavingsInstruments: (userId: string) =>

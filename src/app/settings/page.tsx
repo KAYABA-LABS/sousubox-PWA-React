@@ -237,37 +237,37 @@ export default function Settings() {
         </SettingsSection>
 
         <SettingsSection title="Cards & Accounts">
-          <SettingsRow
+          {/* <SettingsRow
             icon={<CreditCard className="w-5 h-5" />}
             label="Virtual Cards"
             subtitle="Manage digital transaction cards"
             badge="2 Active"
             badgeColor="emerald"
             onClick={() => router.push("/settings/virtual-cards")}
-          />
-          <SettingsRow
+          /> */}
+          {/* <SettingsRow
             icon={<CreditCard className="w-5 h-5" />}
             label="Physical Card"
             subtitle="Order, activate, or replace your card"
             onClick={() => router.push("/settings/physical-card")}
-          />
-          <SettingsRow
+          /> */}
+          {/* <SettingsRow
             icon={<Snowflake className="w-5 h-5" />}
             label="Freeze Card"
             subtitle="Temporarily pause all transactions"
             onClick={() => router.push("/settings/freeze")}
-          />
+          /> */}
           <SettingsRow
             icon={<Landmark className="w-5 h-5" />}
-            label="Linked Bank Accounts"
-            subtitle="View connected external institutions"
+            label="Linked Payment Accounts"
+            subtitle="View connected deposits and withdrawals payment accounts"
             onClick={() => router.push("/settings/linked-accounts")}
           />
-          <SettingsRow
+          {/* <SettingsRow
             icon={<Plus className="w-5 h-5" />}
             label="Add Bank Account"
             onClick={() => router.push("/settings/add-account")}
-          />
+          /> */}
         </SettingsSection>
 
         <SettingsSection title="Notifications">
@@ -291,15 +291,15 @@ export default function Settings() {
             subtitle="Text message security codes"
             onClick={() => router.push("/settings/sms")}
           />
-          <SettingsRow
+          {/* <SettingsRow
             icon={<Moon className="w-5 h-5" />}
             label="Quiet Hours"
             subtitle="Schedule notification blackout"
             onClick={() => router.push("/settings/quiet-hours")}
-          />
+          /> */}
         </SettingsSection>
 
-        <SettingsSection title="Limits & Controls">
+        {/* <SettingsSection title="Limits & Controls">
           <SettingsRow
             icon={<TrendingUp className="w-5 h-5" />}
             label="Spending Limits"
@@ -330,7 +330,7 @@ export default function Settings() {
             subtitle="Prevent specific vendors from charging you"
             onClick={() => router.push("/settings/blocked-merchants")}
           />
-        </SettingsSection>
+        </SettingsSection> */}
 
         <SettingsSection title="Documents">
           <SettingsRow
@@ -339,24 +339,24 @@ export default function Settings() {
             subtitle="Download monthly statement papers"
             onClick={() => router.push("/settings/statements")}
           />
-          <SettingsRow
+          {/* <SettingsRow
             icon={<Receipt className="w-5 h-5" />}
             label="Tax Documents"
             subtitle="View 1099 interest statements"
             onClick={() => router.push("/settings/tax-docs")}
-          />
+          /> */}
           <SettingsRow
             icon={<FileSignature className="w-5 h-5" />}
             label="Account Agreements"
             subtitle="Disclosures and legal terms"
             onClick={() => router.push("/settings/agreements")}
           />
-          <SettingsRow
+          {/* <SettingsRow
             icon={<Download className="w-5 h-5" />}
             label="Download Data"
             subtitle="Export and download all telemetry and history"
             onClick={() => router.push("/settings/download-data")}
-          />
+          /> */}
         </SettingsSection>
 
         <SettingsSection title="App Preferences">
@@ -378,7 +378,7 @@ export default function Settings() {
             subtitle="Dark Mode (Impeccable)"
             onClick={() => router.push("/settings/theme")}
           />
-          <SettingsRow
+          {/* <SettingsRow
             icon={<SettingsIcon className="w-5 h-5" />}
             label="Accessibility"
             subtitle="Contrast, motion, and font customization"
@@ -389,7 +389,7 @@ export default function Settings() {
             label="Data Usage"
             subtitle="Cache storage controls"
             onClick={() => router.push("/settings/data-usage")}
-          />
+          /> */}
         </SettingsSection>
 
         <SettingsSection title="Support & Legal">

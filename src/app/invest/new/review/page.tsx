@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { useAuth } from "@clerk/nextjs";
 import { useSavingsService } from "@/services/savingsService";
+import { isDevMode } from "@/lib/dev";
 import {
   ArrowLeft,
   Loader2,
@@ -51,7 +52,7 @@ export default function PlanReviewPage() {
   const totalAfter12Months = amount + projectedReturn;
 
   const handleSubmit = async () => {
-    if (!userId) return;
+    if (!userId && !isDevMode()) return;
     setIsSubmitting(true);
     setError("");
 
@@ -68,19 +69,19 @@ export default function PlanReviewPage() {
 
       switch (planId) {
         case "flex":
-          await savingsService.activateFlexibleSavings(userId, instrumentId, {
+          await savingsService.activateFlexibleSavings(userId || "", instrumentId, {
             ...baseData,
             configuration: { maxWithdrawalsPerMonth: 3, emergencyWithdrawalLimit: amount * 0.5, emergencyWithdrawalFee: 0.05, minimumBalance: 0 },
           });
           break;
         case "fixed":
-          await savingsService.activateTimeLock(userId, instrumentId, {
+          await savingsService.activateTimeLock(userId || "", instrumentId, {
             ...baseData,
             configuration: { lockPeriodDays: 365, earlyWithdrawalPenalty: 0.1, allowPartialLocks: false },
           });
           break;
         case "goal":
-          await savingsService.activateTargetFund(userId, instrumentId, {
+          await savingsService.activateTargetFund(userId || "", instrumentId, {
             ...baseData,
             // eslint-disable-next-line react-hooks/purity
             targetDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
@@ -88,7 +89,7 @@ export default function PlanReviewPage() {
           });
           break;
         case "auto":
-          await savingsService.activateAutoSave(userId, instrumentId, {
+          await savingsService.activateAutoSave(userId || "", instrumentId, {
             ...baseData,
             configuration: { deductionSource: "SAVINGS_ACCOUNT", minimumBalance: 0, contributionDay: new Date().getDate() },
           });

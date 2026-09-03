@@ -97,7 +97,7 @@ export default function SignUpPageContent() {
           });
 
       console.log("Backend registration result:", result);
-      console.log("Backend registration result:", result.data);
+      // console.log("Backend registration result:", result.data);
 
       if (!result.success) {
         throw new Error(
@@ -300,41 +300,17 @@ export default function SignUpPageContent() {
         console.log(backendUserId)
 
 
-    /*
-     * unsafeMetadata is copied onto the created user once
-     * finalize() completes below - no active session is
-     * required at this point, unlike clerk.user.update().
-     */
-    // const result = await signUp.update({
-    //   unsafeMetadata: {
-    //     userId: backendUserId,
-    //   },
-    // });
+    
 
-    // if (result.error) {
-    //   throw result.error;
-    // }
-
-    // console.log("Profile details updated");
-
-
-    /*
-     * Finalize the signup.
-     */
-    const finalized = await signUp.finalize();
-
-    if (finalized.error) {
-      throw finalized.error;
-    }
 
           /*
-          * Do not finalize here. Finalizing activates the Clerk
-          * session, and middleware redirects any authenticated
-          * user away from /signup - so finalizing before the
-          * user has entered their name would skip the details
-          * step. Collect firstName/lastName first; finalize()
-          * happens in handleCompleteProfile instead.
+          * Finalize the signup.
           */
+          const finalized = await signUp.finalize();
+
+          if (finalized.error) {
+            throw finalized.error;
+          }
 
           setStep("details");
         } catch (err: unknown) {
@@ -422,23 +398,12 @@ export default function SignUpPageContent() {
       },
     });
 
-    if (result.error) {
+    if (result.error ) {
       throw result.error;
     }
 
     console.log("Profile details updated");
 
-
-    /*
-     * Finalize the signup.
-     */
-    // const finalized = await signUp.finalize();
-
-    // if (finalized.error) {
-    //   throw finalized.error;
-    // }
-
-    // console.log("Signup finalized");
 
     /*
      * Navigate to application.

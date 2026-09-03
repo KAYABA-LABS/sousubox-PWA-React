@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@clerk/nextjs";
 import { useSavingsService } from "@/services/savingsService";
 import { api } from "@/lib/api";
+import { isDevMode } from "@/lib/dev";
 import { btn } from "@/lib/variants";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,9 +46,9 @@ export default function ActivePlanDetailPage() {
   const [contributeSuccess, setContributeSuccess] = useState(false);
 
   const loadPlan = async () => {
-    if (!userId) return;
+    if (!userId && !isDevMode()) return;
     try {
-      const data = await savingsService.getInstrumentById(userId, planId);
+      const data = await savingsService.getInstrumentById(userId || "", planId);
       setPlan(data as Record<string, unknown>);
     } catch {
       toast.error("Failed to load plan");
@@ -56,13 +57,13 @@ export default function ActivePlanDetailPage() {
   };
 
   useEffect(() => {
-    if (!isLoaded || !userId || !planId) return;
+    if (!isLoaded || (!userId && !isDevMode()) || !planId) return;
     loadPlan();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded, userId, planId]);
 
   const handleContribute = async () => {
-    if (!userId || !contributeAmount) return;
+    if ((!userId && !isDevMode()) || !contributeAmount) return;
     const amount = parseFloat(contributeAmount);
     if (isNaN(amount) || amount <= 0) {
       toast.error("Please enter a valid amount");
@@ -71,7 +72,7 @@ export default function ActivePlanDetailPage() {
 
     setIsContributing(true);
     try {
-      await api.contributeToSavings(userId, planId, amount);
+      await api.contributeToSavings(userId || "", planId, amount);
       setContributeSuccess(true);
       toast.success(`GH₵ ${amount.toFixed(2)} contributed successfully`);
       setTimeout(() => {
