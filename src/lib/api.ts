@@ -1,6 +1,6 @@
 const API_BASE =
   typeof window === "undefined"
-    ? process.env.NEXT_PUBLIC_API_URL || "http://192.168.0.165:8000/api/v1"
+    ? process.env.NEXT_PUBLIC_API_URL || "http://192.168.0.166:8000/api/v1"
     : "/api/backend";
 
 let authTokenGetter: (() => Promise<string | null>) | null = null;
@@ -316,6 +316,26 @@ export interface KycSession {
   status: string;
 }
 
+// ── Funding Sources ───────────────────────────────────────────────────────────
+
+export type FundingSourceNetwork = "MTN" | "TELECEL" | "AIRTELTIGO";
+
+export interface FundingSourceIdentifier {
+  networkId: FundingSourceNetwork;
+  phoneNumber: string;
+}
+
+export interface FundingSource extends FundingSourceIdentifier {
+  active: boolean;
+}
+
+export interface FundingSourcesEnvelope {
+  success: boolean;
+  message: string;
+  data?: FundingSource[];
+  error?: string;
+}
+
 // ── API Methods ───────────────────────────────────────────────────────────────
 
 export const api = {
@@ -362,7 +382,7 @@ export const api = {
 
   updateProfile: (userId: string, data: Record<string, string>) =>
     apiFetch<BackendEnvelope<UserProfile>>("/updateProfile", {
-      method: "PUT",
+      method: "PATCH",
       body: JSON.stringify({ userId: resolveUserId(userId), ...data }),
     }),
 
@@ -477,5 +497,27 @@ export const api = {
     apiFetch<BackendEnvelope<KycSession>>("/kyc/session", {
       method: "POST",
       body: JSON.stringify({ userId: resolveUserId(userId), ...options }),
+    }),
+
+  // Funding Sources
+  getFundingSources: (userId: string) =>
+    apiFetch<FundingSourcesEnvelope>(`/getUserFundingSources/${resolveUserId(userId)}`),
+
+  addFundingSource: (userId: string, fundingSource: FundingSourceIdentifier) =>
+    apiFetch<FundingSourcesEnvelope>("/addUserFundingSource", {
+      method: "POST",
+      body: JSON.stringify({ userId: resolveUserId(userId), ...fundingSource }),
+    }),
+
+  setActiveFundingSource: (userId: string, fundingSource: FundingSourceIdentifier) =>
+    apiFetch<FundingSourcesEnvelope>("/SetUserFundingSourceActive", {
+      method: "PATCH",
+      body: JSON.stringify({ userId: resolveUserId(userId), ...fundingSource }),
+    }),
+
+  removeFundingSource: (userId: string, fundingSource: FundingSourceIdentifier) =>
+    apiFetch<FundingSourcesEnvelope>(`/removeFundingSource/${resolveUserId(userId)}`, {
+      method: "DELETE",
+      body: JSON.stringify({ userId: resolveUserId(userId), ...fundingSource }),
     }),
 };

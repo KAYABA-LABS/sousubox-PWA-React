@@ -11,7 +11,7 @@ const SLIDES = [
     icon: Wallet,
     title: "Save & Grow",
     description: "Start saving with as little as GH₵20. Watch your money grow with competitive interest rates.",
-    color: "#00E660",
+    color: "#0D4F3C",
   },
   {
     icon: Users,
@@ -55,14 +55,14 @@ export default function OnboardingPage() {
   const Icon = slide.icon;
 
   return (
-    <div className="min-h-screen bg-[#0C0F14] flex flex-col">
+    <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col">
       {/* Skip button */}
       <div className="flex justify-end px-5 pt-6">
         <Button
           variant="ghost"
           size="sm"
           onClick={handleSkip}
-          className="text-gray-400 hover:text-white"
+          className="text-gray-500 dark:text-gray-400 hover:text-[#0C0F14] dark:hover:text-white"
         >
           Skip
         </Button>
@@ -88,10 +88,10 @@ export default function OnboardingPage() {
             </div>
 
             {/* Text */}
-            <h1 className="text-3xl font-extrabold text-white mb-4">
+            <h1 className="text-3xl font-extrabold text-[#0C0F14] dark:text-white mb-4">
               {slide.title}
             </h1>
-            <p className="text-base text-gray-400 max-w-sm mx-auto leading-relaxed">
+            <p className="text-base text-gray-500 dark:text-gray-400 max-w-sm mx-auto leading-relaxed">
               {slide.description}
             </p>
           </motion.div>

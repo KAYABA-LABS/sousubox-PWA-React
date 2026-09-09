@@ -45,19 +45,19 @@ export default function AddBillerPage() {
   const canSubmit = formData.name.trim() && formData.accountNumber.trim();
 
   return (
-    <div className="min-h-screen bg-[#0C0F14] flex flex-col">
+    <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col">
       {/* Header */}
-      <header className="bg-[#0C0F14] px-5 pt-6 pb-4 border-b border-white/5">
+      <header className="bg-[#FBF6EF] dark:bg-[#0C0F14] px-5 pt-6 pb-4 border-b border-black/5 dark:border-white/5">
         <div className="flex items-center gap-4 mb-2">
           <button
             onClick={() => router.back()}
-            className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors"
+            className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 flex items-center justify-center transition-colors"
           >
-            <ArrowLeft className="w-5 h-5 text-white" strokeWidth={2} />
+            <ArrowLeft className="w-5 h-5 text-[#0C0F14] dark:text-white" strokeWidth={2} />
           </button>
           <div>
-            <h1 className="text-xl font-semibold text-white">Add biller</h1>
-            <p className="text-sm text-gray-400">Enter biller details</p>
+            <h1 className="text-xl font-semibold text-[#0C0F14] dark:text-white">Add biller</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Enter biller details</p>
           </div>
         </div>
       </header>
@@ -70,9 +70,9 @@ export default function AddBillerPage() {
         >
           {/* Icon Preview */}
           <div className="flex justify-center">
-            <div className="w-20 h-20 rounded-full bg-[#151A1F] border-2 border-white/10 flex items-center justify-center">
+            <div className="w-20 h-20 rounded-full bg-white dark:bg-[#151A1F] border-2 border-black/10 dark:border-white/10 flex items-center justify-center">
               <Building2
-                className="w-10 h-10 text-gray-600"
+                className="w-10 h-10 text-gray-400 dark:text-gray-600"
                 strokeWidth={1.5}
               />
             </div>
@@ -80,7 +80,7 @@ export default function AddBillerPage() {
 
           {/* Biller Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-400 mb-2">
+            <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
               Biller name *
             </label>
             <input
@@ -91,18 +91,18 @@ export default function AddBillerPage() {
                 setFormData({ ...formData, name: e.target.value });
                 if (errors.name) setErrors({ ...errors, name: undefined });
               }}
-              className={`w-full bg-[#151A1F] border ${
-                errors.name ? "border-red-500" : "border-white/10"
-              } rounded-xl px-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-[#00E660] transition-colors`}
+              className={`w-full bg-white dark:bg-[#151A1F] border ${
+                errors.name ? "border-red-500" : "border-black/10 dark:border-white/10"
+              } rounded-xl px-4 py-3 text-[#0C0F14] dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53] transition-colors`}
             />
             {errors.name && (
-              <p className="text-xs text-red-400 mt-1">{errors.name}</p>
+              <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.name}</p>
             )}
           </div>
 
           {/* Account/Reference Number */}
           <div>
-            <label className="block text-sm font-medium text-gray-400 mb-2">
+            <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
               Account/Reference number *
             </label>
             <input
@@ -114,12 +114,12 @@ export default function AddBillerPage() {
                 if (errors.accountNumber)
                   setErrors({ ...errors, accountNumber: undefined });
               }}
-              className={`w-full bg-[#151A1F] border ${
-                errors.accountNumber ? "border-red-500" : "border-white/10"
-              } rounded-xl px-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-[#00E660] transition-colors`}
+              className={`w-full bg-white dark:bg-[#151A1F] border ${
+                errors.accountNumber ? "border-red-500" : "border-black/10 dark:border-white/10"
+              } rounded-xl px-4 py-3 text-[#0C0F14] dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53] transition-colors`}
             />
             {errors.accountNumber && (
-              <p className="text-xs text-red-400 mt-1">
+              <p className="text-xs text-red-600 dark:text-red-400 mt-1">
                 {errors.accountNumber}
               </p>
             )}
@@ -127,7 +127,7 @@ export default function AddBillerPage() {
 
           {/* Category */}
           <div>
-            <label className="block text-sm font-medium text-gray-400 mb-2">
+            <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
               Category
             </label>
             <select
@@ -135,7 +135,7 @@ export default function AddBillerPage() {
               onChange={(e) =>
                 setFormData({ ...formData, category: e.target.value })
               }
-              className="w-full bg-[#151A1F] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#00E660] transition-colors"
+              className="w-full bg-white dark:bg-[#151A1F] border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-[#0C0F14] dark:text-white focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53] transition-colors"
             >
               {categories.map((cat) => (
                 <option key={cat} value={cat}>
@@ -152,13 +152,13 @@ export default function AddBillerPage() {
         <button
           onClick={handleSubmit}
           disabled={!canSubmit}
-          className="w-full bg-[#00E660] hover:bg-[#00cc55] disabled:bg-white/10 disabled:text-gray-500 text-black font-semibold py-4 rounded-xl transition-colors disabled:cursor-not-allowed"
+          className="w-full bg-[#0D4F3C] hover:bg-[#156B53] disabled:bg-black/10 dark:disabled:bg-white/10 disabled:text-gray-400 dark:disabled:text-gray-500 text-white font-semibold py-4 rounded-xl transition-colors disabled:cursor-not-allowed"
         >
           Save biller
         </button>
         <button
           onClick={() => router.back()}
-          className="w-full bg-transparent border border-white/10 hover:bg-white/5 text-white font-medium py-4 rounded-xl transition-colors"
+          className="w-full bg-transparent border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 text-[#0C0F14] dark:text-white font-medium py-4 rounded-xl transition-colors"
         >
           Cancel
         </button>

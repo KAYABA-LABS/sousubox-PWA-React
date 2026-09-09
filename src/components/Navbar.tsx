@@ -37,8 +37,8 @@ export const Navbar = () => {
       <nav className="container mx-auto flex items-center justify-between h-16 px-4 md:px-6">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 rounded-lg bg-[#00E660] flex items-center justify-center">
-            <span className="text-black font-bold text-lg">V</span>
+          <div className="w-8 h-8 rounded-lg bg-[#0D4F3C] flex items-center justify-center">
+            <span className="text-white font-bold text-lg">V</span>
           </div>
           <span className="font-semibold text-lg text-foreground group-hover:text-primary transition-colors">
             Vaulta
@@ -51,7 +51,7 @@ export const Navbar = () => {
             <a
               key={link.label}
               href={link.href}
-              className="px-4 py-2 text-sm font-medium cursor-pointer text-white/60 hover:text-[#00E660] transition-colors"
+              className="px-4 py-2 text-sm font-medium cursor-pointer text-white/60 hover:text-[#0D4F3C] dark:hover:text-[#156B53] transition-colors"
             >
               {link.label}
             </a>
@@ -64,7 +64,7 @@ export const Navbar = () => {
             <Button
               variant="ghost"
               size="sm"
-              className="inline-flex cursor-pointer hover:text-[#00E660] transition-colors"
+              className="inline-flex cursor-pointer hover:text-[#0D4F3C] dark:hover:text-[#156B53] transition-colors"
             >
               Sign In
             </Button>
@@ -73,7 +73,7 @@ export const Navbar = () => {
             <Button
               variant="default"
               size="sm"
-              className="px-4 py-3 cursor-pointer bg-[#00E660] text-black font-semibold rounded-xl"
+              className="px-4 py-3 cursor-pointer bg-[#0D4F3C] text-white font-semibold rounded-xl"
             >
               Get Started
             </Button>

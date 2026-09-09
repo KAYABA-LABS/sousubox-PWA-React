@@ -1,7 +1,7 @@
 export const lightTheme = {
   // Backgrounds
   bg: {
-    primary: "bg-gray-50",
+    primary: "bg-[#FBF6EF]",
     secondary: "bg-white",
     tertiary: "bg-gray-100",
     elevated: "bg-white",
@@ -10,12 +10,12 @@ export const lightTheme = {
 
   // Text
   text: {
-    primary: "text-gray-900",
+    primary: "text-[#0C0F14]",
     secondary: "text-gray-600",
     tertiary: "text-gray-500",
     muted: "text-gray-400",
     inverse: "text-white",
-    link: "text-emerald-600",
+    link: "text-[#0D4F3C]",
   },
 
   // Borders
@@ -23,13 +23,13 @@ export const lightTheme = {
     default: "border-gray-200",
     subtle: "border-gray-100",
     strong: "border-gray-300",
-    focus: "border-emerald-600",
+    focus: "border-[#0D4F3C]",
   },
 
   // Accent
   accent: {
-    primary: "bg-emerald-600",
-    primaryHover: "hover:bg-emerald-700",
+    primary: "bg-[#0D4F3C]",
+    primaryHover: "hover:bg-[#156B53]",
     primaryText: "text-white",
     secondary: "bg-gray-100",
     secondaryHover: "hover:bg-gray-200",
@@ -62,7 +62,7 @@ export const lightTheme = {
 
   // Icons
   icon: {
-    primary: "text-emerald-600",
+    primary: "text-[#0D4F3C]",
     secondary: "text-gray-500",
     muted: "text-gray-400",
   },
@@ -71,7 +71,7 @@ export const lightTheme = {
   nav: {
     bg: "bg-white",
     border: "border-gray-200",
-    active: "text-emerald-600 bg-emerald-50",
+    active: "text-[#0D4F3C] bg-[#0D4F3C]/10",
     inactive: "text-gray-500 hover:text-gray-700 hover:bg-gray-100",
   },
 
@@ -80,7 +80,7 @@ export const lightTheme = {
     bg: "bg-white",
     border: "border-gray-200",
     shadow: "shadow-lg shadow-black/5",
-    active: "text-emerald-600 bg-emerald-50",
+    active: "text-[#0D4F3C] bg-[#0D4F3C]/10",
     inactive: "text-gray-400 hover:text-gray-700 hover:bg-gray-100",
   },
 } as const;
@@ -88,9 +88,9 @@ export const lightTheme = {
 export const darkTheme = {
   bg: {
     primary: "bg-[#0C0F14]",
-    secondary: "bg-[#1C2128]",
+    secondary: "bg-[#151A1F]",
     tertiary: "bg-[#2C2C2E]",
-    elevated: "bg-[#1C2128]",
+    elevated: "bg-[#151A1F]",
     overlay: "bg-black/60",
   },
   text: {
@@ -99,18 +99,18 @@ export const darkTheme = {
     tertiary: "text-gray-500",
     muted: "text-gray-600",
     inverse: "text-gray-900",
-    link: "text-emerald-400",
+    link: "text-[#156B53]",
   },
   border: {
     default: "border-white/10",
     subtle: "border-white/5",
     strong: "border-white/20",
-    focus: "border-emerald-400",
+    focus: "border-[#156B53]",
   },
   accent: {
-    primary: "bg-[#00E660]",
-    primaryHover: "hover:bg-[#00E660]/90",
-    primaryText: "text-[#0C0F14]",
+    primary: "bg-[#0D4F3C]",
+    primaryHover: "hover:bg-[#156B53]",
+    primaryText: "text-white",
     secondary: "bg-white/5",
     secondaryHover: "hover:bg-white/10",
     secondaryText: "text-white",
@@ -122,33 +122,33 @@ export const darkTheme = {
     info: "bg-blue-500/10 text-blue-400 border-blue-500/20",
   },
   card: {
-    bg: "bg-[#1C2128]",
+    bg: "bg-[#151A1F]",
     border: "border-white/10",
-    hover: "hover:border-emerald-400/30",
+    hover: "hover:bg-[#1A1F25]",
   },
   input: {
-    bg: "bg-[#2C2C2E]",
+    bg: "bg-[#0C0F14]",
     border: "border-white/10",
-    focus: "focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20",
+    focus: "focus:border-[#156B53] focus:ring-2 focus:ring-[#156B53]/20",
     text: "text-white",
     placeholder: "placeholder:text-gray-500",
   },
   icon: {
-    primary: "text-[#00E660]",
+    primary: "text-[#156B53]",
     secondary: "text-gray-400",
     muted: "text-gray-600",
   },
   nav: {
-    bg: "bg-[#1C2128]",
+    bg: "bg-[#151A1F]",
     border: "border-white/10",
-    active: "text-[#00E660] bg-[#00E660]/10",
+    active: "text-[#156B53] bg-[#0D4F3C]/15",
     inactive: "text-gray-400 hover:text-white hover:bg-white/5",
   },
   dock: {
     bg: "bg-[#1A1D24]",
     border: "border-white/5",
     shadow: "shadow-2xl shadow-black/40",
-    active: "text-[#00E660] bg-[#00E660]/10",
+    active: "text-[#156B53] bg-[#0D4F3C]/15",
     inactive: "text-gray-400 hover:text-white hover:bg-white/5",
   },
 } as const;

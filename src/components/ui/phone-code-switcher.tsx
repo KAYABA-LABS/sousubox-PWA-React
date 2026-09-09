@@ -74,7 +74,7 @@ export function PhoneCodeSwitcher({ value, onChange }: PhoneCodeSwitcherProps) {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-2 h-14 px-3 ${theme.input.bg} border border-gray-200 rounded-xl hover:border-gray-300 transition-colors min-w-[100px]`}
+        className={`flex items-center gap-2 h-14 px-3 ${theme.input.bg} border border-gray-200 dark:border-white/10 rounded-xl hover:border-gray-300 dark:hover:border-white/20 transition-colors min-w-[100px]`}
       >
         <img
           src={getFlagUrl(selected.iso)}
@@ -93,9 +93,9 @@ export function PhoneCodeSwitcher({ value, onChange }: PhoneCodeSwitcherProps) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className="absolute top-full left-0 mt-2 w-72 bg-white rounded-xl border border-gray-200 shadow-xl z-50 overflow-hidden"
+            className="absolute top-full left-0 mt-2 w-72 bg-white dark:bg-[#151A1F] rounded-xl border border-gray-200 dark:border-white/10 shadow-xl z-50 overflow-hidden"
           >
-            <div className="p-3 border-b border-gray-100">
+            <div className="p-3 border-b border-gray-100 dark:border-white/5">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
@@ -104,7 +104,7 @@ export function PhoneCodeSwitcher({ value, onChange }: PhoneCodeSwitcherProps) {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   autoFocus
-                  className="w-full h-9 pl-9 pr-3 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-emerald-500"
+                  className="w-full h-9 pl-9 pr-3 bg-gray-50 dark:bg-[#0C0F14] border border-gray-200 dark:border-white/10 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53]"
                 />
               </div>
             </div>
@@ -119,9 +119,9 @@ export function PhoneCodeSwitcher({ value, onChange }: PhoneCodeSwitcherProps) {
                     setIsOpen(false);
                     setSearch("");
                   }}
-                  className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors ${
+                  className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors ${
                     country.code === selected.code && country.iso === selected.iso
-                      ? "bg-emerald-50"
+                      ? "bg-[#0D4F3C]/10 dark:bg-[#0D4F3C]/20"
                       : ""
                   }`}
                 >
@@ -131,10 +131,10 @@ export function PhoneCodeSwitcher({ value, onChange }: PhoneCodeSwitcherProps) {
                     className="w-6 h-6 rounded-full object-cover"
                     loading="lazy"
                   />
-                  <span className="text-sm text-gray-900 flex-1 text-left">{country.name}</span>
-                  <span className="text-sm text-gray-500 font-medium">{country.code}</span>
+                  <span className="text-sm text-gray-900 dark:text-white flex-1 text-left">{country.name}</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">{country.code}</span>
                   {country.code === selected.code && country.iso === selected.iso && (
-                    <div className="w-5 h-5 rounded-full bg-emerald-600 flex items-center justify-center">
+                    <div className="w-5 h-5 rounded-full bg-[#0D4F3C] flex items-center justify-center">
                       <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                       </svg>

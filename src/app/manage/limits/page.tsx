@@ -23,19 +23,19 @@ export default function ManageLimitsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0C0F14] flex flex-col">
+    <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col">
       {/* Header */}
-      <header className="bg-[#0C0F14] px-5 pt-6 pb-4 border-b border-white/5">
+      <header className="bg-[#FBF6EF] dark:bg-[#0C0F14] px-5 pt-6 pb-4 border-b border-black/5 dark:border-white/5">
         <div className="flex items-center gap-4 mb-2">
           <button
             onClick={() => router.back()}
-            className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors"
+            className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 flex items-center justify-center transition-colors"
           >
-            <ArrowLeft className="w-5 h-5 text-white" strokeWidth={2} />
+            <ArrowLeft className="w-5 h-5 text-[#0C0F14] dark:text-white" strokeWidth={2} />
           </button>
           <div>
-            <h1 className="text-xl font-semibold text-white">Limits</h1>
-            <p className="text-sm text-gray-400">Manage transaction limits</p>
+            <h1 className="text-xl font-semibold text-[#0C0F14] dark:text-white">Limits</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Manage transaction limits</p>
           </div>
         </div>
       </header>
@@ -48,20 +48,20 @@ export default function ManageLimitsPage() {
         >
           {/* Transaction Limits */}
           <div>
-            <h2 className="text-sm font-medium text-gray-400 mb-3">
+            <h2 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">
               Transaction limits
             </h2>
             <div className="space-y-4">
               {/* Daily Transaction */}
-              <div className="bg-[#151A1F] rounded-xl p-4">
+              <div className="bg-white dark:bg-[#151A1F] rounded-xl p-4">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <p className="text-white font-medium">
+                    <p className="text-[#0C0F14] dark:text-white font-medium">
                       Daily transaction limit
                     </p>
-                    <p className="text-xs text-gray-500">Maximum per day</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500">Maximum per day</p>
                   </div>
-                  <p className="text-2xl font-bold text-white">
+                  <p className="text-2xl font-bold text-[#0C0F14] dark:text-white">
                     ${limits.dailyTransaction.toLocaleString()}
                   </p>
                 </div>
@@ -77,24 +77,24 @@ export default function ManageLimitsPage() {
                       dailyTransaction: parseInt(e.target.value),
                     })
                   }
-                  className="w-full accent-[#00E660]"
+                  className="w-full accent-[#0D4F3C] dark:accent-[#156B53]"
                 />
-                <div className="flex justify-between text-xs text-gray-500 mt-2">
+                <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500 mt-2">
                   <span>$1,000</span>
                   <span>$10,000</span>
                 </div>
               </div>
 
               {/* Monthly Transaction */}
-              <div className="bg-[#151A1F] rounded-xl p-4">
+              <div className="bg-white dark:bg-[#151A1F] rounded-xl p-4">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <p className="text-white font-medium">
+                    <p className="text-[#0C0F14] dark:text-white font-medium">
                       Monthly transaction limit
                     </p>
-                    <p className="text-xs text-gray-500">Maximum per month</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500">Maximum per month</p>
                   </div>
-                  <p className="text-2xl font-bold text-white">
+                  <p className="text-2xl font-bold text-[#0C0F14] dark:text-white">
                     ${limits.monthlyTransaction.toLocaleString()}
                   </p>
                 </div>
@@ -110,9 +110,9 @@ export default function ManageLimitsPage() {
                       monthlyTransaction: parseInt(e.target.value),
                     })
                   }
-                  className="w-full accent-[#00E660]"
+                  className="w-full accent-[#0D4F3C] dark:accent-[#156B53]"
                 />
-                <div className="flex justify-between text-xs text-gray-500 mt-2">
+                <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500 mt-2">
                   <span>$10,000</span>
                   <span>$100,000</span>
                 </div>
@@ -122,20 +122,20 @@ export default function ManageLimitsPage() {
 
           {/* Withdrawal Limits */}
           <div>
-            <h2 className="text-sm font-medium text-gray-400 mb-3">
+            <h2 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">
               Withdrawal limits
             </h2>
             <div className="space-y-4">
               {/* Daily Withdrawal */}
-              <div className="bg-[#151A1F] rounded-xl p-4">
+              <div className="bg-white dark:bg-[#151A1F] rounded-xl p-4">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <p className="text-white font-medium">
+                    <p className="text-[#0C0F14] dark:text-white font-medium">
                       Daily withdrawal limit
                     </p>
-                    <p className="text-xs text-gray-500">ATM and transfers</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500">ATM and transfers</p>
                   </div>
-                  <p className="text-2xl font-bold text-white">
+                  <p className="text-2xl font-bold text-[#0C0F14] dark:text-white">
                     ${limits.dailyWithdrawal.toLocaleString()}
                   </p>
                 </div>
@@ -151,24 +151,24 @@ export default function ManageLimitsPage() {
                       dailyWithdrawal: parseInt(e.target.value),
                     })
                   }
-                  className="w-full accent-[#00E660]"
+                  className="w-full accent-[#0D4F3C] dark:accent-[#156B53]"
                 />
-                <div className="flex justify-between text-xs text-gray-500 mt-2">
+                <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500 mt-2">
                   <span>$500</span>
                   <span>$5,000</span>
                 </div>
               </div>
 
               {/* Monthly Withdrawal */}
-              <div className="bg-[#151A1F] rounded-xl p-4">
+              <div className="bg-white dark:bg-[#151A1F] rounded-xl p-4">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <p className="text-white font-medium">
+                    <p className="text-[#0C0F14] dark:text-white font-medium">
                       Monthly withdrawal limit
                     </p>
-                    <p className="text-xs text-gray-500">All withdrawals</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500">All withdrawals</p>
                   </div>
-                  <p className="text-2xl font-bold text-white">
+                  <p className="text-2xl font-bold text-[#0C0F14] dark:text-white">
                     ${limits.monthlyWithdrawal.toLocaleString()}
                   </p>
                 </div>
@@ -184,9 +184,9 @@ export default function ManageLimitsPage() {
                       monthlyWithdrawal: parseInt(e.target.value),
                     })
                   }
-                  className="w-full accent-[#00E660]"
+                  className="w-full accent-[#0D4F3C] dark:accent-[#156B53]"
                 />
-                <div className="flex justify-between text-xs text-gray-500 mt-2">
+                <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500 mt-2">
                   <span>$5,000</span>
                   <span>$50,000</span>
                 </div>
@@ -195,13 +195,13 @@ export default function ManageLimitsPage() {
           </div>
 
           {/* Warning Notice */}
-          <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 flex gap-3">
-            <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+          <div className="bg-amber-50 border border-amber-200 dark:bg-amber-500/10 dark:border-amber-500/20 rounded-xl p-4 flex gap-3">
+            <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm text-amber-300 font-medium mb-1">
+              <p className="text-sm text-amber-700 dark:text-amber-300 font-medium mb-1">
                 Limit adjustments
               </p>
-              <p className="text-xs text-amber-300/80">
+              <p className="text-xs text-amber-700/80 dark:text-amber-300/80">
                 Changes to limits may take up to 24 hours to take effect. Higher
                 limits may require additional verification.
               </p>
@@ -215,7 +215,7 @@ export default function ManageLimitsPage() {
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="w-full bg-[#00E660] hover:bg-[#00cc55] disabled:bg-white/10 disabled:text-gray-500 text-black font-semibold py-4 rounded-xl transition-colors disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="w-full bg-[#0D4F3C] hover:bg-[#156B53] disabled:bg-black/10 dark:disabled:bg-white/10 disabled:text-gray-400 dark:disabled:text-gray-500 text-white font-semibold py-4 rounded-xl transition-colors disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           {isSaving ? (
             <>

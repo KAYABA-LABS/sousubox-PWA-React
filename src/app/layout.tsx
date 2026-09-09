@@ -52,7 +52,7 @@ export default function RootLayout({
 }>) {
   const content = (
     <ThemeProvider>
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
@@ -62,7 +62,7 @@ export default function RootLayout({
           <div id="app-root">
             {children}
           </div>
-          <Toaster position="top-center" theme="light" />
+          <Toaster position="top-center" />
           <SWRegistration />
           <SpeedInsights />
         </body>

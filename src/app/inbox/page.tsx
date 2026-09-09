@@ -93,7 +93,7 @@ export default function InboxPage() {
   };
 
   return (
-    <main id="main-content" role="main" className="min-h-screen bg-gray-50 flex flex-col pb-32">
+    <main id="main-content" role="main" className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col pb-32">
       <motion.header
         role="banner"
         initial={{ opacity: 0, y: -10 }}
@@ -102,9 +102,9 @@ export default function InboxPage() {
       >
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Inbox</h1>
+            <h1 className="text-2xl font-bold text-[#0C0F14] dark:text-white">Inbox</h1>
             {unreadCount > 0 && (
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 {unreadCount} unread message{unreadCount !== 1 ? "s" : ""}
               </p>
             )}
@@ -113,10 +113,10 @@ export default function InboxPage() {
             <Button
               onClick={handleMarkAllRead}
               disabled={unreadCount === 0}
-              className="w-10 h-10 rounded-xl bg-white hover:bg-gray-100 flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-10 h-10 rounded-xl bg-white dark:bg-[#151A1F] hover:bg-gray-100 dark:hover:bg-white/5 flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="Mark all as read"
             >
-              <CheckCheck className="w-5 h-5 text-gray-500" strokeWidth={2} />
+              <CheckCheck className="w-5 h-5 text-gray-500 dark:text-gray-400" strokeWidth={2} />
             </Button>
           </div>
         </div>
@@ -162,8 +162,8 @@ export default function InboxPage() {
             animate={{ opacity: 1 }}
             className="flex flex-col items-center justify-center py-20"
           >
-            <div className="w-12 h-12 border-4 border-emerald-200 border-t-[#00E660] rounded-full animate-spin" />
-            <p className="text-sm text-gray-500 mt-4">
+            <div className="w-12 h-12 border-4 border-emerald-200 dark:border-emerald-500/20 border-t-[#0D4F3C] dark:border-t-[#156B53] rounded-full animate-spin" />
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">
               Loading notifications...
             </p>
           </motion.div>
@@ -173,13 +173,13 @@ export default function InboxPage() {
             animate={{ opacity: 1, y: 0 }}
             className="flex flex-col items-center justify-center py-20"
           >
-            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center mb-4">
-              <Bell className="w-8 h-8 text-gray-500" strokeWidth={1.5} />
+            <div className="w-16 h-16 rounded-full bg-white dark:bg-[#151A1F] flex items-center justify-center mb-4">
+              <Bell className="w-8 h-8 text-gray-500 dark:text-gray-400" strokeWidth={1.5} />
             </div>
-            <p className="text-sm font-medium text-gray-900 mb-1">
+            <p className="text-sm font-medium text-[#0C0F14] dark:text-white mb-1">
               No notifications
             </p>
-            <p className="text-xs text-gray-500">You&apos;re all caught up</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">You&apos;re all caught up</p>
           </motion.div>
         ) : (
           <div className="space-y-2">
@@ -190,12 +190,12 @@ export default function InboxPage() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
                 onClick={() => handleNotificationClick(notification.id)}
-                className={`bg-white rounded-2xl p-4 hover:bg-gray-100 transition-all cursor-pointer relative overflow-hidden ${
-                  !notification.read ? "ring-1 ring-[#00E660]/30" : ""
+                className={`bg-white dark:bg-[#151A1F] rounded-2xl p-4 hover:bg-gray-100 dark:hover:bg-white/5 transition-all cursor-pointer relative overflow-hidden ${
+                  !notification.read ? "ring-1 ring-[#0D4F3C]/30 dark:ring-[#156B53]/30" : ""
                 }`}
               >
                 {!notification.read && (
-                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-linear-to-b from-[#00E660] to-[#00B84D]" />
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-linear-to-b from-[#0D4F3C] to-[#156B53]" />
                 )}
 
                 <div className="flex items-start gap-3.5">
@@ -205,16 +205,16 @@ export default function InboxPage() {
                         ? "bg-red-500/10"
                         : notification.category === "promo"
                         ? "bg-purple-500/10"
-                        : "bg-emerald-50"
+                        : "bg-emerald-50 dark:bg-emerald-500/10"
                     }`}
                   >
                     <notification.icon
                       className={`w-5 h-5 ${
                         notification.priority === "high"
-                          ? "text-red-500"
+                          ? "text-red-500 dark:text-red-400"
                           : notification.category === "promo"
                           ? "text-purple-400"
-                          : "text-emerald-600"
+                          : "text-emerald-600 dark:text-emerald-400"
                       }`}
                       strokeWidth={2}
                     />
@@ -225,21 +225,21 @@ export default function InboxPage() {
                       <span
                         className={`text-[10px] font-semibold uppercase tracking-wider ${
                           notification.priority === "high"
-                            ? "text-red-500"
-                            : "text-gray-500"
+                            ? "text-red-500 dark:text-red-400"
+                            : "text-gray-500 dark:text-gray-400"
                         }`}
                       >
                         {notification.category}
                       </span>
-                      <span className="text-gray-500">•</span>
-                      <span className="text-xs text-gray-500 flex items-center gap-1">
+                      <span className="text-gray-500 dark:text-gray-400">•</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         {formatTimeAgo(notification.timestamp)}
                       </span>
                       {!notification.read && (
                         <>
-                          <span className="text-gray-500">•</span>
-                          <Badge className="px-1.5 py-0.5 bg-emerald-50 text-emerald-600 text-[9px] font-bold uppercase tracking-wider rounded">
+                          <span className="text-gray-500 dark:text-gray-400">•</span>
+                          <Badge className="px-1.5 py-0.5 bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 text-[9px] font-bold uppercase tracking-wider rounded">
                             New
                           </Badge>
                         </>
@@ -247,12 +247,12 @@ export default function InboxPage() {
                     </div>
                     <h3
                       className={`text-sm font-bold mb-1.5 ${
-                        !notification.read ? "text-gray-900" : "text-gray-700"
+                        !notification.read ? "text-[#0C0F14] dark:text-white" : "text-gray-700 dark:text-gray-300"
                       }`}
                     >
                       {notification.title}
                     </h3>
-                    <p className="text-xs text-gray-500 leading-relaxed pr-10">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed pr-10">
                       {notification.message}
                     </p>
                   </div>
@@ -267,7 +267,7 @@ export default function InboxPage() {
                   aria-label="Delete notification"
                 >
                   <Trash2
-                    className="w-3.5 h-3.5 text-gray-500 group-hover:text-red-500 transition-colors"
+                    className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400 group-hover:text-red-500 dark:group-hover:text-red-400 transition-colors"
                     strokeWidth={2}
                   />
                 </Button>
@@ -298,14 +298,14 @@ function FilterPill({
       onClick={onClick}
       className={`px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
         active
-          ? "bg-emerald-600 text-black"
-          : "bg-white text-gray-500 hover:bg-gray-100"
+          ? "bg-[#0D4F3C] text-white"
+          : "bg-white dark:bg-[#151A1F] text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5"
       }`}
     >
       {label}
       {count > 0 && (
         <span
-          className={`ml-1.5 ${active ? "text-black/70" : "text-gray-500"}`}
+          className={`ml-1.5 ${active ? "text-white/70" : "text-gray-500 dark:text-gray-400"}`}
         >
           ({count})
         </span>

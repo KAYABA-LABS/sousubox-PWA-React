@@ -105,7 +105,7 @@ export default function PlanReviewPage() {
 
   if (isSuccess) {
     return (
-      <main id="main-content" role="main" className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-5">
+      <main id="main-content" role="main" className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col items-center justify-center px-5">
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
@@ -115,8 +115,8 @@ export default function PlanReviewPage() {
         >
           <CheckCircle2 className="w-10 h-10" style={{ color: plan.color }} />
         </motion.div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Plan Created!</h1>
-        <p className="text-sm text-gray-500 text-center mb-6">
+        <h1 className="text-2xl font-bold text-[#0C0F14] dark:text-white mb-2">Plan Created!</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 text-center mb-6">
           Your {plan.name} plan is now active.
         </p>
         <Button
@@ -131,7 +131,7 @@ export default function PlanReviewPage() {
   }
 
   return (
-    <main id="main-content" role="main" className="min-h-screen bg-gray-50 flex flex-col pb-24">
+    <main id="main-content" role="main" className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col pb-24">
       {/* Header */}
       <motion.header
         role="banner"
@@ -142,12 +142,12 @@ export default function PlanReviewPage() {
         <div className="flex items-center gap-3">
           <Button
             onClick={() => router.back()}
-            className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center"
+            className="w-10 h-10 rounded-full border border-gray-200 dark:border-white/10 flex items-center justify-center"
             aria-label="Go back"
           >
-            <ArrowLeft className="w-5 h-5 text-gray-500" />
+            <ArrowLeft className="w-5 h-5 text-gray-500 dark:text-gray-400" />
           </Button>
-          <h1 className="text-lg font-bold text-gray-900">Review Plan</h1>
+          <h1 className="text-lg font-bold text-[#0C0F14] dark:text-white">Review Plan</h1>
         </div>
       </motion.header>
 
@@ -182,65 +182,65 @@ export default function PlanReviewPage() {
 
       {/* Summary */}
       <div className="flex-1 px-5 space-y-4">
-        <h2 className="text-base font-bold text-gray-900">Plan Summary</h2>
+        <h2 className="text-base font-bold text-[#0C0F14] dark:text-white">Plan Summary</h2>
 
-        <Card className="bg-white border border-gray-200 rounded-2xl divide-y divide-gray-200 shadow-none">
+        <Card className="bg-white dark:bg-[#151A1F] border border-gray-200 dark:border-white/10 rounded-2xl divide-y divide-gray-200 dark:divide-white/10 shadow-none">
           <div className="flex items-center gap-3 p-4">
-            <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
-              <DollarSign className="w-5 h-5 text-gray-500" />
+            <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-white/5 flex items-center justify-center">
+              <DollarSign className="w-5 h-5 text-gray-500 dark:text-gray-400" />
             </div>
             <div className="flex-1">
-              <p className="text-sm text-gray-500">Contribution Amount</p>
-              <p className="text-sm font-semibold text-gray-900">GH₵ {amount.toLocaleString()}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Contribution Amount</p>
+              <p className="text-sm font-semibold text-[#0C0F14] dark:text-white">GH₵ {amount.toLocaleString()}</p>
             </div>
           </div>
           <div className="flex items-center gap-3 p-4">
-            <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
-              <Calendar className="w-5 h-5 text-gray-500" />
+            <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-white/5 flex items-center justify-center">
+              <Calendar className="w-5 h-5 text-gray-500 dark:text-gray-400" />
             </div>
             <div className="flex-1">
-              <p className="text-sm text-gray-500">Frequency</p>
-              <p className="text-sm font-semibold text-gray-900">{frequency.replace("_", " ").toLowerCase().replace(/\b\w/g, (l) => l.toUpperCase())}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Frequency</p>
+              <p className="text-sm font-semibold text-[#0C0F14] dark:text-white">{frequency.replace("_", " ").toLowerCase().replace(/\b\w/g, (l) => l.toUpperCase())}</p>
             </div>
           </div>
           <div className="flex items-center gap-3 p-4">
-            <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-gray-500" />
+            <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-white/5 flex items-center justify-center">
+              <TrendingUp className="w-5 h-5 text-gray-500 dark:text-gray-400" />
             </div>
             <div className="flex-1">
-              <p className="text-sm text-gray-500">Interest Rate</p>
-              <p className="text-sm font-semibold text-gray-900">{plan.rate}% p.a.</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Interest Rate</p>
+              <p className="text-sm font-semibold text-[#0C0F14] dark:text-white">{plan.rate}% p.a.</p>
             </div>
           </div>
           <div className="flex items-center gap-3 p-4">
-            <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
-              <Clock className="w-5 h-5 text-gray-500" />
+            <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-white/5 flex items-center justify-center">
+              <Clock className="w-5 h-5 text-gray-500 dark:text-gray-400" />
             </div>
             <div className="flex-1">
-              <p className="text-sm text-gray-500">Estimated Return (12 months)</p>
-              <p className="text-sm font-semibold text-emerald-600">+GH₵ {projectedReturn.toFixed(2)}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Estimated Return (12 months)</p>
+              <p className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">+GH₵ {projectedReturn.toFixed(2)}</p>
             </div>
           </div>
         </Card>
 
         {/* Projected Total */}
-        <Card className="bg-emerald-50 border border-emerald-200 rounded-2xl p-5 shadow-none">
+        <Card className="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-2xl p-5 shadow-none">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs text-gray-500">Projected Total (12 months)</p>
-              <p className="text-2xl font-bold text-gray-900">GH₵ {totalAfter12Months.toFixed(2)}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Projected Total (12 months)</p>
+              <p className="text-2xl font-bold text-[#0C0F14] dark:text-white">GH₵ {totalAfter12Months.toFixed(2)}</p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center">
-              <TrendingUp className="w-6 h-6 text-emerald-600" />
+            <div className="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center">
+              <TrendingUp className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
             </div>
           </div>
         </Card>
 
-        {error && <p className="text-sm text-red-500">{error}</p>}
+        {error && <p className="text-sm text-red-500 dark:text-red-400">{error}</p>}
       </div>
 
       {/* CTA */}
-      <div className="fixed bottom-0 left-0 right-0 px-5 pb-6 pt-3 bg-gray-50 border-t border-gray-200">
+      <div className="fixed bottom-0 left-0 right-0 px-5 pb-6 pt-3 bg-[#FBF6EF] dark:bg-[#0C0F14] border-t border-gray-200 dark:border-white/10">
         <Button
           onClick={handleSubmit}
           disabled={isSubmitting}

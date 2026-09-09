@@ -124,16 +124,16 @@ export default function ActivityPage() {
 
   const getTransactionIconBg = (type: string, category: string) => {
     if (type === "credit" || category === "receive" || category === "deposit") {
-      return "bg-emerald-50";
+      return "bg-emerald-50 dark:bg-emerald-500/10";
     }
-    return "bg-white";
+    return "bg-white dark:bg-[#151A1F]";
   };
 
   const getTransactionColor = (type: string, category: string) => {
     if (type === "credit" || category === "receive" || category === "deposit") {
-      return "text-emerald-600";
+      return "text-emerald-600 dark:text-emerald-400";
     }
-    return "text-gray-900";
+    return "text-[#0C0F14] dark:text-white";
   };
 
   const groupTransactionsByDate = (transactions: Transaction[]) => {
@@ -171,13 +171,13 @@ export default function ActivityPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-emerald-600 animate-spin" />
+      <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-[#0D4F3C] dark:text-[#156B53] animate-spin" />
       </div>
     );
   }
   return (
-    <main id="main-content" role="main" className="min-h-screen bg-gray-50 flex flex-col pb-32">
+    <main id="main-content" role="main" className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col pb-32">
       <motion.header
         role="banner"
         initial={{ opacity: 0, y: -10 }}
@@ -185,9 +185,9 @@ export default function ActivityPage() {
         className="px-5 pt-6 pb-4"
       >
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold text-gray-900">Activity</h1>
-          <Button className="w-10 h-10 rounded-xl bg-white hover:bg-gray-100 flex items-center justify-center transition-colors" aria-label="Download">
-            <Download className="w-5 h-5 text-gray-500" strokeWidth={2} />
+          <h1 className="text-2xl font-bold text-[#0C0F14] dark:text-white">Activity</h1>
+          <Button className="w-10 h-10 rounded-xl bg-white dark:bg-[#151A1F] hover:bg-gray-100 dark:hover:bg-white/5 flex items-center justify-center transition-colors" aria-label="Download">
+            <Download className="w-5 h-5 text-gray-500 dark:text-gray-400" strokeWidth={2} />
           </Button>
         </div>
 
@@ -198,7 +198,7 @@ export default function ActivityPage() {
           className="relative mb-3"
         >
           <Search
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500"
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 dark:text-gray-400"
             strokeWidth={2}
           />
           <Input
@@ -206,7 +206,7 @@ export default function ActivityPage() {
             placeholder="Search transactions..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white rounded-xl pl-12 pr-4 py-3 text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00E660]/20"
+            className="w-full bg-white dark:bg-[#151A1F] rounded-xl pl-12 pr-4 py-3 text-sm text-[#0C0F14] dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0D4F3C]/20 dark:focus:ring-[#156B53]/20"
           />
         </motion.div>
 
@@ -249,17 +249,17 @@ export default function ActivityPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center py-20"
           >
-            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 rounded-full bg-white dark:bg-[#151A1F] flex items-center justify-center mx-auto mb-4">
               {searchQuery ? (
-                <Search className="w-8 h-8 text-gray-500" />
+                <Search className="w-8 h-8 text-gray-500 dark:text-gray-400" />
               ) : (
-                <ArrowUpRight className="w-8 h-8 text-gray-500" />
+                <ArrowUpRight className="w-8 h-8 text-gray-500 dark:text-gray-400" />
               )}
             </div>
-            <p className="text-gray-500 text-base">
+            <p className="text-gray-500 dark:text-gray-400 text-base">
               {searchQuery ? "No results found" : "No transactions yet"}
             </p>
-            <p className="text-gray-500 text-sm mt-2">
+            <p className="text-gray-500 dark:text-gray-400 text-sm mt-2">
               {searchQuery
                 ? "Try adjusting your search"
                 : "Your transaction history will appear here"}
@@ -274,7 +274,7 @@ export default function ActivityPage() {
             {Object.entries(groupTransactionsByDate(filteredTransactions)).map(
               ([date, dateTransactions]) => (
                 <div key={date}>
-                  <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-1 mb-3">
+                  <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-1 mb-3">
                     {date}
                   </h2>
                   <div className="space-y-2">
@@ -285,7 +285,7 @@ export default function ActivityPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.03 }}
                       >
-                        <Card className="bg-white rounded-2xl p-4 hover:bg-gray-100 transition-colors cursor-pointer">
+                        <Card className="bg-white dark:bg-[#151A1F] rounded-2xl p-4 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors cursor-pointer">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
                               <div
@@ -306,19 +306,19 @@ export default function ActivityPage() {
                                   )}
                                 </div>
                               </div>
-                              <div>
-                                <p className="text-gray-900 font-semibold text-sm">
+              <div>
+                                <p className="text-[#0C0F14] dark:text-white font-semibold text-sm">
                                   {transaction.merchant_name ||
                                     transaction.recipient_name ||
                                     transaction.sender_name ||
                                     transaction.description}
                                 </p>
                                 <div className="flex items-center gap-1.5 mt-0.5">
-                                  <p className="text-gray-500 text-xs capitalize">
+                                  <p className="text-gray-500 dark:text-gray-400 text-xs capitalize">
                                     {transaction.category.replace(/_/g, " ")}
                                   </p>
-                                  <span className="text-gray-500">•</span>
-                                  <p className="text-gray-500 text-xs">
+                                  <span className="text-gray-500 dark:text-gray-400">•</span>
+                                  <p className="text-gray-500 dark:text-gray-400 text-xs">
                                     {formatTime(transaction.created_at)}
                                   </p>
                                 </div>
@@ -339,10 +339,10 @@ export default function ActivityPage() {
                               <Badge
                                 className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium mt-1 ${
                                   transaction.status === "completed"
-                                    ? "bg-emerald-50 text-emerald-600"
+                                    ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400"
                                     : transaction.status === "pending"
-                                    ? "bg-yellow-500/10 text-yellow-500"
-                                    : "bg-gray-100 text-gray-500"
+                                    ? "bg-yellow-500/10 text-yellow-500 dark:text-yellow-400"
+                                    : "bg-gray-100 text-gray-500 dark:bg-white/5 dark:text-gray-400"
                                 }`}
                               >
                                 {transaction.status}
@@ -381,14 +381,14 @@ function FilterPill({
       onClick={onClick}
       className={`px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
         active
-          ? "bg-emerald-600 text-black"
-          : "bg-white text-gray-500 hover:bg-gray-100"
+          ? "bg-[#0D4F3C] text-white"
+          : "bg-white dark:bg-[#151A1F] text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5"
       }`}
     >
       {label}
       {count > 0 && (
         <span
-          className={`ml-1.5 ${active ? "text-black/70" : "text-gray-500"}`}
+          className={`ml-1.5 ${active ? "text-white/70" : "text-gray-500 dark:text-gray-400"}`}
         >
           ({count})
         </span>

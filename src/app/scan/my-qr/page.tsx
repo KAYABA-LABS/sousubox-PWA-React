@@ -69,7 +69,7 @@ export default function MyQRPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0C0F14] flex flex-col pb-8">
+    <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col pb-8">
       {/* Header */}
       <motion.header
         initial={{ opacity: 0, y: -10 }}
@@ -79,11 +79,11 @@ export default function MyQRPage() {
         <div className="flex items-center justify-between">
           <button
             onClick={() => router.back()}
-            className="w-10 h-10 rounded-xl bg-[#151A1F] hover:bg-[#1A1F25] flex items-center justify-center transition-colors"
+            className="w-10 h-10 rounded-xl bg-white dark:bg-[#151A1F] hover:bg-gray-50 dark:hover:bg-[#1A1F25] flex items-center justify-center transition-colors"
           >
-            <ArrowLeft className="w-5 h-5 text-white" strokeWidth={2} />
+            <ArrowLeft className="w-5 h-5 text-[#0C0F14] dark:text-white" strokeWidth={2} />
           </button>
-          <h1 className="text-lg font-semibold text-white">My QR Code</h1>
+          <h1 className="text-lg font-semibold text-[#0C0F14] dark:text-white">My QR Code</h1>
           <div className="w-10" />
         </div>
       </motion.header>
@@ -96,7 +96,7 @@ export default function MyQRPage() {
           className="w-full max-w-sm"
         >
           {/* QR Code Card */}
-          <div className="bg-white rounded-3xl p-8 mb-6">
+          <div className="bg-white rounded-3xl p-8 mb-6 border border-black/5 dark:border-transparent shadow-sm dark:shadow-none">
             {qrCodeUrl ? (
               <motion.img
                 initial={{ scale: 0.8, opacity: 0 }}
@@ -118,13 +118,13 @@ export default function MyQRPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="bg-[#151A1F] rounded-3xl p-6 mb-6"
+            className="bg-white dark:bg-[#151A1F] rounded-3xl p-6 mb-6"
           >
             <div className="text-center">
-              <h2 className="text-xl font-semibold text-white mb-2">
+              <h2 className="text-xl font-semibold text-[#0C0F14] dark:text-white mb-2">
                 {userName}
               </h2>
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 Account ••••{accountNumber.slice(-4)}
               </p>
             </div>
@@ -135,9 +135,9 @@ export default function MyQRPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="bg-[#00E660]/10 border border-[#00E660]/20 rounded-2xl p-4 mb-6"
+            className="bg-[#0D4F3C]/10 dark:bg-[#156B53]/10 border border-[#0D4F3C]/20 dark:border-[#156B53]/20 rounded-2xl p-4 mb-6"
           >
-            <p className="text-sm text-[#00E660] text-center">
+            <p className="text-sm text-[#0D4F3C] dark:text-[#156B53] text-center">
               Let others scan this code to send you money instantly
             </p>
           </motion.div>
@@ -153,7 +153,7 @@ export default function MyQRPage() {
       >
         <button
           onClick={handleShare}
-          className="w-full bg-[#00E660] hover:bg-[#00E660]/90 text-black font-semibold py-4 rounded-xl transition-all flex items-center justify-center gap-2"
+          className="w-full bg-[#0D4F3C] hover:bg-[#156B53] text-white font-semibold py-4 rounded-xl transition-all flex items-center justify-center gap-2"
         >
           {copied ? (
             <>
@@ -170,7 +170,7 @@ export default function MyQRPage() {
 
         <button
           onClick={() => router.back()}
-          className="w-full bg-[#151A1F] hover:bg-[#1A1F25] text-white font-semibold py-4 rounded-xl transition-all"
+          className="w-full bg-white dark:bg-[#151A1F] hover:bg-gray-50 dark:hover:bg-[#1A1F25] text-[#0C0F14] dark:text-white font-semibold py-4 rounded-xl transition-all"
         >
           Done
         </button>

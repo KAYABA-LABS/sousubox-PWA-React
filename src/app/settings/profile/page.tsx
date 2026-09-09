@@ -53,7 +53,7 @@ export default function ProfileSettings() {
       try {
         if (userId || isDevMode()) {
           const profile = await userService.getUserProfile(userId || "");
-          
+
           const backendName = [profile.firstName, profile.lastName].filter(Boolean).join(" ");
           setFullName(backendName || (user ? [user.firstName, user.lastName].filter(Boolean).join(" ") : ""));
           setEmail(profile.email || user?.emailAddresses?.[0]?.emailAddress || "");
@@ -121,22 +121,22 @@ export default function ProfileSettings() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#0C0F14] flex flex-col items-center justify-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,230,96,0.05),transparent_60%)]" />
-        <Loader2 className="w-8 h-8 border-2 border-[#00E660] border-t-transparent rounded-full animate-spin z-10" />
+      <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col items-center justify-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(13,79,60,0.05),transparent_60%)]" />
+        <Loader2 className="w-8 h-8 border-2 border-[#0D4F3C] dark:border-[#156B53] border-t-transparent rounded-full animate-spin z-10" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0C0F14] text-white p-6 pb-32 relative overflow-hidden">
+    <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] text-[#0C0F14] dark:text-white p-6 pb-32 relative overflow-hidden">
       {/* Background glow effects */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(0,230,96,0.06),transparent_60%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(13,79,60,0.06),transparent_60%)] pointer-events-none" />
 
       <div className="max-w-2xl mx-auto z-10 relative">
         <button
           onClick={() => router.push("/settings")}
-          className="flex items-center gap-2 text-zinc-400 hover:text-white mb-8 transition-colors group cursor-pointer"
+          className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400 hover:text-[#0C0F14] dark:hover:text-white mb-8 transition-colors group cursor-pointer"
         >
           <ArrowLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" />
           <span className="text-sm font-semibold">Settings</span>
@@ -144,16 +144,16 @@ export default function ProfileSettings() {
 
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-[#0C0F14] via-zinc-700 to-zinc-500 dark:from-white dark:via-zinc-200 dark:to-zinc-400 bg-clip-text text-transparent">
               Profile
             </h1>
-            <p className="text-zinc-500 text-sm">Update your personal details below.</p>
+            <p className="text-zinc-400 dark:text-zinc-500 text-sm">Update your personal details below.</p>
           </div>
           {saveSuccess && (
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="flex items-center gap-1.5 text-[#00E660] text-sm bg-[#00E660]/10 border border-[#00E660]/20 px-3 py-1.5 rounded-full font-semibold"
+              className="flex items-center gap-1.5 text-[#0D4F3C] dark:text-[#156B53] text-sm bg-[#0D4F3C]/10 dark:bg-[#156B53]/10 border border-[#0D4F3C]/20 dark:border-[#156B53]/20 px-3 py-1.5 rounded-full font-semibold"
             >
               <Check className="w-4 h-4" />
               Saved
@@ -161,18 +161,18 @@ export default function ProfileSettings() {
           )}
         </div>
 
-        <Card className="bg-white/[0.02] border-white/[0.08] backdrop-blur-md rounded-2xl overflow-hidden shadow-2xl">
-          <CardHeader className="border-b border-white/[0.04] p-6 bg-white/[0.01]">
-            <CardTitle className="text-lg font-bold text-white">Personal Information</CardTitle>
-            <CardDescription className="text-zinc-400 text-xs mt-1">
+        <Card className="bg-white dark:bg-white/[0.02] border-black/[0.06] dark:border-white/[0.08] backdrop-blur-md rounded-2xl overflow-hidden shadow-2xl">
+          <CardHeader className="border-b border-black/[0.04] dark:border-white/[0.04] p-6 bg-black/[0.01] dark:bg-white/[0.01]">
+            <CardTitle className="text-lg font-bold text-[#0C0F14] dark:text-white">Personal Information</CardTitle>
+            <CardDescription className="text-zinc-500 dark:text-zinc-400 text-xs mt-1">
               Your details are stored securely. Some fields are locked to match verified identity credentials.
             </CardDescription>
           </CardHeader>
           <CardContent className="p-6 space-y-6">
             {/* Full Name */}
             <div className="space-y-2">
-              <Label className="text-sm font-semibold text-zinc-300 flex items-center gap-2">
-                <User className="w-4 h-4 text-zinc-400" />
+              <Label className="text-sm font-semibold text-zinc-600 dark:text-zinc-300 flex items-center gap-2">
+                <User className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
                 <span>Full Name</span>
               </Label>
               <Input
@@ -180,31 +180,31 @@ export default function ProfileSettings() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Enter your full name"
-                className="bg-white/[0.02] border-white/[0.08] hover:border-white/[0.15] focus:border-[#00E660] text-white placeholder-zinc-500 rounded-xl h-11 transition-all"
+                className="bg-gray-50 dark:bg-white/[0.02] border-black/[0.08] dark:border-white/[0.08] hover:border-black/[0.15] dark:hover:border-white/[0.15] focus:border-[#0D4F3C] dark:focus:border-[#156B53] text-[#0C0F14] dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 rounded-xl h-11 transition-all"
               />
             </div>
 
             {/* Email (Read Only - Locked) */}
             <div className="space-y-2">
-              <Label className="text-sm font-semibold text-zinc-300 flex items-center gap-2">
-                <Mail className="w-4 h-4 text-zinc-400" />
+              <Label className="text-sm font-semibold text-zinc-600 dark:text-zinc-300 flex items-center gap-2">
+                <Mail className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
                 <span className="flex items-center gap-1.5">
                   Email Address
-                  <Lock className="w-3 h-3 text-zinc-500" />
+                  <Lock className="w-3 h-3 text-zinc-400 dark:text-zinc-500" />
                 </span>
               </Label>
               <Input
                 type="email"
                 value={email}
                 disabled
-                className="bg-white/[0.01] border-white/[0.04] text-zinc-500 rounded-xl h-11 cursor-not-allowed select-none"
+                className="bg-gray-50 dark:bg-white/[0.01] border-black/[0.04] dark:border-white/[0.04] text-zinc-400 dark:text-zinc-500 rounded-xl h-11 cursor-not-allowed select-none"
               />
             </div>
 
             {/* Phone */}
             <div className="space-y-2">
-              <Label className="text-sm font-semibold text-zinc-300 flex items-center gap-2">
-                <Phone className="w-4 h-4 text-zinc-400" />
+              <Label className="text-sm font-semibold text-zinc-600 dark:text-zinc-300 flex items-center gap-2">
+                <Phone className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
                 <span>Phone Number</span>
               </Label>
               <Input
@@ -212,28 +212,28 @@ export default function ProfileSettings() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="Enter your phone number"
-                className="bg-white/[0.02] border-white/[0.08] hover:border-white/[0.15] focus:border-[#00E660] text-white placeholder-zinc-500 rounded-xl h-11 transition-all"
+                className="bg-gray-50 dark:bg-white/[0.02] border-black/[0.08] dark:border-white/[0.08] hover:border-black/[0.15] dark:hover:border-white/[0.15] focus:border-[#0D4F3C] dark:focus:border-[#156B53] text-[#0C0F14] dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 rounded-xl h-11 transition-all"
               />
             </div>
 
             {/* Date of Birth */}
             <div className="space-y-2">
-              <Label className="text-sm font-semibold text-zinc-300 flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-zinc-400" />
+              <Label className="text-sm font-semibold text-zinc-600 dark:text-zinc-300 flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
                 <span>Date of Birth</span>
               </Label>
               <Input
                 type="date"
                 value={dateOfBirth}
                 onChange={(e) => setDateOfBirth(e.target.value)}
-                className="bg-white/[0.02] border-white/[0.08] hover:border-white/[0.15] focus:border-[#00E660] text-white rounded-xl h-11 transition-all [color-scheme:dark]"
+                className="bg-gray-50 dark:bg-white/[0.02] border-black/[0.08] dark:border-white/[0.08] hover:border-black/[0.15] dark:hover:border-white/[0.15] focus:border-[#0D4F3C] dark:focus:border-[#156B53] text-[#0C0F14] dark:text-white rounded-xl h-11 transition-all dark:[color-scheme:dark]"
               />
             </div>
 
             {/* Address */}
             <div className="space-y-2">
-              <Label className="text-sm font-semibold text-zinc-300 flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-zinc-400" />
+              <Label className="text-sm font-semibold text-zinc-600 dark:text-zinc-300 flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
                 <span>Physical Address</span>
               </Label>
               <Textarea
@@ -241,7 +241,7 @@ export default function ProfileSettings() {
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder="Enter your address"
                 rows={3}
-                className="bg-white/[0.02] border-white/[0.08] hover:border-white/[0.15] focus:border-[#00E660] text-white placeholder-zinc-500 rounded-xl transition-all resize-none p-3"
+                className="bg-gray-50 dark:bg-white/[0.02] border-black/[0.08] dark:border-white/[0.08] hover:border-black/[0.15] dark:hover:border-white/[0.15] focus:border-[#0D4F3C] dark:focus:border-[#156B53] text-[#0C0F14] dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 rounded-xl transition-all resize-none p-3"
               />
             </div>
 
@@ -249,16 +249,16 @@ export default function ProfileSettings() {
             <Button
               onClick={handleSave}
               disabled={isSaving}
-              className="w-full bg-gradient-to-r from-[#00E660] to-[#00C850] hover:from-[#00FF6A] hover:to-[#00D957] text-black font-bold h-12 rounded-xl transition-all duration-300 shadow-[0_4px_20px_rgba(0,230,96,0.2)] hover:shadow-[0_4px_25px_rgba(0,230,96,0.35)] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer border-none"
+              className="w-full bg-gradient-to-r from-[#0D4F3C] to-[#156B53] hover:from-[#156B53] hover:to-[#156B53] text-white font-bold h-12 rounded-xl transition-all duration-300 shadow-[0_4px_20px_rgba(13,79,60,0.2)] hover:shadow-[0_4px_25px_rgba(13,79,60,0.35)] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer border-none"
             >
               {isSaving ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin text-black" />
+                  <Loader2 className="w-4 h-4 animate-spin text-white" />
                   <span>Saving Changes...</span>
                 </>
               ) : (
                 <>
-                  <Save className="w-4 h-4 text-black" />
+                  <Save className="w-4 h-4 text-white" />
                   <span>Save Profile</span>
                 </>
               )}

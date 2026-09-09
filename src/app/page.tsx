@@ -25,8 +25,8 @@ export default function HomePage() {
   }, [isLoaded, isSignedIn, router]);
 
   return (
-    <div className="min-h-screen bg-[#0C0F14] flex items-center justify-center">
-      <Loader2 className="w-8 h-8 animate-spin text-[#00E660]" />
+    <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center">
+      <Loader2 className="w-8 h-8 animate-spin text-[#0D4F3C] dark:text-[#156B53]" />
     </div>
   );
 }

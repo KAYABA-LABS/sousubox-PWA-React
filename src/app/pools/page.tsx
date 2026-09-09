@@ -29,8 +29,8 @@ export default function PoolsPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#FBF6EF] flex items-center justify-center">
-          <Loader2 className="w-7 h-7 animate-spin text-emerald-700" />
+        <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center">
+          <Loader2 className="w-7 h-7 animate-spin text-[#0D4F3C] dark:text-[#156B53]" />
         </div>
       }
     >
@@ -172,14 +172,14 @@ function PoolsHubContent() {
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen bg-[#FBF6EF] flex items-center justify-center">
-        <Loader2 className="w-7 h-7 animate-spin text-emerald-700" />
+      <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center">
+        <Loader2 className="w-7 h-7 animate-spin text-[#0D4F3C] dark:text-[#156B53]" />
       </div>
     );
   }
 
   return (
-    <main id="main-content" role="main" className="min-h-screen bg-[#FBF6EF] flex flex-col pb-32 font-sans">
+    <main id="main-content" role="main" className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col pb-32 font-sans">
       <motion.header
         role="banner"
         initial={{ opacity: 0, y: -10 }}
@@ -187,38 +187,38 @@ function PoolsHubContent() {
         className="px-5 pt-6 pb-4 max-w-xl mx-auto w-full"
       >
         <div className="mb-5">
-          <p className="text-[10px] text-emerald-950/45 tracking-widest uppercase font-semibold">Your finances</p>
-          <h1 className="text-2xl font-bold text-emerald-950 tracking-tight">Pools</h1>
+          <p className="text-[10px] text-gray-500 dark:text-gray-400 tracking-widest uppercase font-semibold">Your finances</p>
+          <h1 className="text-2xl font-bold text-[#0C0F14] dark:text-white tracking-tight">Pools</h1>
         </div>
 
         <div className="relative mb-4">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-950/30" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500" />
           <input
             type="text"
             placeholder={searchPlaceholder}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-12 pl-11 pr-4 bg-white border border-emerald-950/10 rounded-2xl text-emerald-950 placeholder:text-emerald-950/30 text-sm font-medium focus:outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-700/10 transition-colors shadow-[0_2px_8px_rgba(20,60,40,0.04)]"
+            className="w-full h-12 pl-11 pr-4 bg-white dark:bg-[#151A1F] border border-black/10 dark:border-white/10 rounded-2xl text-[#0C0F14] dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 text-sm font-medium focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53] focus:ring-2 focus:ring-[#0D4F3C]/10 dark:focus:ring-[#156B53]/10 transition-colors shadow-[0_2px_8px_rgba(0,0,0,0.04)] dark:shadow-black/10"
           />
         </div>
 
         <Tabs value={activeTab} onValueChange={handleTabChange}>
-          <TabsList className="w-full h-auto bg-white border border-emerald-950/10 rounded-full p-1 gap-1 justify-between">
+          <TabsList className="w-full h-auto bg-white dark:bg-[#151A1F] border border-black/10 dark:border-white/10 rounded-full p-1 gap-1 justify-between">
             <TabsTrigger
               value="active"
-              className="flex-1 rounded-full px-3 py-2 text-[11px] font-bold uppercase tracking-wide text-emerald-950/50 data-[state=active]:bg-emerald-700 data-[state=active]:text-white data-[state=active]:shadow-none"
+              className="flex-1 rounded-full px-3 py-2 text-[11px] font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400 data-[state=active]:bg-[#0D4F3C] data-[state=active]:text-white data-[state=active]:shadow-none"
             >
               Active
             </TabsTrigger>
             <TabsTrigger
               value="joined"
-              className="flex-1 rounded-full px-3 py-2 text-[11px] font-bold uppercase tracking-wide text-emerald-950/50 data-[state=active]:bg-emerald-700 data-[state=active]:text-white data-[state=active]:shadow-none"
+              className="flex-1 rounded-full px-3 py-2 text-[11px] font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400 data-[state=active]:bg-[#0D4F3C] data-[state=active]:text-white data-[state=active]:shadow-none"
             >
               Joined
             </TabsTrigger>
             <TabsTrigger
               value="discover"
-              className="flex-1 rounded-full px-3 py-2 text-[11px] font-bold uppercase tracking-wide text-emerald-950/50 data-[state=active]:bg-emerald-700 data-[state=active]:text-white data-[state=active]:shadow-none"
+              className="flex-1 rounded-full px-3 py-2 text-[11px] font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400 data-[state=active]:bg-[#0D4F3C] data-[state=active]:text-white data-[state=active]:shadow-none"
             >
               Discover
             </TabsTrigger>
@@ -231,7 +231,7 @@ function PoolsHubContent() {
           <>
             {isActiveLoading && activePools === null ? (
               <div className="flex justify-center py-16">
-                <Loader2 className="w-6 h-6 animate-spin text-emerald-700" />
+                <Loader2 className="w-6 h-6 animate-spin text-[#0D4F3C] dark:text-[#156B53]" />
               </div>
             ) : filteredActive.length === 0 ? (
               <EmptyState
@@ -251,42 +251,44 @@ function PoolsHubContent() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
                       onClick={() => router.push(`/pools/${pool.id}?type=active`)}
-                      className="bg-white border border-emerald-950/[0.04] rounded-[24px] p-5 cursor-pointer hover:border-emerald-700/20 transition-all active:scale-[0.99] shadow-[0_2px_8px_rgba(20,60,40,0.06)]"
+                      className="bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 rounded-[24px] p-5 cursor-pointer hover:border-[#0D4F3C]/30 dark:hover:border-[#156B53]/30 transition-all active:scale-[0.99] shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20"
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-sm font-bold text-emerald-950 mb-1 truncate">
+                          <h3 className="text-sm font-bold text-[#0C0F14] dark:text-white mb-1 truncate">
                             {pool.template.name}
                           </h3>
-                          <p className="text-[10px] text-emerald-950/40 uppercase tracking-wider font-semibold mb-3">
+                          <p className="text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-wider font-semibold mb-3">
                             {pool.template.tier} Tier
                           </p>
-                          <div className="flex items-center gap-2.5 text-[11px] text-emerald-950/55 flex-wrap">
-                            <span className="font-bold text-emerald-950">GHS {pool.contributionAmount}</span>
-                            <span className="text-emerald-950/15">&bull;</span>
+                          <div className="flex items-center gap-2.5 text-[11px] text-gray-500 dark:text-gray-400 flex-wrap">
+                            <span className="font-bold text-[#0C0F14] dark:text-white">GHS {pool.contributionAmount}</span>
+                            <span className="text-gray-300 dark:text-gray-600">&bull;</span>
                             <span>Cycle {pool.currentCycle}/{pool.totalCycles}</span>
                           </div>
                         </div>
                         <div className="flex flex-col items-end gap-2 shrink-0 pl-2">
                           <span
                             className={`px-2.5 py-0.5 rounded-full text-[9px] font-bold tracking-wide uppercase ${
-                              isPaid ? "bg-emerald-50 text-emerald-700" : "bg-amber-100 text-amber-700"
+                              isPaid
+                                ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400"
+                                : "bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400"
                             }`}
                           >
                             {pool.contributionStatus}
                           </span>
-                          <ChevronRight className="w-4 h-4 text-emerald-950/25" />
+                          <ChevronRight className="w-4 h-4 text-gray-400 dark:text-gray-500" />
                         </div>
                       </div>
 
-                      <div className="mt-4 pt-3 border-t border-emerald-950/[0.06] space-y-2">
-                        <div className="flex justify-between text-[10px] text-emerald-950/50 font-semibold">
+                      <div className="mt-4 pt-3 border-t border-black/[0.06] dark:border-white/10 space-y-2">
+                        <div className="flex justify-between text-[10px] text-gray-500 dark:text-gray-400 font-semibold">
                           <span>Next due: {formatDate(pool.nextContributionDue)}</span>
                           <span>{percent}% of cycle</span>
                         </div>
-                        <div className="h-1.5 bg-[#FBF6EF] rounded-full overflow-hidden">
+                        <div className="h-1.5 bg-[#FBF6EF] dark:bg-white/10 rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-emerald-700 rounded-full transition-all duration-500"
+                            className="h-full bg-[#0D4F3C] rounded-full transition-all duration-500"
                             style={{ width: `${percent}%` }}
                           />
                         </div>
@@ -303,7 +305,7 @@ function PoolsHubContent() {
           <>
             {isJoinedLoading && joinedPools === null ? (
               <div className="flex justify-center py-16">
-                <Loader2 className="w-6 h-6 animate-spin text-emerald-700" />
+                <Loader2 className="w-6 h-6 animate-spin text-[#0D4F3C] dark:text-[#156B53]" />
               </div>
             ) : filteredJoined.length === 0 ? (
               <EmptyState
@@ -320,38 +322,38 @@ function PoolsHubContent() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
                     onClick={() => router.push(`/pools/${pool.id}?type=joined`)}
-                    className="bg-white border border-emerald-950/[0.04] rounded-[24px] p-5 cursor-pointer hover:border-emerald-700/20 transition-all active:scale-[0.99] shadow-[0_2px_8px_rgba(20,60,40,0.06)]"
+                    className="bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 rounded-[24px] p-5 cursor-pointer hover:border-[#0D4F3C]/30 dark:hover:border-[#156B53]/30 transition-all active:scale-[0.99] shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-sm font-bold text-emerald-950 mb-1 truncate">
+                        <h3 className="text-sm font-bold text-[#0C0F14] dark:text-white mb-1 truncate">
                           {pool.template.name}
                         </h3>
-                        <p className="text-[10px] text-emerald-950/40 uppercase tracking-wider font-semibold mb-3">
+                        <p className="text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-wider font-semibold mb-3">
                           {pool.template.tier} Tier &middot; {pool.frequency}
                         </p>
-                        <div className="flex items-center gap-2.5 text-[11px] text-emerald-950/55 flex-wrap">
-                          <span className="font-bold text-emerald-950">GHS {pool.contributionAmount}</span>
-                          <span className="text-emerald-950/15">&bull;</span>
+                        <div className="flex items-center gap-2.5 text-[11px] text-gray-500 dark:text-gray-400 flex-wrap">
+                          <span className="font-bold text-[#0C0F14] dark:text-white">GHS {pool.contributionAmount}</span>
+                          <span className="text-gray-300 dark:text-gray-600">&bull;</span>
                           <span>Payout GHS {pool.payoutAmount}</span>
-                          <span className="text-emerald-950/15">&bull;</span>
+                          <span className="text-gray-300 dark:text-gray-600">&bull;</span>
                           <span>{pool.totalCycles} cycles</span>
                         </div>
                       </div>
                       <div className="flex flex-col items-end gap-2 shrink-0 pl-2">
-                        <span className="px-2.5 py-0.5 rounded-full text-[9px] font-bold tracking-wide uppercase bg-amber-100 text-amber-700">
+                        <span className="px-2.5 py-0.5 rounded-full text-[9px] font-bold tracking-wide uppercase bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400">
                           Forming
                         </span>
-                        <ChevronRight className="w-4 h-4 text-emerald-950/25" />
+                        <ChevronRight className="w-4 h-4 text-gray-400 dark:text-gray-500" />
                       </div>
                     </div>
 
-                    <div className="mt-4 pt-3 border-t border-emerald-950/[0.06] flex items-center justify-between text-[10px] text-emerald-950/50 font-semibold">
+                    <div className="mt-4 pt-3 border-t border-black/[0.06] dark:border-white/10 flex items-center justify-between text-[10px] text-gray-500 dark:text-gray-400 font-semibold">
                       <span className="flex items-center gap-1">
                         <Users className="w-3.5 h-3.5" />
                         {pool.currentMemberCount}/{pool.template.maxMembers}
                       </span>
-                      <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 font-bold">
+                      <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 font-bold">
                         {pool.spotsRemaining} spots left
                       </span>
                     </div>
@@ -366,15 +368,15 @@ function PoolsHubContent() {
           <>
             {isDiscoverLoading && discoverPools === null ? (
               <div className="flex justify-center py-16">
-                <Loader2 className="w-6 h-6 animate-spin text-emerald-700" />
+                <Loader2 className="w-6 h-6 animate-spin text-[#0D4F3C] dark:text-[#156B53]" />
               </div>
             ) : filteredDiscover.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-16 text-center bg-white border border-emerald-950/[0.04] rounded-[28px] p-6 shadow-[0_2px_8px_rgba(20,60,40,0.06)]">
-                <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mb-4 text-amber-700">
+              <div className="flex flex-col items-center justify-center py-16 text-center bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 rounded-[28px] p-6 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20">
+                <div className="w-16 h-16 rounded-full bg-[#0D4F3C]/10 dark:bg-[#156B53]/10 flex items-center justify-center mb-4 text-[#0D4F3C] dark:text-[#156B53]">
                   <Sparkles className="w-7 h-7" strokeWidth={1.75} />
                 </div>
-                <h2 className="text-base font-bold text-emerald-950 mb-1">No pools available</h2>
-                <p className="text-xs text-emerald-950/50 max-w-[220px] leading-relaxed">
+                <h2 className="text-base font-bold text-[#0C0F14] dark:text-white mb-1">No pools available</h2>
+                <p className="text-xs text-gray-500 dark:text-gray-400 max-w-[220px] leading-relaxed">
                   All pools are currently filled. Check back soon.
                 </p>
               </div>
@@ -387,48 +389,48 @@ function PoolsHubContent() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
                     onClick={() => openPoolDetails(pool)}
-                    className="bg-white border border-emerald-950/[0.04] rounded-[24px] p-5 cursor-pointer hover:border-emerald-700/20 transition-all active:scale-[0.99] shadow-[0_2px_8px_rgba(20,60,40,0.06)]"
+                    className="bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 rounded-[24px] p-5 cursor-pointer hover:border-[#0D4F3C]/30 dark:hover:border-[#156B53]/30 transition-all active:scale-[0.99] shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20"
                   >
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap mb-1">
-                          <h3 className="text-sm font-bold text-emerald-950 truncate">{pool.template.name}</h3>
-                          <span className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wide bg-[#FBF6EF] text-emerald-950/50 border border-emerald-950/10">
+                          <h3 className="text-sm font-bold text-[#0C0F14] dark:text-white truncate">{pool.template.name}</h3>
+                          <span className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wide bg-black/5 dark:bg-white/10 text-gray-500 dark:text-gray-400 border border-black/10 dark:border-white/10">
                             {pool.template.tier}
                           </span>
                         </div>
                         {pool.template.description && (
-                          <p className="text-[11px] text-emerald-950/50 line-clamp-2 leading-relaxed">
+                          <p className="text-[11px] text-gray-500 dark:text-gray-400 line-clamp-2 leading-relaxed">
                             {pool.template.description}
                           </p>
                         )}
                       </div>
-                      <span className="shrink-0 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold">
+                      <span className="shrink-0 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 text-[10px] font-bold">
                         {pool.spotsRemaining} spots left
                       </span>
                     </div>
 
                     <div className="grid grid-cols-3 gap-2 mb-3">
-                      <div className="bg-[#FBF6EF] rounded-xl p-2.5 text-center">
-                        <p className="text-[9px] font-semibold text-emerald-950/40 uppercase tracking-wider mb-0.5">Pay</p>
-                        <p className="text-xs font-bold text-emerald-950">GHS {pool.contributionAmount}</p>
+                      <div className="bg-black/5 dark:bg-white/5 rounded-xl p-2.5 text-center">
+                        <p className="text-[9px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-0.5">Pay</p>
+                        <p className="text-xs font-bold text-[#0C0F14] dark:text-white">GHS {pool.contributionAmount}</p>
                       </div>
-                      <div className="bg-emerald-50 rounded-xl p-2.5 text-center">
-                        <p className="text-[9px] font-semibold text-emerald-700/70 uppercase tracking-wider mb-0.5">Payout</p>
-                        <p className="text-xs font-bold text-emerald-700">GHS {pool.payoutAmount}</p>
+                      <div className="bg-[#D4A843]/10 dark:bg-[#D4A843]/15 rounded-xl p-2.5 text-center">
+                        <p className="text-[9px] font-semibold text-[#B58A28] dark:text-[#E2BB5C] uppercase tracking-wider mb-0.5">Payout</p>
+                        <p className="text-xs font-bold text-[#B58A28] dark:text-[#E2BB5C]">GHS {pool.payoutAmount}</p>
                       </div>
-                      <div className="bg-[#FBF6EF] rounded-xl p-2.5 text-center">
-                        <p className="text-[9px] font-semibold text-emerald-950/40 uppercase tracking-wider mb-0.5">Cycles</p>
-                        <p className="text-xs font-bold text-emerald-950">{pool.totalCycles}</p>
+                      <div className="bg-black/5 dark:bg-white/5 rounded-xl p-2.5 text-center">
+                        <p className="text-[9px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-0.5">Cycles</p>
+                        <p className="text-xs font-bold text-[#0C0F14] dark:text-white">{pool.totalCycles}</p>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between pt-3 border-t border-emerald-950/[0.06] text-[11px] text-emerald-950/50 font-semibold">
+                    <div className="flex items-center justify-between pt-3 border-t border-black/[0.06] dark:border-white/10 text-[11px] text-gray-500 dark:text-gray-400 font-semibold">
                       <span className="flex items-center gap-1">
                         <Users className="w-3.5 h-3.5" />
                         {pool.currentMemberCount}/{pool.template.maxMembers} members
                       </span>
-                      <span className="flex items-center gap-1 text-emerald-700 font-bold">
+                      <span className="flex items-center gap-1 text-[#0D4F3C] dark:text-[#156B53] font-bold">
                         View details <ChevronRight className="w-3.5 h-3.5" />
                       </span>
                     </div>
@@ -472,15 +474,15 @@ function EmptyState({
   onCta: () => void;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center py-16 text-center bg-white border border-emerald-950/[0.04] rounded-[28px] p-6 shadow-[0_2px_8px_rgba(20,60,40,0.06)]">
-      <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mb-4 text-amber-700">
+    <div className="flex flex-col items-center justify-center py-16 text-center bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 rounded-[28px] p-6 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20">
+      <div className="w-16 h-16 rounded-full bg-[#0D4F3C]/10 dark:bg-[#156B53]/10 flex items-center justify-center mb-4 text-[#0D4F3C] dark:text-[#156B53]">
         <Users className="w-7 h-7" strokeWidth={1.75} />
       </div>
-      <h2 className="text-base font-bold text-emerald-950 mb-1">{message}</h2>
-      <p className="text-xs text-emerald-950/50 mb-6 max-w-[220px] leading-relaxed">{description}</p>
+      <h2 className="text-base font-bold text-[#0C0F14] dark:text-white mb-1">{message}</h2>
+      <p className="text-xs text-gray-500 dark:text-gray-400 mb-6 max-w-[220px] leading-relaxed">{description}</p>
       <button
         onClick={onCta}
-        className="px-6 py-2.5 bg-emerald-700 hover:bg-emerald-800 active:scale-95 text-white font-bold text-xs rounded-full transition-all"
+        className="px-6 py-2.5 bg-[#0D4F3C] hover:bg-[#156B53] active:scale-95 text-white font-bold text-xs rounded-full transition-all"
       >
         Find a pool
       </button>

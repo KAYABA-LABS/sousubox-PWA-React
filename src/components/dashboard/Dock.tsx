@@ -1,6 +1,7 @@
 import React from "react";
 import { Home, Users, TrendingUp, User, LucideIcon } from "lucide-react";
 import { Dock as MotionDock, DockItem, DockSeparator } from "@/components/motion/dock";
+import { dock } from "@/lib/variants";
 
 interface DockItemType {
   icon: LucideIcon;
@@ -24,22 +25,22 @@ const dockItems: DockItemType[] = [
 export const Dock = ({ activeItem, onItemClick }: DockProps) => {
   return (
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
-      <MotionDock size={48} className="bg-white/90 backdrop-blur-xl border border-emerald-950/[0.06] shadow-[0_4px_16px_rgba(20,60,40,0.12),0_16px_40px_rgba(20,60,40,0.10)]">
+      <MotionDock size={48} className={dock()}>
         {dockItems.map((item, index) => {
           const Icon = item.icon;
           const isActive = activeItem === item.id || activeItem === item.href;
 
           return (
             <React.Fragment key={item.id}>
-              {index === 3 && <DockSeparator className="bg-emerald-950/10" />}
+              {index === 3 && <DockSeparator className="bg-black/10 dark:bg-white/10" />}
               <DockItem
                 aria-label={item.label}
                 active={isActive}
                 onClick={() => onItemClick(item.href)}
-                className={`w-12 h-12 rounded-full transition-colors ${isActive ? "bg-emerald-700" : ""}`}
+                className={`w-12 h-12 rounded-full transition-colors ${isActive ? "bg-[#0D4F3C]" : ""}`}
               >
                 <Icon
-                  className={isActive ? "w-5 h-5 text-white" : "w-5 h-5 text-emerald-950/50"}
+                  className={isActive ? "w-5 h-5 text-white" : "w-5 h-5 text-gray-500 dark:text-gray-400"}
                   strokeWidth={isActive ? 2 : 1.75}
                 />
               </DockItem>

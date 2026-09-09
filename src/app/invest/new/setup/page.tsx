@@ -130,7 +130,7 @@ export default function PlanSetupPage() {
 
   if (isSuccess) {
     return (
-      <main id="main-content" role="main" className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-5">
+      <main id="main-content" role="main" className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col items-center justify-center px-5">
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
@@ -140,8 +140,8 @@ export default function PlanSetupPage() {
         >
           <CheckCircle2 className="w-10 h-10" style={{ color: plan.color }} />
         </motion.div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Plan Created!</h1>
-        <p className="text-sm text-gray-500 text-center">
+        <h1 className="text-2xl font-bold text-[#0C0F14] dark:text-white mb-2">Plan Created!</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
           Your {plan.name} plan is now active.
         </p>
       </main>
@@ -151,7 +151,7 @@ export default function PlanSetupPage() {
   const PlanIcon = plan.icon;
 
   return (
-    <main id="main-content" role="main" className="min-h-screen bg-gray-50 flex flex-col pb-24">
+    <main id="main-content" role="main" className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col pb-24">
       {/* Header */}
       <motion.header
         role="banner"
@@ -162,14 +162,14 @@ export default function PlanSetupPage() {
         <div className="flex items-center gap-3">
           <Button
             onClick={() => router.back()}
-            className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center"
+            className="w-10 h-10 rounded-full border border-gray-200 dark:border-white/10 flex items-center justify-center"
             aria-label="Go back"
           >
-            <ArrowLeft className="w-5 h-5 text-gray-500" />
+            <ArrowLeft className="w-5 h-5 text-gray-500 dark:text-gray-400" />
           </Button>
           <div>
-            <h1 className="text-lg font-bold text-gray-900">Set Up {plan.name}</h1>
-            <p className="text-xs text-gray-500">Configure your savings plan</p>
+            <h1 className="text-lg font-bold text-[#0C0F14] dark:text-white">Set Up {plan.name}</h1>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Configure your savings plan</p>
           </div>
         </div>
       </motion.header>
@@ -214,19 +214,19 @@ export default function PlanSetupPage() {
       <div className="flex-1 px-5 space-y-5">
         {/* Plan Name */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Plan Name</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Plan Name</label>
           <Input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g. Emergency Fund"
-            className="w-full h-12 px-4 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-emerald-200 transition-colors"
+            className="w-full h-12 px-4 bg-white dark:bg-[#151A1F] border border-gray-200 dark:border-white/10 rounded-xl text-[#0C0F14] dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:border-emerald-200 dark:focus:border-emerald-500/40 transition-colors"
           />
         </div>
 
         {/* Amount */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Contribution Amount (GH₵)
           </label>
           <Input
@@ -235,7 +235,7 @@ export default function PlanSetupPage() {
             onChange={(e) => setAmount(e.target.value)}
             placeholder={`Min. GH₵ ${plan.minAmount}`}
             min={plan.minAmount}
-            className="w-full h-12 px-4 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-emerald-200 transition-colors"
+            className="w-full h-12 px-4 bg-white dark:bg-[#151A1F] border border-gray-200 dark:border-white/10 rounded-xl text-[#0C0F14] dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:border-emerald-200 dark:focus:border-emerald-500/40 transition-colors"
           />
           <div className="flex gap-2 mt-2">
             {QUICK_AMOUNTS.filter((a) => a >= plan.minAmount).map((a) => (
@@ -245,7 +245,7 @@ export default function PlanSetupPage() {
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                   numericAmount === a
                     ? "text-gray-900"
-                    : "bg-gray-100 text-gray-500 hover:text-gray-900"
+                    : "bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
                 }`}
                 style={numericAmount === a ? { backgroundColor: plan.color } : {}}
               >
@@ -257,7 +257,7 @@ export default function PlanSetupPage() {
 
         {/* Frequency */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Frequency</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Frequency</label>
           <div className="grid grid-cols-4 gap-2">
             {FREQUENCIES.map((f) => (
               <Button
@@ -266,7 +266,7 @@ export default function PlanSetupPage() {
                 className={`py-2.5 rounded-xl text-xs font-medium transition-colors ${
                   frequency === f
                     ? "text-gray-900"
-                    : "bg-gray-100 text-gray-500 hover:text-gray-900"
+                    : "bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
                 }`}
                 style={frequency === f ? { backgroundColor: plan.color } : {}}
               >
@@ -279,7 +279,7 @@ export default function PlanSetupPage() {
         {/* Target Amount (for goal plan) */}
         {planId === "goal" && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Target Amount (GH₵)
             </label>
             <Input
@@ -287,19 +287,19 @@ export default function PlanSetupPage() {
               value={targetAmount}
               onChange={(e) => setTargetAmount(e.target.value)}
               placeholder="e.g. 10000"
-              className="w-full h-12 px-4 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-emerald-200 transition-colors"
+              className="w-full h-12 px-4 bg-white dark:bg-[#151A1F] border border-gray-200 dark:border-white/10 rounded-xl text-[#0C0F14] dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:border-emerald-200 dark:focus:border-emerald-500/40 transition-colors"
             />
           </div>
         )}
 
         {/* Error */}
         {error && (
-          <p className="text-sm text-red-500">{error}</p>
+          <p className="text-sm text-red-500 dark:text-red-400">{error}</p>
         )}
       </div>
 
       {/* Sticky CTA */}
-      <div className="fixed bottom-0 left-0 right-0 px-5 pb-6 pt-3 bg-gray-50 border-t border-gray-200">
+      <div className="fixed bottom-0 left-0 right-0 px-5 pb-6 pt-3 bg-[#FBF6EF] dark:bg-[#0C0F14] border-t border-gray-200 dark:border-white/10">
         <Button
           onClick={handleSubmit}
           disabled={!canSubmit || isSubmitting}

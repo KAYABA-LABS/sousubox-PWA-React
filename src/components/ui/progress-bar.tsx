@@ -11,7 +11,7 @@ interface ProgressBarProps {
   className?: string;
 }
 
-export function ProgressBar({ value, max = 100, color = "#00E660", size = "md", showLabel, className }: ProgressBarProps) {
+export function ProgressBar({ value, max = 100, color = "#0D4F3C", size = "md", showLabel, className }: ProgressBarProps) {
   const percentage = Math.min((value / max) * 100, 100);
   const heights = { sm: "h-1", md: "h-1.5", lg: "h-2" };
 

@@ -45,7 +45,7 @@ export const HowItWorksSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center max-w-2xl mx-auto mb-16"
         >
-          <span className="inline-block text-xs font-medium text-primary mb-4 uppercase tracking-wider border-[#00E660] border px-3.5 py-1 rounded-full bg-[#00E660]/50">
+          <span className="inline-block text-xs font-medium text-primary mb-4 uppercase tracking-wider border-[#0D4F3C] dark:border-[#156B53] border px-3.5 py-1 rounded-full bg-[#0D4F3C]/50 dark:bg-[#156B53]/50">
             How It Works
           </span>
           <h2 className="text-5xl text-foreground mb-4">
@@ -77,17 +77,17 @@ export const HowItWorksSection = () => {
                 {/* Step number */}
                 <div className="relative mx-auto w-32 h-32 mb-6">
                   <div className="absolute inset-0 rounded-2xl bg-secondary/50 border-2 border-transparent group-hover:border-primary/30 group-hover:bg-primary/10 transition-all duration-300" />
-                  <div className="absolute inset-0 rounded-2xl flex items-center justify-center bg-[#101114] group-hover:bg-[#00E660]/5">
+                  <div className="absolute inset-0 rounded-2xl flex items-center justify-center bg-[#101114] group-hover:bg-[#0D4F3C]/5 dark:group-hover:bg-[#156B53]/5">
                     <motion.div
                       whileHover={{ scale: 1.1, rotate: 5 }}
                       transition={{ type: "spring", stiffness: 300 }}
                     >
-                      <Icon className="w-10 h-10 text-[#00E660] group-hover:text-primary transition-colors duration-300" />
+                      <Icon className="w-10 h-10 text-[#0D4F3C] dark:text-[#156B53] group-hover:text-primary transition-colors duration-300" />
                     </motion.div>
                   </div>
                   <motion.span
                     whileHover={{ scale: 1.15 }}
-                    className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-[#00E660] group-hover:shadow-lg group-hover:shadow-[#00E660]/50 flex items-center justify-center text-black text-sm font-bold transition-all duration-300"
+                    className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-[#0D4F3C] group-hover:shadow-lg group-hover:shadow-[#0D4F3C]/50 flex items-center justify-center text-white text-sm font-bold transition-all duration-300"
                   >
                     {step.step.slice(-1)}
                   </motion.span>

@@ -88,7 +88,7 @@ export const FAQSection = () => {
                 value={`item-${index}`}
                 className="border-0 p-0"
               >
-                <Card className="bg-card/80 border border-border rounded-xl px-6 data-[state=open]:border-emerald-200 data-[state=open]:shadow-lg data-[state=open]:shadow-[#00E660]/10 transition-all">
+                <Card className="bg-card/80 border border-border rounded-xl px-6 data-[state=open]:border-emerald-200 data-[state=open]:shadow-lg data-[state=open]:shadow-[#0D4F3C]/10 transition-all">
                   <AccordionTrigger className="text-left text-foreground cursor-pointer hover:text-emerald-600 hover:no-underline py-5">
                     {faq.question}
                   </AccordionTrigger>

@@ -21,7 +21,7 @@ interface StatCardProps {
   className?: string;
 }
 
-export function StatCard({ icon, label, value, color = "#00E660", interactive, onClick }: StatCardProps) {
+export function StatCard({ icon, label, value, color = "#0D4F3C", interactive, onClick }: StatCardProps) {
   return (
     <div className={statCard({ interactive })} onClick={onClick}>
       <div

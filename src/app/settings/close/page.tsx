@@ -25,26 +25,26 @@ export default function CloseAccount() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0C0F14] p-6 pb-32">
+    <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] p-6 pb-32">
       <div className="max-w-2xl mx-auto">
         <button
           onClick={() => router.push("/settings")}
-          className="flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors"
+          className="flex items-center gap-2 text-gray-500 dark:text-gray-400 hover:text-[#0C0F14] dark:hover:text-white mb-6 transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
           <span>Settings</span>
         </button>
 
-        <h1 className="text-2xl font-bold text-white mb-6">Close Account</h1>
+        <h1 className="text-2xl font-bold text-[#0C0F14] dark:text-white mb-6">Close Account</h1>
 
-        <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 mb-6">
+        <div className="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-2xl p-6 mb-6">
           <div className="flex gap-3 mb-4">
             <AlertTriangle className="w-6 h-6 text-red-500 shrink-0" />
             <div>
-              <h3 className="text-white font-semibold mb-2">
+              <h3 className="text-[#0C0F14] dark:text-white font-semibold mb-2">
                 Warning: This action cannot be undone
               </h3>
-              <ul className="text-sm text-gray-300 space-y-1">
+              <ul className="text-sm text-gray-600 dark:text-gray-300 space-y-1">
                 <li>• All your data will be permanently deleted</li>
                 <li>• Your account balance must be $0.00</li>
                 <li>• You will lose access to all services</li>
@@ -54,9 +54,9 @@ export default function CloseAccount() {
           </div>
         </div>
 
-        <div className="bg-[#151A1F] rounded-2xl p-6 space-y-4">
+        <div className="bg-white dark:bg-[#151A1F] rounded-2xl p-6 space-y-4">
           <div>
-            <label className="text-sm text-gray-400 mb-2 block">
+            <label className="text-sm text-gray-500 dark:text-gray-400 mb-2 block">
               Type &quot;CLOSE MY ACCOUNT&quot; to confirm
             </label>
             <input
@@ -66,7 +66,7 @@ export default function CloseAccount() {
                 setConfirmation(e.target.value);
                 setShowWarning(false);
               }}
-              className="w-full bg-[#0C0F14] rounded-xl p-3 text-white border border-white/10 focus:border-red-500 focus:outline-none transition-colors"
+              className="w-full bg-gray-50 dark:bg-[#0C0F14] rounded-xl p-3 text-[#0C0F14] dark:text-white border border-black/10 dark:border-white/10 focus:border-red-500 focus:outline-none transition-colors"
               placeholder="Type here..."
             />
             {showWarning && (
@@ -93,14 +93,14 @@ export default function CloseAccount() {
             </button>
             <button
               onClick={() => router.push("/settings")}
-              className="px-6 bg-white/5 text-white font-medium py-3 rounded-xl hover:bg-white/10 transition-colors"
+              className="px-6 bg-black/5 dark:bg-white/5 text-[#0C0F14] dark:text-white font-medium py-3 rounded-xl hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
             >
               Cancel
             </button>
           </div>
         </div>
 
-        <p className="text-center text-sm text-gray-500 mt-6">
+        <p className="text-center text-sm text-gray-400 dark:text-gray-500 mt-6">
           Need help? Contact support before closing your account.
         </p>
       </div>

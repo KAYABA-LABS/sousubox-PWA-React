@@ -32,7 +32,7 @@ export function BalanceCard({
               maximumFractionDigits: 2,
             })}
           </motion.h1>
-          <span className="text-sm font-medium text-[#00E660]">+2145%</span>
+          <span className="text-sm font-medium text-[#0D4F3C] dark:text-[#156B53]">+2145%</span>
         </div>
       </div>
 

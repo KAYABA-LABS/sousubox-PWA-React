@@ -89,25 +89,25 @@ export default function ActivePlanDetailPage() {
 
   if (!isLoaded || isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
+      <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-[#0D4F3C] dark:text-[#156B53]" />
       </div>
     );
   }
 
   if (!plan) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-500">Plan not found</p>
+      <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center">
+        <p className="text-gray-500 dark:text-gray-400">Plan not found</p>
       </div>
     );
   }
 
-  const color = TYPE_COLORS[plan.type] || "#00E660";
+  const color = TYPE_COLORS[plan.type] || "#0D4F3C";
   const progress = plan.targetAmount > 0 ? Math.min((plan.currentBalance / plan.targetAmount) * 100, 100) : 0;
 
   return (
-    <main id="main-content" role="main" className="min-h-screen bg-gray-50 flex flex-col pb-24">
+    <main id="main-content" role="main" className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col pb-24">
       {/* Header */}
       <motion.header
         role="banner"
@@ -119,7 +119,7 @@ export default function ActivePlanDetailPage() {
           <Button variant="ghost" size="icon" onClick={() => router.back()} aria-label="Go back">
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <h1 className="text-lg font-bold text-gray-900">{plan.name}</h1>
+          <h1 className="text-lg font-bold text-[#0C0F14] dark:text-white">{plan.name}</h1>
         </div>
       </motion.header>
 
@@ -131,8 +131,8 @@ export default function ActivePlanDetailPage() {
         style={{ backgroundColor: `${color}15`, borderColor: `${color}30`, borderWidth: 1 }}
       >
         <div className="absolute -right-10 -top-10 w-32 h-32 rounded-full border-4" style={{ borderColor: `${color}10` }} />
-        <p className="text-xs text-gray-500 font-semibold tracking-wider">CURRENT BALANCE</p>
-        <h2 className="text-3xl font-extrabold text-gray-900 mt-1">
+        <p className="text-xs text-gray-500 dark:text-gray-400 font-semibold tracking-wider">CURRENT BALANCE</p>
+        <h2 className="text-3xl font-extrabold text-[#0C0F14] dark:text-white mt-1">
           GH₵ {plan.currentBalance?.toLocaleString("en-US", { minimumFractionDigits: 2 }) || "0.00"}
         </h2>
         <div className="flex items-center gap-4 mt-3">
@@ -140,7 +140,7 @@ export default function ActivePlanDetailPage() {
             <TrendingUp className="w-3.5 h-3.5" style={{ color }} />
             <span className="text-xs font-semibold" style={{ color }}>10% p.a.</span>
           </div>
-          <div className="text-xs text-gray-500">
+          <div className="text-xs text-gray-500 dark:text-gray-400">
             Target: GH₵ {plan.targetAmount?.toLocaleString() || "0"}
           </div>
         </div>
@@ -151,16 +151,16 @@ export default function ActivePlanDetailPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="mx-5 mt-4 bg-white border border-gray-200 rounded-2xl p-5"
+        className="mx-5 mt-4 bg-white dark:bg-[#151A1F] border border-gray-200 dark:border-white/10 rounded-2xl p-5"
       >
         <div className="flex items-center justify-between mb-2">
-          <p className="text-sm text-gray-500">Progress</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Progress</p>
           <p className="text-sm font-semibold" style={{ color }}>{progress.toFixed(0)}%</p>
         </div>
-        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+        <div className="h-2 bg-gray-100 dark:bg-white/10 rounded-full overflow-hidden">
           <div className="h-full rounded-full transition-all" style={{ width: `${progress}%`, backgroundColor: color }} />
         </div>
-        <div className="flex justify-between text-xs text-gray-500 mt-2">
+        <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-2">
           <span>GH₵ {plan.currentBalance?.toLocaleString() || "0"} saved</span>
           <span>GH₵ {plan.targetAmount?.toLocaleString() || "0"} target</span>
         </div>
@@ -171,42 +171,42 @@ export default function ActivePlanDetailPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="mx-5 mt-4 bg-white border border-gray-200 rounded-2xl divide-y divide-gray-200"
+        className="mx-5 mt-4 bg-white dark:bg-[#151A1F] border border-gray-200 dark:border-white/10 rounded-2xl divide-y divide-gray-200 dark:divide-white/10"
       >
         <div className="flex items-center gap-3 p-4">
-          <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
-            <DollarSign className="w-5 h-5 text-gray-500" />
+          <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-white/5 flex items-center justify-center">
+            <DollarSign className="w-5 h-5 text-gray-500 dark:text-gray-400" />
           </div>
           <div className="flex-1">
-            <p className="text-xs text-gray-500">Contribution Amount</p>
-            <p className="text-sm font-semibold text-gray-900">GH₵ {plan.contributionAmount?.toLocaleString() || "0"}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Contribution Amount</p>
+            <p className="text-sm font-semibold text-[#0C0F14] dark:text-white">GH₵ {plan.contributionAmount?.toLocaleString() || "0"}</p>
           </div>
         </div>
         <div className="flex items-center gap-3 p-4">
-          <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
-            <Calendar className="w-5 h-5 text-gray-500" />
+          <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-white/5 flex items-center justify-center">
+            <Calendar className="w-5 h-5 text-gray-500 dark:text-gray-400" />
           </div>
           <div className="flex-1">
-            <p className="text-xs text-gray-500">Frequency</p>
-            <p className="text-sm font-semibold text-gray-900">{plan.frequency?.replace("_", " ").toLowerCase().replace(/\b\w/g, (l: string) => l.toUpperCase()) || "Monthly"}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Frequency</p>
+            <p className="text-sm font-semibold text-[#0C0F14] dark:text-white">{plan.frequency?.replace("_", " ").toLowerCase().replace(/\b\w/g, (l: string) => l.toUpperCase()) || "Monthly"}</p>
           </div>
         </div>
         <div className="flex items-center gap-3 p-4">
-          <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
-            <Clock className="w-5 h-5 text-gray-500" />
+          <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-white/5 flex items-center justify-center">
+            <Clock className="w-5 h-5 text-gray-500 dark:text-gray-400" />
           </div>
           <div className="flex-1">
-            <p className="text-xs text-gray-500">Status</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Status</p>
             <p className="text-sm font-semibold" style={{ color }}>{plan.status}</p>
           </div>
         </div>
         <div className="flex items-center gap-3 p-4">
-          <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
-            <TrendingUp className="w-5 h-5 text-gray-500" />
+          <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-white/5 flex items-center justify-center">
+            <TrendingUp className="w-5 h-5 text-gray-500 dark:text-gray-400" />
           </div>
           <div className="flex-1">
-            <p className="text-xs text-gray-500">Type</p>
-            <p className="text-sm font-semibold text-gray-900">{plan.type?.replace("_", " ") || "Savings"}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Type</p>
+            <p className="text-sm font-semibold text-[#0C0F14] dark:text-white">{plan.type?.replace("_", " ") || "Savings"}</p>
           </div>
         </div>
       </motion.div>
@@ -221,7 +221,7 @@ export default function ActivePlanDetailPage() {
           style={{ backgroundColor: `${color}10`, borderColor: `${color}20`, borderWidth: 1 }}
         >
           <p className="text-xs font-semibold" style={{ color }}>NEXT CONTRIBUTION</p>
-          <p className="text-lg font-bold text-gray-900 mt-1">
+          <p className="text-lg font-bold text-[#0C0F14] dark:text-white mt-1">
             {new Date(plan.nextContributionDue).toLocaleDateString("en-US", {
               weekday: "long",
               month: "long",
@@ -232,7 +232,7 @@ export default function ActivePlanDetailPage() {
       )}
 
       {/* Actions */}
-      <div className="fixed bottom-0 left-0 right-0 px-5 pb-6 pt-3 bg-gray-50 border-t border-gray-200">
+      <div className="fixed bottom-0 left-0 right-0 px-5 pb-6 pt-3 bg-[#FBF6EF] dark:bg-[#0C0F14] border-t border-gray-200 dark:border-white/10">
         <div className="flex gap-3">
           <Button
             onClick={() => toast.info("Pause feature coming soon")}
@@ -267,7 +267,7 @@ export default function ActivePlanDetailPage() {
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="relative w-full sm:max-w-lg bg-white rounded-t-3xl sm:rounded-3xl overflow-hidden"
+              className="relative w-full sm:max-w-lg bg-white dark:bg-[#151A1F] rounded-t-3xl sm:rounded-3xl overflow-hidden"
             >
               {contributeSuccess ? (
                 <div className="p-8 text-center">
@@ -280,28 +280,28 @@ export default function ActivePlanDetailPage() {
                   >
                     <CheckCircle2 className="w-10 h-10" style={{ color }} />
                   </motion.div>
-                  <h2 className="text-xl font-bold text-gray-900 mb-2">Contribution Successful!</h2>
-                  <p className="text-sm text-gray-500">
+                  <h2 className="text-xl font-bold text-[#0C0F14] dark:text-white mb-2">Contribution Successful!</h2>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
                     GH₵ {parseFloat(contributeAmount || "0").toFixed(2)} has been added to your savings.
                   </p>
                 </div>
               ) : (
                 <>
-                  <div className="px-5 pt-5 pb-4 border-b border-gray-200">
+                  <div className="px-5 pt-5 pb-4 border-b border-gray-200 dark:border-white/10">
                     <div className="flex items-center justify-between mb-4">
-                      <h2 className="text-lg font-bold text-gray-900">Make a Contribution</h2>
+                      <h2 className="text-lg font-bold text-[#0C0F14] dark:text-white">Make a Contribution</h2>
                       <Button variant="ghost" size="icon" onClick={() => setShowContributeModal(false)} disabled={isContributing}>
                         <X className="w-5 h-5" />
                       </Button>
                     </div>
-                    <p className="text-sm text-gray-500">
-                      Add funds to your <span className="text-gray-900 font-medium">{plan.name}</span> savings plan.
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Add funds to your <span className="text-[#0C0F14] dark:text-white font-medium">{plan.name}</span> savings plan.
                     </p>
                   </div>
 
                   <div className="p-5 space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Amount (GH₵)</label>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Amount (GH₵)</label>
                       <Input
                         type="number"
                         value={contributeAmount}

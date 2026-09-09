@@ -1,7 +1,7 @@
 export const MOMO_PROVIDERS = [
-  { value: "mtn", label: "MTN Mobile Money" },
-  { value: "vodafone", label: "Telecel / Vodafone Cash" },
-  { value: "airteltigo", label: "AirtelTigo Money" },
+  { value: "MTN", label: "MTN Mobile Money" },
+  { value: "TELECEL", label: "Telecel / Vodafone Cash" },
+  { value: "AIRTELTIGO", label: "AirtelTigo Money" },
 ] as const;
 
 export const GHANA_PHONE_REGEX = /^(?:0|\+233)[235]\d{8}$/;

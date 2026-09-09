@@ -106,25 +106,25 @@ export default function InvestPage() {
 
   if (!isLoaded || kycLoading || isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
+      <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-[#0D4F3C] dark:text-[#156B53]" />
       </div>
     );
   }
 
   if (kycStatus !== "VERIFIED") {
     return (
-      <main id="main-content" role="main" className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-5 pb-32">
-        <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center mb-4">
-          <Shield className="w-8 h-8 text-emerald-600" />
+      <main id="main-content" role="main" className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col items-center justify-center px-5 pb-32">
+        <div className="w-16 h-16 rounded-full bg-[#0D4F3C]/10 dark:bg-[#156B53]/10 flex items-center justify-center mb-4">
+          <Shield className="w-8 h-8 text-[#0D4F3C] dark:text-[#156B53]" />
         </div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-2">Complete KYC Verification</h2>
-        <p className="text-sm text-gray-500 text-center mb-6">
+        <h2 className="text-lg font-semibold text-[#0C0F14] dark:text-white mb-2">Complete KYC Verification</h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400 text-center mb-6">
           Verify your identity to create and manage saving plans
         </p>
         <Button
           onClick={() => router.push("/kyc")}
-          className="px-6 py-3 bg-emerald-600 text-black font-semibold rounded-xl"
+          className="px-6 py-3 bg-[#0D4F3C] text-white font-semibold rounded-xl"
         >
           Start Verification
         </Button>
@@ -134,7 +134,7 @@ export default function InvestPage() {
   }
 
   return (
-    <main id="main-content" role="main" className="min-h-screen bg-gray-50 flex flex-col pb-32">
+    <main id="main-content" role="main" className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col pb-32">
       <motion.header
         role="banner"
         initial={{ opacity: 0, y: -10 }}
@@ -142,12 +142,12 @@ export default function InvestPage() {
         className="px-5 pt-6 pb-2"
       >
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">My Investments</h1>
-          <Button className="w-9 h-9 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center" aria-label="Help">
-            <span className="text-gray-500 text-lg">?</span>
+          <h1 className="text-2xl font-bold text-[#0C0F14] dark:text-white">My Investments</h1>
+          <Button className="w-9 h-9 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center" aria-label="Help">
+            <span className="text-gray-500 dark:text-gray-400 text-lg">?</span>
           </Button>
         </div>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
           Choose any of our savings options to start growing. Start now to join many others grow their money.
         </p>
       </motion.header>
@@ -155,23 +155,23 @@ export default function InvestPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mx-5 mt-4 bg-emerald-50 rounded-2xl p-5 overflow-hidden relative"
+        className="mx-5 mt-4 bg-[#0D4F3C]/10 dark:bg-[#156B53]/10 rounded-2xl p-5 overflow-hidden relative"
       >
-        <div className="absolute -right-12 -top-14 w-44 h-44 rounded-full border-[35px] border-gray-200" />
-        <div className="absolute -right-4 top-4 w-28 h-28 rounded-full border-[25px] border-gray-200" />
+        <div className="absolute -right-12 -top-14 w-44 h-44 rounded-full border-[35px] border-gray-200 dark:border-white/10" />
+        <div className="absolute -right-4 top-4 w-28 h-28 rounded-full border-[25px] border-gray-200 dark:border-white/10" />
 
-        <div className="inline-block bg-emerald-100 rounded-md px-3 py-1 mb-3">
-          <Badge className="text-[10px] font-bold text-gray-900 tracking-wider bg-emerald-100">PERSONAL SAVINGS</Badge>
+        <div className="inline-block bg-[#0D4F3C]/20 dark:bg-[#156B53]/20 rounded-md px-3 py-1 mb-3">
+          <Badge className="text-[10px] font-bold text-gray-900 dark:text-white tracking-wider bg-[#0D4F3C]/20 dark:bg-[#156B53]/20">PERSONAL SAVINGS</Badge>
         </div>
 
-        <p className="text-xs text-gray-900/60 mb-1">Total Balance</p>
+        <p className="text-xs text-gray-900/60 dark:text-white/60 mb-1">Total Balance</p>
         <div className="flex items-center gap-3 mb-4">
-          <h2 className="text-2xl font-bold text-gray-900">
+          <h2 className="text-2xl font-bold text-[#0C0F14] dark:text-white">
             {balanceVisible ? `GH₵${totalSaved.toLocaleString("en-US", { minimumFractionDigits: 2 })}` : "GH₵ ••••••"}
           </h2>
           <Button
             onClick={() => setBalanceVisible(!balanceVisible)}
-            className="text-gray-900/60 hover:text-gray-900"
+            className="text-gray-900/60 dark:text-white/60 hover:text-gray-900 dark:hover:text-white"
             aria-label={balanceVisible ? "Hide balance" : "Show balance"}
           >
             {balanceVisible ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -181,13 +181,13 @@ export default function InvestPage() {
         <div className="flex items-center justify-between">
           <Button
             onClick={() => router.push("/invest/new")}
-            className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 rounded-xl px-4 py-2.5 transition-colors"
+            className="flex items-center gap-2 bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 rounded-xl px-4 py-2.5 transition-colors"
           >
-            <span className="text-sm font-semibold text-gray-900">New Investment +</span>
+            <span className="text-sm font-semibold text-[#0C0F14] dark:text-white">New Investment +</span>
           </Button>
-          <Button className="flex items-center gap-1.5 bg-emerald-100 rounded-lg px-3 py-1.5">
-            <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
-            <span className="text-xs font-semibold text-emerald-600">9.1% increase</span>
+          <Button className="flex items-center gap-1.5 bg-emerald-100 dark:bg-emerald-500/20 rounded-lg px-3 py-1.5">
+            <TrendingUp className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">9.1% increase</span>
           </Button>
         </div>
       </motion.div>
@@ -198,28 +198,28 @@ export default function InvestPage() {
         transition={{ delay: 0.1 }}
         className="mx-5 mt-4"
       >
-        <Card className="bg-white border-gray-200 rounded-2xl p-5">
-          <p className="text-xs text-gray-500 tracking-wider font-semibold mb-1">PORTFOLIO SUMMARY</p>
+        <Card className="bg-white dark:bg-[#151A1F] border-gray-200 dark:border-white/10 rounded-2xl p-5">
+          <p className="text-xs text-gray-500 dark:text-gray-400 tracking-wider font-semibold mb-1">PORTFOLIO SUMMARY</p>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-bold text-gray-900">GH₵ {totalSaved.toLocaleString("en-US", { minimumFractionDigits: 2 })}</h3>
-            <Badge className="flex items-center gap-1 bg-emerald-50 rounded-lg px-2 py-1">
-              <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
-              <span className="text-xs font-bold text-emerald-600">+8.2%</span>
+            <h3 className="text-xl font-bold text-[#0C0F14] dark:text-white">GH₵ {totalSaved.toLocaleString("en-US", { minimumFractionDigits: 2 })}</h3>
+            <Badge className="flex items-center gap-1 bg-emerald-50 dark:bg-emerald-500/10 rounded-lg px-2 py-1">
+              <TrendingUp className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">+8.2%</span>
             </Badge>
           </div>
 
-          <div className="flex items-center divide-x divide-white/10">
+          <div className="flex items-center divide-x divide-gray-200 dark:divide-white/10">
             <div className="flex-1 text-center">
-              <p className="text-xs text-gray-500 font-semibold">Active Plans</p>
-              <p className="text-base font-bold text-gray-900 mt-1">{activePlans}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 font-semibold">Active Plans</p>
+              <p className="text-base font-bold text-[#0C0F14] dark:text-white mt-1">{activePlans}</p>
             </div>
             <div className="flex-1 text-center">
-              <p className="text-xs text-gray-500 font-semibold">Total Returns</p>
-              <p className="text-base font-bold text-emerald-600 mt-1">GH₵ 0.00</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 font-semibold">Total Returns</p>
+              <p className="text-base font-bold text-emerald-600 dark:text-emerald-400 mt-1">GH₵ 0.00</p>
             </div>
             <div className="flex-1 text-center">
-              <p className="text-xs text-gray-500 font-semibold">Avg. Rate</p>
-              <p className="text-base font-bold text-gray-900 mt-1">10%</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 font-semibold">Avg. Rate</p>
+              <p className="text-base font-bold text-[#0C0F14] dark:text-white mt-1">10%</p>
             </div>
           </div>
         </Card>
@@ -227,8 +227,8 @@ export default function InvestPage() {
 
       <div className="px-5 mt-6">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-base font-bold text-gray-900">Good Opportunities</h2>
-          <Button className="text-sm text-emerald-600 font-semibold">View all</Button>
+          <h2 className="text-base font-bold text-[#0C0F14] dark:text-white">Good Opportunities</h2>
+          <Button className="text-sm text-[#0D4F3C] dark:text-[#156B53] font-semibold">View all</Button>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
@@ -274,7 +274,7 @@ export default function InvestPage() {
 
       {goals.length > 0 && (
         <div className="px-5 mt-6">
-          <h2 className="text-base font-bold text-gray-900 mb-3">Your Goals</h2>
+          <h2 className="text-base font-bold text-[#0C0F14] dark:text-white mb-3">Your Goals</h2>
           <div className="space-y-3">
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             {goals.map((goal: any, index: number) => (
@@ -284,38 +284,38 @@ export default function InvestPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
               >
-                <Card className="bg-white border-gray-200 rounded-2xl p-4">
+                <Card className="bg-white dark:bg-[#151A1F] border-gray-200 dark:border-white/10 rounded-2xl p-4">
                   <div className="flex items-start justify-between mb-2">
                     <div>
-                      <h3 className="text-sm font-semibold text-gray-900">{goal.name}</h3>
-                      <p className="text-xs text-gray-500">{goal.type.replace("_", " ")}</p>
+                      <h3 className="text-sm font-semibold text-[#0C0F14] dark:text-white">{goal.name}</h3>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{goal.type.replace("_", " ")}</p>
                     </div>
                     <Badge
                       className={`px-2 py-1 rounded-lg text-xs font-medium ${
                         goal.status === "ACTIVE"
-                          ? "bg-emerald-50 text-emerald-600"
+                          ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400"
                           : goal.status === "COMPLETED"
                             ? "bg-blue-500/10 text-blue-400"
-                            : "bg-gray-100 text-gray-500"
+                            : "bg-gray-100 text-gray-500 dark:bg-white/5 dark:text-gray-400"
                       }`}
                     >
                       {goal.status}
                     </Badge>
                   </div>
-                  <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden mb-2">
+                  <div className="h-1.5 bg-gray-100 dark:bg-white/10 rounded-full overflow-hidden mb-2">
                     <div
-                      className="h-full bg-emerald-600 rounded-full"
+                      className="h-full bg-[#0D4F3C] rounded-full"
                       style={{
                         width: `${goal.target > 0 ? Math.min((goal.balance / goal.target) * 100, 100) : 0}%`,
                       }}
                     />
                   </div>
-                  <div className="flex justify-between text-xs text-gray-500">
+                  <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
                     <span>GH₵{goal.balance.toLocaleString()} saved</span>
                     <span>GH₵{goal.target.toLocaleString()} target</span>
                   </div>
                   {goal.dueDays !== null && (
-                    <p className="text-xs text-emerald-600 mt-2">
+                    <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-2">
                       {goal.dueDays > 0 ? `Due in ${goal.dueDays} days` : "Overdue"}
                     </p>
                   )}

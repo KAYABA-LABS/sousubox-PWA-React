@@ -11,19 +11,19 @@ export default function AccessibilitySettings() {
   const [reduceMotion, setReduceMotion] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#0C0F14] p-6 pb-32">
+    <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] p-6 pb-32">
       <div className="max-w-2xl mx-auto">
         <button
           onClick={() => router.push("/settings")}
-          className="flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors"
+          className="flex items-center gap-2 text-gray-500 dark:text-gray-400 hover:text-[#0C0F14] dark:hover:text-white mb-6 transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
           <span>Settings</span>
         </button>
-        <h1 className="text-2xl font-bold text-white mb-6">Accessibility</h1>
+        <h1 className="text-2xl font-bold text-[#0C0F14] dark:text-white mb-6">Accessibility</h1>
         <div className="space-y-4">
-          <div className="bg-[#151A1F] rounded-2xl p-4">
-            <label className="text-sm text-gray-400 mb-3 block">
+          <div className="bg-white dark:bg-[#151A1F] rounded-2xl p-4">
+            <label className="text-sm text-gray-500 dark:text-gray-400 mb-3 block">
               Font Size
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -33,8 +33,8 @@ export default function AccessibilitySettings() {
                   onClick={() => setFontSize(size)}
                   className={`py-2 rounded-lg capitalize ${
                     fontSize === size
-                      ? "bg-[#00E660] text-black"
-                      : "bg-white/5 text-white"
+                      ? "bg-[#0D4F3C] text-white"
+                      : "bg-black/5 dark:bg-white/5 text-[#0C0F14] dark:text-white"
                   }`}
                 >
                   {size}
@@ -42,15 +42,15 @@ export default function AccessibilitySettings() {
               ))}
             </div>
           </div>
-          <div className="bg-[#151A1F] rounded-2xl p-4 flex justify-between items-center">
+          <div className="bg-white dark:bg-[#151A1F] rounded-2xl p-4 flex justify-between items-center">
             <div>
-              <h3 className="text-white font-medium">High Contrast</h3>
-              <p className="text-sm text-gray-400">Increase color contrast</p>
+              <h3 className="text-[#0C0F14] dark:text-white font-medium">High Contrast</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Increase color contrast</p>
             </div>
             <button
               onClick={() => setHighContrast(!highContrast)}
               className={`relative w-12 h-6 rounded-full transition-colors ${
-                highContrast ? "bg-[#00E660]" : "bg-gray-600"
+                highContrast ? "bg-[#0D4F3C]" : "bg-gray-300 dark:bg-gray-600"
               }`}
             >
               <span
@@ -60,15 +60,15 @@ export default function AccessibilitySettings() {
               />
             </button>
           </div>
-          <div className="bg-[#151A1F] rounded-2xl p-4 flex justify-between items-center">
+          <div className="bg-white dark:bg-[#151A1F] rounded-2xl p-4 flex justify-between items-center">
             <div>
-              <h3 className="text-white font-medium">Reduce Motion</h3>
-              <p className="text-sm text-gray-400">Minimize animations</p>
+              <h3 className="text-[#0C0F14] dark:text-white font-medium">Reduce Motion</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Minimize animations</p>
             </div>
             <button
               onClick={() => setReduceMotion(!reduceMotion)}
               className={`relative w-12 h-6 rounded-full transition-colors ${
-                reduceMotion ? "bg-[#00E660]" : "bg-gray-600"
+                reduceMotion ? "bg-[#0D4F3C]" : "bg-gray-300 dark:bg-gray-600"
               }`}
             >
               <span

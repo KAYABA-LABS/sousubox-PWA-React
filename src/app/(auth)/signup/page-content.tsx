@@ -430,9 +430,9 @@ export default function SignUpPageContent() {
   const stepIndex = STEPS.indexOf(step);
 
   const stepIcons: Record<Step, React.ReactNode> = {
-    phone: <PhoneCall className="w-5 h-5 text-amber-700" strokeWidth={2} />,
-    verify: <ShieldCheck className="w-5 h-5 text-amber-700" strokeWidth={2} />,
-    details: <UserRound className="w-5 h-5 text-amber-700" strokeWidth={2} />,
+    phone: <PhoneCall className="w-5 h-5 text-[#0D4F3C] dark:text-[#156B53]" strokeWidth={2} />,
+    verify: <ShieldCheck className="w-5 h-5 text-[#0D4F3C] dark:text-[#156B53]" strokeWidth={2} />,
+    details: <UserRound className="w-5 h-5 text-[#0D4F3C] dark:text-[#156B53]" strokeWidth={2} />,
   };
 
   // const handleCodeChange = (index: number, value: string) => {
@@ -642,16 +642,16 @@ export default function SignUpPageContent() {
     };
 
   return (
-    <div className="min-h-screen bg-[#FBF6EF] flex flex-col font-sans">
+    <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col font-sans">
       {/* Header */}
       <header className="flex items-center justify-between px-6 py-6">
         <Link href="/" className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-full bg-emerald-700 flex items-center justify-center text-white">
+          <div className="w-9 h-9 rounded-full bg-[#0D4F3C] flex items-center justify-center text-white">
             <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6" />
             </svg>
           </div>
-          <span className="font-bold text-lg text-emerald-950 tracking-tight">SusuChain</span>
+          <span className="font-bold text-lg text-[#0C0F14] dark:text-white tracking-tight">SusuChain</span>
         </Link>
 
         {/* Step indicator */}
@@ -661,16 +661,16 @@ export default function SignUpPageContent() {
               <div
                 className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold transition-colors ${
                   i < stepIndex
-                    ? "bg-emerald-700 text-white"
+                    ? "bg-[#0D4F3C] text-white"
                     : i === stepIndex
-                    ? "bg-amber-100 text-amber-700 ring-2 ring-amber-200"
-                    : "bg-emerald-950/5 text-emerald-950/30"
+                    ? "bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 ring-2 ring-amber-200 dark:ring-amber-500/20"
+                    : "bg-black/5 dark:bg-white/10 text-gray-400 dark:text-gray-600"
                 }`}
               >
                 {i < stepIndex ? <Check className="w-3 h-3" strokeWidth={3} /> : i + 1}
               </div>
               {i < STEPS.length - 1 && (
-                <div className={`w-4 h-0.5 rounded-full ${i < stepIndex ? "bg-emerald-700" : "bg-emerald-950/10"}`} />
+                <div className={`w-4 h-0.5 rounded-full ${i < stepIndex ? "bg-[#0D4F3C]" : "bg-black/10 dark:bg-white/10"}`} />
               )}
             </div>
           ))}
@@ -685,18 +685,18 @@ export default function SignUpPageContent() {
           transition={{ duration: 0.4 }}
           className="w-full max-w-md"
         >
-          <div className="bg-white rounded-[28px] p-8 sm:p-10 shadow-[0_2px_8px_rgba(20,60,40,0.06),0_16px_40px_rgba(20,60,40,0.08)] border border-emerald-950/[0.04]">
+          <div className="bg-white dark:bg-[#151A1F] rounded-[28px] p-8 sm:p-10 shadow-[0_2px_8px_rgba(0,0,0,0.06),0_16px_40px_rgba(0,0,0,0.08)] dark:shadow-black/20 border border-black/[0.04] dark:border-white/10">
             {/* Header */}
             <div className="mb-8">
-              <div className="w-11 h-11 rounded-full bg-amber-100 flex items-center justify-center mb-5">
+              <div className="w-11 h-11 rounded-full bg-[#0D4F3C]/10 dark:bg-[#156B53]/10 flex items-center justify-center mb-5">
                 {stepIcons[step]}
               </div>
-              <h1 className="text-[26px] leading-tight font-bold text-emerald-950 tracking-tight">
+              <h1 className="text-[26px] leading-tight font-bold text-[#0C0F14] dark:text-white tracking-tight">
                 {step === "phone" && "Create your account"}
                 {step === "verify" && "Check your phone"}
                 {step === "details" && "Almost there"}
               </h1>
-              <p className="text-[15px] text-emerald-950/55 mt-2 leading-relaxed">
+              <p className="text-[15px] text-gray-500 dark:text-gray-400 mt-2 leading-relaxed">
                 {step === "phone" && "Start saving together with your phone number."}
                 {step === "verify" && `We sent a 6-digit code to ${phoneNumber}`}
                 {step === "details" && "Tell us a little about yourself."}
@@ -722,7 +722,7 @@ export default function SignUpPageContent() {
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(formatPhone(e.target.value))}
                       autoFocus
-                      className="flex-1 h-14 px-4 bg-[#FBF6EF] border border-emerald-950/10 rounded-2xl text-emerald-950 placeholder:text-emerald-950/30 text-[15px] font-medium focus:outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-700/10 transition-colors"
+                      className="flex-1 h-14 px-4 bg-[#FBF6EF] dark:bg-[#0C0F14] border border-black/10 dark:border-white/10 rounded-2xl text-[#0C0F14] dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 text-[15px] font-medium focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53] focus:ring-2 focus:ring-[#0D4F3C]/10 dark:focus:ring-[#156B53]/10 transition-colors"
                     />
                   </div>
 
@@ -732,7 +732,7 @@ export default function SignUpPageContent() {
                     <motion.p
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2.5"
+                      className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 rounded-xl px-4 py-2.5"
                     >
                       {error}
                     </motion.p>
@@ -741,7 +741,7 @@ export default function SignUpPageContent() {
                   <button
                     type="submit"
                     disabled={!phoneNumber.trim() || isLoading}
-                    className="w-full h-14 bg-emerald-700 hover:bg-emerald-800 active:scale-[0.98] text-white font-semibold rounded-2xl transition-all disabled:opacity-40 disabled:active:scale-100 shadow-[0_4px_14px_rgba(4,120,87,0.25)]"
+                    className="w-full h-14 bg-[#0D4F3C] hover:bg-[#156B53] active:scale-[0.98] text-white font-semibold rounded-2xl transition-all disabled:opacity-40 disabled:active:scale-100 shadow-[0_4px_14px_rgba(13,79,60,0.25)]"
                   >
                     {isLoading ? (
                       <Loader2 className="w-5 h-5 animate-spin mx-auto" />
@@ -780,7 +780,7 @@ export default function SignUpPageContent() {
                         onKeyDown={(e) => handleCodeKeyDown(i, e)}
                         onPaste={handleCodePaste}
                         autoComplete="one-time-code"
-                        className="w-12 h-14 text-center text-xl font-bold text-emerald-950 bg-[#FBF6EF] border-2 border-emerald-950/10 rounded-2xl focus:outline-none focus:border-emerald-700 transition-colors"
+                        className="w-12 h-14 text-center text-xl font-bold text-[#0C0F14] dark:text-white bg-[#FBF6EF] dark:bg-[#0C0F14] border-2 border-black/10 dark:border-white/10 rounded-2xl focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53] transition-colors"
                       />
                     ))}
                   </div>
@@ -789,7 +789,7 @@ export default function SignUpPageContent() {
                     <motion.p
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2.5 text-center"
+                      className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 rounded-xl px-4 py-2.5 text-center"
                     >
                       {error}
                     </motion.p>
@@ -799,7 +799,7 @@ export default function SignUpPageContent() {
                     <button
                       type="submit"
                       disabled={code.join("").length < 6 || isLoading}
-                      className="w-full h-14 bg-emerald-700 hover:bg-emerald-800 active:scale-[0.98] text-white font-semibold rounded-2xl transition-all disabled:opacity-40 disabled:active:scale-100 shadow-[0_4px_14px_rgba(4,120,87,0.25)]"
+                      className="w-full h-14 bg-[#0D4F3C] hover:bg-[#156B53] active:scale-[0.98] text-white font-semibold rounded-2xl transition-all disabled:opacity-40 disabled:active:scale-100 shadow-[0_4px_14px_rgba(13,79,60,0.25)]"
                     >
                       {isLoading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "Continue"}
                     </button>
@@ -810,7 +810,7 @@ export default function SignUpPageContent() {
                         setCode(["", "", "", "", "", ""]);
                         setError("");
                       }}
-                      className="w-full text-center text-sm font-medium text-emerald-950/50 hover:text-emerald-700 transition-colors py-1"
+                      className="w-full text-center text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-[#0D4F3C] dark:hover:text-[#156B53] transition-colors py-1"
                     >
                       Use a different number
                     </button>
@@ -828,9 +828,9 @@ export default function SignUpPageContent() {
                   onSubmit={handleCompleteProfile}
                   className="space-y-5"
                 >
-                  <div className="flex items-center gap-2.5 px-4 py-3 bg-emerald-50 rounded-2xl">
-                    <Check className="w-4 h-4 text-emerald-700 shrink-0" strokeWidth={2.5} />
-                    <span className="text-sm font-medium text-emerald-800">{phoneNumber} verified</span>
+                  <div className="flex items-center gap-2.5 px-4 py-3 bg-emerald-50 dark:bg-emerald-500/10 rounded-2xl">
+                    <Check className="w-4 h-4 text-emerald-700 dark:text-emerald-400 shrink-0" strokeWidth={2.5} />
+                    <span className="text-sm font-medium text-emerald-800 dark:text-emerald-400">{phoneNumber} verified</span>
                   </div>
 
                   <div className="space-y-3">
@@ -840,36 +840,36 @@ export default function SignUpPageContent() {
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
                       autoFocus
-                      className="w-full h-14 px-4 bg-[#FBF6EF] border border-emerald-950/10 rounded-2xl text-emerald-950 placeholder:text-emerald-950/30 text-[15px] font-medium focus:outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-700/10 transition-colors"
+                      className="w-full h-14 px-4 bg-[#FBF6EF] dark:bg-[#0C0F14] border border-black/10 dark:border-white/10 rounded-2xl text-[#0C0F14] dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 text-[15px] font-medium focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53] focus:ring-2 focus:ring-[#0D4F3C]/10 dark:focus:ring-[#156B53]/10 transition-colors"
                     />
                     <input
                       type="text"
                       placeholder="Last name"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
-                      className="w-full h-14 px-4 bg-[#FBF6EF] border border-emerald-950/10 rounded-2xl text-emerald-950 placeholder:text-emerald-950/30 text-[15px] font-medium focus:outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-700/10 transition-colors"
+                      className="w-full h-14 px-4 bg-[#FBF6EF] dark:bg-[#0C0F14] border border-black/10 dark:border-white/10 rounded-2xl text-[#0C0F14] dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 text-[15px] font-medium focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53] focus:ring-2 focus:ring-[#0D4F3C]/10 dark:focus:ring-[#156B53]/10 transition-colors"
                     />
                     <input
                       type="text"
                       placeholder="Username"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
-                      className="w-full h-14 px-4 bg-[#FBF6EF] border border-emerald-950/10 rounded-2xl text-emerald-950 placeholder:text-emerald-950/30 text-[15px] font-medium focus:outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-700/10 transition-colors"
+                      className="w-full h-14 px-4 bg-[#FBF6EF] dark:bg-[#0C0F14] border border-black/10 dark:border-white/10 rounded-2xl text-[#0C0F14] dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 text-[15px] font-medium focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53] focus:ring-2 focus:ring-[#0D4F3C]/10 dark:focus:ring-[#156B53]/10 transition-colors"
                     />
                     <input
                       type="email"
                       placeholder="Email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full h-14 px-4 bg-[#FBF6EF] border border-emerald-950/10 rounded-2xl text-emerald-950 placeholder:text-emerald-950/30 text-[15px] font-medium focus:outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-700/10 transition-colors"
+                      className="w-full h-14 px-4 bg-[#FBF6EF] dark:bg-[#0C0F14] border border-black/10 dark:border-white/10 rounded-2xl text-[#0C0F14] dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 text-[15px] font-medium focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53] focus:ring-2 focus:ring-[#0D4F3C]/10 dark:focus:ring-[#156B53]/10 transition-colors"
                     />
                     <div className="space-y-1.5">
-                      <label className="text-xs font-medium text-emerald-950/50 px-1">Date of birth</label>
+                      <label className="text-xs font-medium text-gray-500 dark:text-gray-400 px-1">Date of birth</label>
                       <input
                         type="date"
                         value={dateOfBirth}
                         onChange={(e) => setDateOfBirth(e.target.value)}
-                        className="w-full h-14 px-4 bg-[#FBF6EF] border border-emerald-950/10 rounded-2xl text-emerald-950 text-[15px] font-medium focus:outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-700/10 transition-colors scheme-light"
+                        className="w-full h-14 px-4 bg-[#FBF6EF] dark:bg-[#0C0F14] border border-black/10 dark:border-white/10 rounded-2xl text-[#0C0F14] dark:text-white text-[15px] font-medium focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53] focus:ring-2 focus:ring-[#0D4F3C]/10 dark:focus:ring-[#156B53]/10 transition-colors scheme-light dark:scheme-dark"
                       />
                     </div>
                   </div>
@@ -878,7 +878,7 @@ export default function SignUpPageContent() {
                     <motion.p
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2.5"
+                      className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 rounded-xl px-4 py-2.5"
                     >
                       {error}
                     </motion.p>
@@ -887,7 +887,7 @@ export default function SignUpPageContent() {
                   <button
                     type="submit"
                     disabled={!firstName.trim() || !lastName.trim() || !username.trim() || !email.trim() || !dateOfBirth || isLoading}
-                    className="w-full h-14 bg-emerald-700 hover:bg-emerald-800 active:scale-[0.98] text-white font-semibold rounded-2xl transition-all disabled:opacity-40 disabled:active:scale-100 shadow-[0_4px_14px_rgba(4,120,87,0.25)]"
+                    className="w-full h-14 bg-[#0D4F3C] hover:bg-[#156B53] active:scale-[0.98] text-white font-semibold rounded-2xl transition-all disabled:opacity-40 disabled:active:scale-100 shadow-[0_4px_14px_rgba(13,79,60,0.25)]"
                   >
                     {isLoading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "Get started"}
                   </button>
@@ -896,9 +896,9 @@ export default function SignUpPageContent() {
             </AnimatePresence>
           </div>
 
-          <p className="text-center text-sm text-emerald-950/55 mt-6">
+          <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
             Already have an account?{" "}
-            <Link href="/signin" className="text-emerald-700 font-semibold hover:underline">
+            <Link href="/signin" className="text-[#0D4F3C] dark:text-[#156B53] font-semibold hover:underline">
               Sign in
             </Link>
           </p>

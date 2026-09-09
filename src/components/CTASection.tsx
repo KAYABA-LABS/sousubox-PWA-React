@@ -17,12 +17,12 @@ export const CTASection = () => {
       <div className="absolute inset-0 bg-linear-to-t from-primary/5 via-transparent to-transparent pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent pointer-events-none" />
       
-      {/* Strategic radial gradient effects with #00E660 */}
-      {/* <div className="absolute top-[-5%] left-[25%] w-[700px] h-[700px] rounded-full bg-emerald-600/14 blur-[115px] pointer-events-none animate-pulse" />
-      <div className="absolute bottom-[-10%] right-[20%] w-[650px] h-[650px] rounded-full bg-emerald-50 blur-[105px] pointer-events-none" />
-      <div className="absolute top-[50%] left-[5%] w-[500px] h-[500px] rounded-full bg-emerald-600/6 blur-[95px] pointer-events-none" /> */}
+      {/* Strategic radial gradient effects with #0D4F3C */}
+      {/* <div className="absolute top-[-5%] left-[25%] w-[700px] h-[700px] rounded-full bg-[#0D4F3C]/14 blur-[115px] pointer-events-none animate-pulse" />
+      <div className="absolute bottom-[-10%] right-[20%] w-[650px] h-[650px] rounded-full bg-[#0D4F3C]/10 blur-[105px] pointer-events-none" />
+      <div className="absolute top-[50%] left-[5%] w-[500px] h-[500px] rounded-full bg-[#0D4F3C]/6 blur-[95px] pointer-events-none" /> */}
 
-      <div className="absolute -right-2 md:right-60 top-1/2 transform -translate-y-1/2 w-180 md:w-260 h-76 md:h-100 rounded-full bg-emerald-50 blur-3xl -z-10 pointer-events-none" />
+      <div className="absolute -right-2 md:right-60 top-1/2 transform -translate-y-1/2 w-180 md:w-260 h-76 md:h-100 rounded-full bg-[#0D4F3C]/10 blur-3xl -z-10 pointer-events-none" />
 
       <div className="container px-4 md:px-6 max-w-7xl mx-auto">
         <motion.div
@@ -33,7 +33,7 @@ export const CTASection = () => {
           className="relative max-w-4xl mx-auto"
         >
           {/* Glow */}
-          {/* <div className="absolute inset-0 bg-emerald-50 blur-3xl rounded-3xl animate-pulse" /> */}
+          {/* <div className="absolute inset-0 bg-[#0D4F3C]/10 blur-3xl rounded-3xl animate-pulse" /> */}
 
           {/* Card */}
           <Card className="relative bg-white/80 border border-border rounded-3xl p-8 md:p-16 text-center shadow-2xl">
@@ -65,7 +65,7 @@ export const CTASection = () => {
               <Button
                 variant="hero"
                 size="xl"
-                className="w-full sm:w-auto cursor-pointer group font-semibold bg-emerald-600 hover:bg-emerald-600/90 text-black"
+                className="w-full sm:w-auto cursor-pointer group font-semibold bg-[#0D4F3C] hover:bg-[#156B53] text-white"
               >
                 Request Access
                 <ArrowRight className="w-4 h-4 font-semibold transition-transform group-hover:translate-x-1" />

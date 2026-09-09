@@ -16,7 +16,7 @@ export default function AllOpportunitiesPage() {
   const router = useRouter();
 
   return (
-    <main id="main-content" role="main" className="min-h-screen bg-gray-50 flex flex-col pb-32">
+    <main id="main-content" role="main" className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col pb-32">
       <motion.header
         role="banner"
         initial={{ opacity: 0, y: -10 }}
@@ -26,12 +26,12 @@ export default function AllOpportunitiesPage() {
         <div className="flex items-center gap-3">
           <Button
             onClick={() => router.back()}
-            className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center"
+            className="w-10 h-10 rounded-full border border-gray-200 dark:border-white/10 flex items-center justify-center"
             aria-label="Go back"
           >
-            <ArrowLeft className="w-5 h-5 text-gray-500" />
+            <ArrowLeft className="w-5 h-5 text-gray-500 dark:text-gray-400" />
           </Button>
-          <h1 className="text-lg font-bold text-gray-900">All Opportunities</h1>
+          <h1 className="text-lg font-bold text-[#0C0F14] dark:text-white">All Opportunities</h1>
         </div>
       </motion.header>
 
