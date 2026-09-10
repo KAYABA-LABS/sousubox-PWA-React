@@ -470,6 +470,17 @@ export const api = {
       body: JSON.stringify(data),
     }),
 
+  // Withdrawals
+  requestWithdrawal: (userId: string, data: {
+    amount: number;
+    fundingSource: FundingSourceIdentifier;
+    metadata?: Record<string, unknown>;
+  }) =>
+    apiFetch<BackendEnvelope<Record<string, unknown>>>("/requestWithdrawal", {
+      method: "POST",
+      body: JSON.stringify({ userId: resolveUserId(userId), ...data }),
+    }),
+
   // Pool Contributions
   contributeToPool: (userId: string, poolId: string, amount: number) =>
     apiFetch<BackendEnvelope<Record<string, unknown>>>(`/${resolveUserId(userId)}/${poolId}/contribute`, {

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@clerk/nextjs";
 import { useKycService } from "@/services/kycService";
+import { isDevMode } from "@/lib/dev";
 import { ArrowLeft, Shield, CheckCircle, XCircle, Clock, Loader2, AlertCircle, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -79,28 +80,29 @@ export default function KycPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
 
-  const loadKycStatus = async () => {
-    if (!userId) return;
-    try {
-      const status = await kycService.getStatus(userId);
-      setKycData(status);
-    } catch {
-      toast.error("Failed to load KYC status");
-    }
-    setIsLoading(false);
-  };
-
   useEffect(() => {
-    if (!isLoaded || !userId) return;
+    if (!isLoaded || (!userId && !isDevMode())) return;
+
+    const loadKycStatus = async () => {
+      try {
+        const status = await kycService.getStatus(userId || "");
+        setKycData(status);
+      } catch {
+        toast.error("Failed to load KYC status");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     loadKycStatus();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded, userId]);
 
   const handleStartVerification = async () => {
-    if (!userId) return;
+    if (!userId && !isDevMode()) return;
     setIsCreating(true);
     try {
-      const session = await kycService.createSession(userId, {
+      const session = await kycService.createSession(userId || "", {
         callback: `${window.location.origin}/kyc`,
       });
       if (session.url) {

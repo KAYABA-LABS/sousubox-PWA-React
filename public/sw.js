@@ -1,4 +1,4 @@
-const CACHE_NAME = "sousuchain-v2";
+const CACHE_NAME = "sousuchain-v3";
 const STATIC_ASSETS = [
   "/",
   "/dashboard",

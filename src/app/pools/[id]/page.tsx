@@ -6,15 +6,15 @@ import { motion } from "framer-motion";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { usePoolService } from "@/services/poolService";
 import { ApiError } from "@/lib/api";
-import type { ActivePoolDetails, JoinedPoolDetails, PoolMemberRef } from "@/lib/api";
+import type { ActivePoolDetails, JoinedPoolDetails } from "@/lib/api";
 import { isDevMode } from "@/lib/dev";
-import { ArrowLeft, Users, Calendar, Loader2, Award, Landmark, CheckCircle2, Info } from "lucide-react";
+import { ArrowLeft, Users, Calendar, Loader2, Landmark, Info, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
-
-function memberName(user: PoolMemberRef) {
-  const full = `${user.firstName || ""} ${user.lastName || ""}`.trim();
-  return full || user.username;
-}
+import { PoolCycleHeroCard } from "@/components/pools/PoolCycleHeroCard";
+import { ContributionStatusCard } from "@/components/pools/ContributionStatusCard";
+import { MyContributionStatusCard } from "@/components/pools/MyContributionStatusCard";
+import { PoolActivityTabs } from "@/components/pools/PoolActivityTabs";
+import { currentCycleMemberStatuses, groupCompletedCycles, payoutRows } from "@/components/pools/activePoolDerivations";
 
 function formatLongDate(value: string | null) {
   if (!value) return null;
@@ -177,8 +177,9 @@ function ActiveView({
   onBack: () => void;
   onContribute: () => void;
 }) {
-  const percent = Math.min(Math.round((details.currentCycle / details.totalCycles) * 100), 100);
-  const memberRows = Array.isArray(details.members) ? details.members : [];
+  const currentCycleEntries = currentCycleMemberStatuses(details);
+  const completedCycles = groupCompletedCycles(details);
+  const payouts = payoutRows(details);
 
   return (
     <main id="main-content" role="main" className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col pb-36 font-sans">
@@ -190,103 +191,26 @@ function ActiveView({
       />
 
       <div className="flex-1 px-5 max-w-xl mx-auto w-full space-y-4">
-        <div className="bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 rounded-[24px] p-5 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20 relative overflow-hidden">
-          <Award className="w-20 h-20 text-[#0D4F3C] dark:text-[#156B53]/[0.06] absolute -top-3 -right-3" />
-          <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold mb-1">{details.tier} Tier</p>
-          <p className="text-2xl font-bold text-[#0C0F14] dark:text-white mb-4">
-            {details.cyclePot.currency} {details.cyclePot.amount}
-            <span className="text-xs font-medium text-gray-500 dark:text-gray-400 ml-1">this cycle&apos;s pot</span>
-          </p>
-          <div className="grid grid-cols-3 gap-2">
-            <StatTile icon={Calendar} label="Cycle" value={`${details.currentCycle}/${details.totalCycles}`} />
-            <StatTile icon={Users} label="Contributed" value={`${details.contributedCount}/${details.totalMembers}`} accent="primary" />
-            <StatTile icon={Calendar} label="Days Left" value={details.daysLeftInCycle ?? "—"} />
-          </div>
-        </div>
+        <PoolCycleHeroCard
+          tier={details.tier}
+          cyclePot={details.cyclePot}
+          contributionAmount={details.myContribution?.amount ?? null}
+          currentCycle={details.currentCycle}
+          totalCycles={details.totalCycles}
+          daysLeftInCycle={details.daysLeftInCycle}
+        />
 
-        <div className="bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 rounded-[24px] p-5 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20">
-          <div className="flex justify-between items-center mb-3">
-            <h3 className="text-xs font-bold text-[#0C0F14] dark:text-white uppercase tracking-wide">Cycle Progress</h3>
-            <span className="text-xs font-bold text-[#0D4F3C] dark:text-[#156B53]">{percent}%</span>
-          </div>
-          <div className="h-2 bg-[#FBF6EF] dark:bg-white/10 rounded-full overflow-hidden">
-            <div className="h-full bg-[#0D4F3C] rounded-full transition-all duration-500" style={{ width: `${percent}%` }} />
-          </div>
-        </div>
+        <ContributionStatusCard
+          entries={currentCycleEntries}
+          contributedCount={details.contributedCount}
+          totalMembers={details.totalMembers}
+        />
 
         {details.myContribution && (
-          <div className="bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 rounded-[24px] p-5 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20">
-            <h3 className="text-xs font-bold text-[#0C0F14] dark:text-white uppercase tracking-wide mb-3">My Contribution</h3>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-500 dark:text-gray-400">Amount</span>
-              <span className="text-sm font-bold text-[#0C0F14] dark:text-white">GHS {details.myContribution.amount}</span>
-            </div>
-            <div className="flex items-center justify-between mt-2">
-              <span className="text-sm text-gray-500 dark:text-gray-400">Status</span>
-              <span className={`text-xs font-bold uppercase ${details.myContribution.paidThisCycle ? "text-emerald-700 dark:text-emerald-400" : "text-amber-700 dark:text-amber-400"}`}>
-                {details.myContribution.status}
-              </span>
-            </div>
-          </div>
+          <MyContributionStatusCard myContribution={details.myContribution} currentCycle={details.currentCycle} />
         )}
 
-        {details.payoutTimeline.length > 0 && (
-          <div className="bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 rounded-[24px] p-5 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20">
-            <h3 className="text-xs font-bold text-[#0C0F14] dark:text-white uppercase tracking-wide mb-3">Payout Timeline</h3>
-            <div className="space-y-2">
-              {details.payoutTimeline.map((entry) => (
-                <div key={entry.cycleNumber} className="flex items-center justify-between py-2 border-b border-black/[0.04] dark:border-white/10 last:border-0">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className="w-6 h-6 rounded-full bg-[#FBF6EF] dark:bg-white/10 text-[10px] font-bold text-gray-500 dark:text-gray-400 flex items-center justify-center shrink-0">
-                      {entry.cycleNumber}
-                    </span>
-                    <span className="text-sm text-gray-500 dark:text-gray-400 truncate">{memberName(entry.user)}</span>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span className="text-sm font-bold text-[#0C0F14] dark:text-white">GHS {entry.amount}</span>
-                    {entry.completed && <CheckCircle2 className="w-4 h-4 text-[#0D4F3C] dark:text-[#156B53]" />}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {details.contributionTimeline.length > 0 && (
-          <div className="bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 rounded-[24px] p-5 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20">
-            <h3 className="text-xs font-bold text-[#0C0F14] dark:text-white uppercase tracking-wide mb-3">Contribution Timeline</h3>
-            <div className="space-y-2">
-              {details.contributionTimeline.map((entry, i) => (
-                <div
-                  key={`${entry.cycleNumber}-${entry.user.id}-${i}`}
-                  className={`flex items-center justify-between py-2 border-b border-black/[0.04] dark:border-white/10 last:border-0 ${entry.isMine ? "bg-[#0D4F3C]/5 dark:bg-[#156B53]/5 dark:bg-[#156B53]/10 -mx-2 px-2 rounded-lg" : ""}`}
-                >
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className="w-6 h-6 rounded-full bg-[#FBF6EF] dark:bg-white/10 text-[10px] font-bold text-gray-500 dark:text-gray-400 flex items-center justify-center shrink-0">
-                      {entry.cycleNumber}
-                    </span>
-                    <span className="text-sm text-gray-500 dark:text-gray-400 truncate">
-                      {entry.isMine ? "You" : memberName(entry.user)}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span className="text-sm font-bold text-[#0C0F14] dark:text-white">GHS {entry.amount}</span>
-                    {entry.completed && <CheckCircle2 className="w-4 h-4 text-[#0D4F3C] dark:text-[#156B53]" />}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {memberRows.length > 0 && (
-          <div className="bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 rounded-[24px] p-5 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20">
-            <h3 className="text-xs font-bold text-[#0C0F14] dark:text-white uppercase tracking-wide mb-3">Members</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              {details.contributedCount} of {details.totalMembers} members have contributed this cycle.
-            </p>
-          </div>
-        )}
+        <PoolActivityTabs completedCycles={completedCycles} payouts={payouts} />
       </div>
 
       {details.myContribution && !details.myContribution.paidThisCycle && (
