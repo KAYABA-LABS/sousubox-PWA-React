@@ -357,6 +357,7 @@ export default function SignUpPageContent() {
   if (
     !isClerkLoaded ||
     !signUp ||
+    !user ||
     !firstName.trim() ||
     !lastName.trim() ||
     !username.trim() ||
@@ -390,17 +391,13 @@ export default function SignUpPageContent() {
      * finalize() completes below - no active session is
      * required at this point, unlike clerk.user.update().
      */
-    const result = await user?.update({
+    await user.update({
       // firstName: firstName.trim(),
       // lastName: lastName.trim(),
       unsafeMetadata: {
         userId: backendUserId,
       },
     });
-
-    if (result.error ) {
-      throw result.error;
-    }
 
     console.log("Profile details updated");
 
