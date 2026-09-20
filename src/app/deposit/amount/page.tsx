@@ -138,7 +138,7 @@ function DepositAmountContent() {
     setIsSubmitting(true);
 
     try {
-      const email = user?.primaryEmailAddress?.emailAddress || user?.emailAddresses?.[0]?.emailAddress || "user@susuchain.com";
+      const email = user?.primaryEmailAddress?.emailAddress || user?.emailAddresses?.[0]?.emailAddress || "user@sousubox.com";
       const response = await api.mobileMoneyPayment({
         amount: numericAmount,
         email,

@@ -187,7 +187,7 @@ export default function ClientDashboard() {
           >
             <ShieldCheck className="w-5 h-5 shrink-0 text-emerald-700 dark:text-emerald-400" />
             <div className="text-sm">
-              <span className="font-semibold">Verification complete!</span> Welcome aboard SusuChain.
+              <span className="font-semibold">Verification complete!</span> Welcome aboard Sousubox.
             </div>
           </motion.div>
         )}

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { useAuth, useUser, useClerk } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import { useProfileService } from "@/services/profileService";
 import { useKycService } from "@/services/kycService";
 import { useUserService } from "@/services/userService";
@@ -16,8 +16,6 @@ import {
   Medal,
   Share2,
   Settings,
-  LogOut,
-  ChevronRight,
   Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -29,7 +27,6 @@ export default function ProfilePage() {
   const router = useRouter();
   const { userId, isLoaded } = useAuth();
   const { user } = useUser();
-  const { signOut } = useClerk();
   const profileService = useProfileService();
   const userService = useUserService();
   const kycService = useKycService();
@@ -90,8 +87,14 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col pb-32 font-sans">
-      <header className="px-5 pt-6 pb-4 max-w-xl mx-auto w-full">
+      <header className="px-5 pt-6 pb-4 max-w-xl mx-auto w-full flex items-center justify-between">
         <h1 className="text-2xl font-bold text-[#0C0F14] dark:text-white tracking-tight">Profile</h1>
+        <button
+          onClick={() => router.push("/settings")}
+          className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20 hover:border-[#0D4F3C]/30 dark:hover:border-[#156B53]/30 transition-colors"
+        >
+          <Settings className="w-[18px] h-[18px] text-gray-500 dark:text-gray-400" strokeWidth={1.75} />
+        </button>
       </header>
 
       <main className="flex-1 px-5 space-y-5 max-w-xl mx-auto w-full">
@@ -176,40 +179,6 @@ export default function ProfilePage() {
           </motion.div>
         )}
 
-        {/* ── ACTIONS ── */}
-        <div className="space-y-2.5">
-          {[
-            { label: "Settings", icon: Settings, href: "/settings" },
-            { label: "KYC verification", icon: Shield, href: "/kyc" },
-          ].map((item) => {
-            const Icon = item.icon;
-            return (
-              <motion.button
-                key={item.label}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                onClick={() => router.push(item.href)}
-                className="w-full flex items-center justify-between p-4 bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 rounded-2xl hover:border-[#0D4F3C]/30 dark:hover:border-[#156B53]/30 transition-colors shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20"
-              >
-                <div className="flex items-center gap-3">
-                  <Icon className="w-[18px] h-[18px] text-gray-500 dark:text-gray-400" strokeWidth={1.75} />
-                  <span className="text-sm font-medium text-[#0C0F14] dark:text-white">{item.label}</span>
-                </div>
-                <ChevronRight className="w-4 h-4 text-gray-400 dark:text-gray-500" />
-              </motion.button>
-            );
-          })}
-
-          <motion.button
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            onClick={() => signOut()}
-            className="w-full flex items-center gap-3 p-4 bg-red-50 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20 rounded-2xl hover:bg-red-100/70 dark:hover:bg-red-500/20 transition-colors"
-          >
-            <LogOut className="w-[18px] h-[18px] text-red-600 dark:text-red-400" strokeWidth={1.75} />
-            <span className="text-sm font-medium text-red-600 dark:text-red-400">Sign out</span>
-          </motion.button>
-        </div>
       </main>
 
       <Dock activeItem="profile" onItemClick={(href) => router.push(href)} />

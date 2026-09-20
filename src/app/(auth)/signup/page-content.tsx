@@ -651,7 +651,7 @@ export default function SignUpPageContent() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6" />
             </svg>
           </div>
-          <span className="font-bold text-lg text-[#0C0F14] dark:text-white tracking-tight">SusuChain</span>
+          <span className="font-bold text-lg text-[#0C0F14] dark:text-white tracking-tight">Sousubox</span>
         </Link>
 
         {/* Step indicator */}

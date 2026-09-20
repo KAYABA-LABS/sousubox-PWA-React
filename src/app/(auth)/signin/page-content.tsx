@@ -236,7 +236,7 @@ export default function SignInPageContent() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6" />
             </svg>
           </div>
-          <span className="font-bold text-lg text-[#0C0F14] dark:text-white tracking-tight">SusuChain</span>
+          <span className="font-bold text-lg text-[#0C0F14] dark:text-white tracking-tight">SousuBox</span>
         </Link>
       </header>
 
@@ -392,7 +392,7 @@ export default function SignInPageContent() {
           </div>
 
           <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
-            New to SusuChain?{" "}
+            New to SousuBox?{" "}
             <Link href="/signup" className="text-[#0D4F3C] dark:text-[#156B53] font-semibold hover:underline">
               Create an account
             </Link>

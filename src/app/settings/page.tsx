@@ -441,7 +441,7 @@ export default function Settings() {
           <SettingsRow
             icon={<Info className="w-5 h-5" />}
             label="About"
-            subtitle="SusuChain Client v1.0.0"
+            subtitle="Sousubox Client v1.0.0"
             onClick={() => router.push("/settings/about")}
           />
         </SettingsSection>
