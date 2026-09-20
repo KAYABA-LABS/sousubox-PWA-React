@@ -3,9 +3,11 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { useAuth, useUser, useClerk } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import { useProfileService } from "@/services/profileService";
 import { useKycService } from "@/services/kycService";
+import { useUserService } from "@/services/userService";
+import { isDevMode } from "@/lib/dev";
 import {
   Users,
   Flame,
@@ -14,35 +16,41 @@ import {
   Medal,
   Share2,
   Settings,
-  LogOut,
-  ChevronRight,
   Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Dock } from "@/components/dashboard/Dock";
 import type { ProfileStats } from "@/services/profileService";
+import type { UserProfile } from "@/lib/api";
 
 export default function ProfilePage() {
   const router = useRouter();
   const { userId, isLoaded } = useAuth();
   const { user } = useUser();
-  const { signOut } = useClerk();
   const profileService = useProfileService();
+  const userService = useUserService();
   const kycService = useKycService();
 
+  const [userName, setUserName] = useState("******");
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [stats, setStats] = useState<ProfileStats | null>(null);
   const [kycStatus, setKycStatus] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const loadProfileData = async () => {
-    if (!userId) return;
+    if (!userId && !isDevMode()) return;
     try {
-      const [profileStats, kyc] = await Promise.all([
-        profileService.getUserStats(userId),
-        kycService.getStatus(userId).catch(() => ({ status: "NOT_SUBMITTED" })),
+      const [userProfile, profileStats, kyc] = await Promise.all([
+        userService.getUserProfile(userId || "").catch(() => null),
+        profileService.getUserStats(userId || ""),
+        kycService.getStatus(userId || "").catch(() => ({ status: "NOT_SUBMITTED" })),
       ]);
+      setProfile(userProfile);
+      setUserName(userProfile?.firstName || "****");
       setStats(profileStats);
       setKycStatus(kyc.status);
+
+      console.log(profileStats);
     } catch {
       toast.error("Failed to load profile");
     }
@@ -50,12 +58,12 @@ export default function ProfilePage() {
   };
 
   useEffect(() => {
-    if (!isLoaded || !userId) return;
+    if (!isLoaded || (!userId && !isDevMode())) return;
     loadProfileData();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded, userId]);
 
-  const userName = user?.firstName || user?.emailAddresses?.[0]?.emailAddress?.split("@")[0] || "User";
+  // const userName = user?.firstName || user?.emailAddresses?.[0]?.emailAddress?.split("@")[0] || "User";
   const userInitials = user?.firstName && user?.lastName
     ? (user.firstName.charAt(0) + user.lastName.charAt(0)).toUpperCase()
     : userName.charAt(0).toUpperCase();
@@ -71,16 +79,22 @@ export default function ProfilePage() {
 
   if (!isLoaded || isLoading) {
     return (
-      <div className="min-h-screen bg-[#FBF6EF] flex items-center justify-center">
-        <Loader2 className="w-7 h-7 animate-spin text-emerald-700" />
+      <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center">
+        <Loader2 className="w-7 h-7 animate-spin text-[#0D4F3C] dark:text-[#156B53]" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#FBF6EF] flex flex-col pb-32 font-sans">
-      <header className="px-5 pt-6 pb-4 max-w-xl mx-auto w-full">
-        <h1 className="text-2xl font-bold text-emerald-950 tracking-tight">Profile</h1>
+    <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col pb-32 font-sans">
+      <header className="px-5 pt-6 pb-4 max-w-xl mx-auto w-full flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-[#0C0F14] dark:text-white tracking-tight">Profile</h1>
+        <button
+          onClick={() => router.push("/settings")}
+          className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20 hover:border-[#0D4F3C]/30 dark:hover:border-[#156B53]/30 transition-colors"
+        >
+          <Settings className="w-[18px] h-[18px] text-gray-500 dark:text-gray-400" strokeWidth={1.75} />
+        </button>
       </header>
 
       <main className="flex-1 px-5 space-y-5 max-w-xl mx-auto w-full">
@@ -88,22 +102,22 @@ export default function ProfilePage() {
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-[24px] p-5 flex items-center gap-4 border border-emerald-950/[0.04] shadow-[0_2px_8px_rgba(20,60,40,0.06)]"
+          className="bg-white dark:bg-[#151A1F] rounded-[24px] p-5 flex items-center gap-4 border border-black/[0.04] dark:border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20"
         >
-          <div className="w-16 h-16 rounded-full bg-emerald-700 flex items-center justify-center text-white text-xl font-bold shrink-0">
+          <div className="w-16 h-16 rounded-full bg-[#0D4F3C] flex items-center justify-center text-white text-xl font-bold shrink-0">
             {userInitials}
           </div>
           <div className="flex-1 min-w-0">
-            <h2 className="text-lg font-bold text-emerald-950 truncate">{userName}</h2>
-            <p className="text-sm text-emerald-950/50 truncate">
+            <h2 className="text-lg font-bold text-[#0C0F14] dark:text-white truncate">{userName}</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
               {user?.emailAddresses?.[0]?.emailAddress}
             </p>
             <div className="flex items-center gap-2 mt-1.5">
-              <span className="px-2.5 py-0.5 bg-amber-100 text-amber-800 rounded-full text-[11px] font-bold">
+              <span className="px-2.5 py-0.5 bg-black/5 dark:bg-white/10 text-gray-600 dark:text-gray-300 rounded-full text-[11px] font-bold">
                 {stats?.accountTier || "SILVER"}
               </span>
               {stats?.reputationScore && (
-                <span className="text-xs text-emerald-950/45">
+                <span className="text-xs text-gray-500 dark:text-gray-400">
                   Score: {stats.reputationScore}
                 </span>
               )}
@@ -121,13 +135,13 @@ export default function ProfilePage() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="bg-white rounded-[20px] p-3.5 text-center border border-emerald-950/[0.04] shadow-[0_2px_8px_rgba(20,60,40,0.06)]"
+                className="bg-white dark:bg-[#151A1F] rounded-[20px] p-3.5 text-center border border-black/[0.04] dark:border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20"
               >
-                <div className="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-2">
-                  <Icon className="w-4 h-4 text-amber-700" strokeWidth={2} />
+                <div className="w-9 h-9 rounded-full bg-[#0D4F3C]/10 dark:bg-[#156B53]/10 flex items-center justify-center mx-auto mb-2">
+                  <Icon className="w-4 h-4 text-[#0D4F3C] dark:text-[#156B53]" strokeWidth={2} />
                 </div>
-                <p className="text-sm font-bold text-emerald-950">{stat.value}</p>
-                <p className="text-[10px] text-emerald-950/45 mt-0.5">{stat.label}</p>
+                <p className="text-sm font-bold text-[#0C0F14] dark:text-white">{stat.value}</p>
+                <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">{stat.label}</p>
               </motion.div>
             );
           })}
@@ -139,9 +153,9 @@ export default function ProfilePage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white rounded-[24px] p-5 border border-emerald-950/[0.04] shadow-[0_2px_8px_rgba(20,60,40,0.06)]"
+            className="bg-white dark:bg-[#151A1F] rounded-[24px] p-5 border border-black/[0.04] dark:border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20"
           >
-            <h3 className="text-xs font-bold text-emerald-950/50 uppercase tracking-wide mb-4">Reputation</h3>
+            <h3 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-4">Reputation</h3>
             <div className="space-y-4">
               {[
                 { label: "Reliability", value: stats.reliabilityScore, max: 100 },
@@ -150,13 +164,13 @@ export default function ProfilePage() {
               ].map((item) => (
                 <div key={item.label}>
                   <div className="flex justify-between text-xs mb-1.5">
-                    <span className="text-emerald-950/55 font-medium">{item.label}</span>
-                    <span className="text-emerald-950 font-bold">{item.value}/{item.max}</span>
+                    <span className="text-gray-500 dark:text-gray-400 font-medium">{item.label}</span>
+                    <span className="text-[#0C0F14] dark:text-white font-bold">{item.value.toFixed(2)}/{item.max}</span>
                   </div>
-                  <div className="h-1.5 bg-[#FBF6EF] rounded-full overflow-hidden">
+                  <div className="h-1.5 bg-[#FBF6EF] dark:bg-white/10 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-emerald-700 rounded-full"
-                      style={{ width: `${Math.min((item.value / item.max) * 100, 100)}%` }}
+                      className="h-full bg-[#0D4F3C] rounded-full"
+                      style={{ width: `${Math.min((item.value / item.max) * 100, 100).toFixed(2)}%` }}
                     />
                   </div>
                 </div>
@@ -165,40 +179,6 @@ export default function ProfilePage() {
           </motion.div>
         )}
 
-        {/* ── ACTIONS ── */}
-        <div className="space-y-2.5">
-          {[
-            { label: "Settings", icon: Settings, href: "/settings" },
-            { label: "KYC verification", icon: Shield, href: "/kyc" },
-          ].map((item) => {
-            const Icon = item.icon;
-            return (
-              <motion.button
-                key={item.label}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                onClick={() => router.push(item.href)}
-                className="w-full flex items-center justify-between p-4 bg-white border border-emerald-950/[0.04] rounded-2xl hover:border-emerald-700/20 transition-colors shadow-[0_2px_8px_rgba(20,60,40,0.06)]"
-              >
-                <div className="flex items-center gap-3">
-                  <Icon className="w-[18px] h-[18px] text-emerald-950/50" strokeWidth={1.75} />
-                  <span className="text-sm font-medium text-emerald-950">{item.label}</span>
-                </div>
-                <ChevronRight className="w-4 h-4 text-emerald-950/30" />
-              </motion.button>
-            );
-          })}
-
-          <motion.button
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            onClick={() => signOut()}
-            className="w-full flex items-center gap-3 p-4 bg-red-50 border border-red-100 rounded-2xl hover:bg-red-100/70 transition-colors"
-          >
-            <LogOut className="w-[18px] h-[18px] text-red-600" strokeWidth={1.75} />
-            <span className="text-sm font-medium text-red-600">Sign out</span>
-          </motion.button>
-        </div>
       </main>
 
       <Dock activeItem="profile" onItemClick={(href) => router.push(href)} />

@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { api } from "@/lib/api";
 
 export interface ProfileStats {
@@ -17,7 +18,7 @@ export interface ProfileStats {
 }
 
 export function useProfileService() {
-  return {
+  return useMemo(() => ({
     getUserStats: async (userId: string): Promise<ProfileStats> => {
       try {
         const result = await api.getUserProfile(userId);
@@ -53,5 +54,5 @@ export function useProfileService() {
         };
       }
     },
-  };
+  }), []);
 }

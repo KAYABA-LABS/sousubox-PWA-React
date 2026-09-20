@@ -52,7 +52,7 @@ export const SecuritySection = () => {
   return (
     <section id="security" className="relative py-24 md:py-32 overflow-hidden">
       {/* Radial background */}
-      <div className="absolute right-8 top-200 w-120 h-150 md:right-30 md:top-1/2 transform md:-translate-y-1/2 md:w-200 md:h-200 rounded-full bg-[#00E660]/8 blur-3xl -z-10 pointer-events-none" />
+      <div className="absolute right-8 top-200 w-120 h-150 md:right-30 md:top-1/2 transform md:-translate-y-1/2 md:w-200 md:h-200 rounded-full bg-[#0D4F3C]/8 dark:bg-[#156B53]/8 blur-3xl -z-10 pointer-events-none" />
       <div className="container mx-auto relative z-10 px-4 md:px-6">
         <div className="grid lg:grid-cols-2 gap-10 items-start">
           {/* Left - Content */}
@@ -63,7 +63,7 @@ export const SecuritySection = () => {
             transition={{ duration: 0.6 }}
             className="max-w-140"
           >
-            <span className="inline-block text-xs font-medium text-primary mb-4 uppercase tracking-wider border-[#00E660] border px-3.5 py-1 rounded-full bg-[#00E660]/50">
+            <span className="inline-block text-xs font-medium text-primary mb-4 uppercase tracking-wider border-[#0D4F3C] dark:border-[#156B53] border px-3.5 py-1 rounded-full bg-[#0D4F3C]/50 dark:bg-[#156B53]/50">
               Security
             </span>
             <h2 className="text-3xl sm:text-5xl text-foreground mb-6">
@@ -88,8 +88,8 @@ export const SecuritySection = () => {
                     transition={{ duration: 0.5, delay: 0.1 + index * 0.1 }}
                   >
                     <Card className="flex items-start gap-3 p-4 rounded-xl bg-[#101114]/80 hover:bg-secondary/50 transition-colors">
-                    <div className="w-10 h-10 rounded-lg bg-[#00E660]/10 flex items-center justify-center shrink-0">
-                      <Icon className="w-5 h-5 text-[#00E660]" />
+                    <div className="w-10 h-10 rounded-lg bg-[#0D4F3C]/10 dark:bg-[#156B53]/10 flex items-center justify-center shrink-0">
+                      <Icon className="w-5 h-5 text-[#0D4F3C] dark:text-[#156B53]" />
                     </div>
                     <div>
                       <h4 className="font-medium text-foreground mb-1">
@@ -113,15 +113,15 @@ export const SecuritySection = () => {
               {/* Shield icon */}
               <div className="flex justify-center mb-8">
                 <div className="relative">
-                  <div className="w-24 h-24 rounded-2xl bg-[#00E660]/10 flex items-center justify-center">
-                    <Shield className="w-12 h-12 text-[#00E660]" />
+                  <div className="w-24 h-24 rounded-2xl bg-[#0D4F3C]/10 dark:bg-[#156B53]/10 flex items-center justify-center">
+                    <Shield className="w-12 h-12 text-[#0D4F3C] dark:text-[#156B53]" />
                   </div>
                   <motion.div
-                    className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-[#00E660] flex items-center justify-center"
+                    className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-[#0D4F3C] flex items-center justify-center"
                     animate={{ scale: [1, 1.1, 1] }}
                     transition={{ duration: 2, repeat: Infinity }}
                   >
-                    <CheckCircle2 className="w-4 h-4 text-black" />
+                    <CheckCircle2 className="w-4 h-4 text-white" />
                   </motion.div>
                 </div>
               </div>
@@ -136,7 +136,7 @@ export const SecuritySection = () => {
                     transition={{ duration: 0.4, delay: 0.4 + index * 0.1 }}
                     className="text-center"
                   >
-                    <p className="text-2xl md:text-3xl font-bold text-[#00E660] mb-1">
+                    <p className="text-2xl md:text-3xl font-bold text-[#0D4F3C] dark:text-[#156B53] mb-1">
                       {stat.value}
                     </p>
                     <p className="text-sm text-muted-foreground">

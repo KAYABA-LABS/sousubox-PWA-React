@@ -1,9 +1,10 @@
 "use client";
 
+import { useMemo } from "react";
 import { api, type KycStatus, type KycSession } from "@/lib/api";
 
 export function useKycService() {
-  return {
+  return useMemo(() => ({
     getStatus: async (userId: string): Promise<KycStatus> => {
       const result = await api.getKycStatus(userId);
       return result.data || { status: "NOT_SUBMITTED" };
@@ -21,5 +22,5 @@ export function useKycService() {
       const result = await api.createKycSession(userId, options);
       return result.data;
     },
-  };
+  }), []);
 }

@@ -21,7 +21,7 @@ export function BudgetWidget({ spent, total, dateRange }: BudgetWidgetProps) {
         <span className="text-lg font-bold text-white">${spent}</span>
         <span className="text-sm text-gray-500">/ ${total}</span>
       </div>
-      <ProgressBar value={spent} max={total} color="#00E660" />
+      <ProgressBar value={spent} max={total} color="#0D4F3C" />
     </Card>
   );
 }

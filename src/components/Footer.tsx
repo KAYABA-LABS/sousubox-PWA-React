@@ -16,7 +16,7 @@ export const Footer = () => {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <a href="#" className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg text-black bg-emerald-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg text-white bg-[#0D4F3C] flex items-center justify-center">
                 <span className="text-primary-foreground font-bold text-lg">
                   V
                 </span>
@@ -30,7 +30,7 @@ export const Footer = () => {
               confidence.
             </p>
             <div className="flex items-center gap-2 text-xs text-gray-900/60">
-              <Shield className="w-4 h-4 text-emerald-600" />
+              <Shield className="w-4 h-4 text-[#0D4F3C]" />
               <span>Bank-level security</span>
             </div>
           </div>
@@ -45,7 +45,7 @@ export const Footer = () => {
                     <Button
                       variant="ghost"
                       asChild
-                      className="h-auto p-0 text-sm text-gray-900/60 hover:text-emerald-600 transition-colors"
+                      className="h-auto p-0 text-sm text-gray-900/60 hover:text-[#0D4F3C] transition-colors"
                     >
                       <a href="#">{link}</a>
                     </Button>

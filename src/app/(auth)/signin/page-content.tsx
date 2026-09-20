@@ -3,14 +3,16 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { useSignIn } from "@clerk/nextjs/legacy";
+import { useSignIn } from "@clerk/nextjs";
 import { PhoneCodeSwitcher } from "@/components/ui/phone-code-switcher";
+import { api } from "@/lib/api";
 import { Loader2, ArrowRight, ShieldCheck, PhoneCall } from "lucide-react";
 import Link from "next/link";
 
 export default function SignInPageContent() {
   const router = useRouter();
-  const { isLoaded, signIn, setActive } = useSignIn();
+  const { signIn, fetchStatus } = useSignIn();
+  const isClerkLoaded = fetchStatus === "idle";
   const [countryCode, setCountryCode] = useState("+233");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [step, setStep] = useState<"phone" | "verify">("phone");
@@ -36,46 +38,135 @@ export default function SignInPageContent() {
     return `${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6, 10)}`;
   };
 
-  const handleSendOTP = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isLoaded || !phoneNumber.trim()) return;
-    setIsLoading(true);
-    setError("");
-    try {
-      const fullPhone = phoneNumber.replace(/\s/g, "");
-      const localPhone = fullPhone.replace(/^0+/, "");
-      const formattedPhone = fullPhone.startsWith("+") ? fullPhone : `${countryCode}${localPhone}`;
-      const result = await signIn.create({ identifier: formattedPhone });
-      const phoneId = result.supportedFirstFactors?.find((f) => f.strategy === "phone_code")?.phoneNumberId;
-      if (phoneId) {
-        await signIn.prepareFirstFactor({ strategy: "phone_code", phoneNumberId: phoneId });
-        setStep("verify");
-      }
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to send code");
+  const loginBackendUser = async () => {
+    const rawPhone = phoneNumber.replace(/\s/g, "");
+    const localPhone = rawPhone.replace(/^0+/, "");
+
+    const formattedPhone = rawPhone.startsWith("+")
+      ? rawPhone
+      : `${countryCode}${localPhone}`;
+
+    const result = await api.loginUser(formattedPhone);
+
+    console.log("Backend login result:", result);
+
+    if (!result.success) {
+      throw new Error(result.message || result.error || "Could not log you in");
     }
-    setIsLoading(false);
+
+    return result.user?.id || null;
   };
 
-  const handleVerifyCode = async (e: React.FormEvent, submittedCode?: string) => {
+  const handleSendOTP = async (e: React.FormEvent) => {
     e.preventDefault();
-    const fullCode = submittedCode ?? code.join("");
-    if (!isLoaded || fullCode.length < 6) return;
+
+    if (!isClerkLoaded || !signIn || !phoneNumber.trim()) {
+      return;
+    }
+
     setIsLoading(true);
     setError("");
+
     try {
-      const result = await signIn.attemptFirstFactor({ strategy: "phone_code", code: fullCode });
-      if (result.status === "complete") {
-        await setActive({ session: result.createdSessionId });
-        router.push("/dashboard");
-      } else {
-        setError("Verification incomplete. Please try again.");
+      const rawPhone = phoneNumber.replace(/\s/g, "");
+      const localPhone = rawPhone.replace(/^0+/, "");
+
+      const formattedPhone = rawPhone.startsWith("+")
+        ? rawPhone
+        : `${countryCode}${localPhone}`;
+
+      console.log("Creating Clerk signin:", formattedPhone);
+
+      const result = await signIn.create({
+        identifier: formattedPhone,
+      });
+
+      if (result.error) {
+        throw result.error;
       }
-    } catch (err: unknown) {
+
+      console.log("Sign-in created successfully");
+
+      const codeResult = await signIn.phoneCode.sendCode();
+
+      if (codeResult.error) {
+        throw codeResult.error;
+      }
+
+      console.log("OTP sent successfully");
+
+      setStep("verify");
+
+      setCode(["", "", "", "", "", ""]);
       autoSubmitRef.current = false;
-      setError(err instanceof Error ? err.message : "Invalid code");
+    } catch (err: unknown) {
+      console.error("SEND OTP ERROR:", err);
+
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Failed to send verification code");
+      }
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
+  };
+
+  const handleVerifyCode = async (
+    e: React.FormEvent,
+    submittedCode?: string
+  ) => {
+    e.preventDefault();
+
+    const fullCode = submittedCode ?? code.join("");
+
+    if (
+      !isClerkLoaded ||
+      !signIn ||
+      fullCode.length !== 6 ||
+      isLoading
+    ) {
+      return;
+    }
+
+    setIsLoading(true);
+    setError("");
+
+    try {
+      console.log("Verifying phone code...");
+
+      const verification = await signIn.phoneCode.verifyCode({
+        code: fullCode,
+      });
+
+      if (verification.error) {
+        throw verification.error;
+      }
+
+      console.log("Phone verification successful");
+
+      await loginBackendUser();
+
+      const finalized = await signIn.finalize();
+
+      if (finalized.error) {
+        throw finalized.error;
+      }
+
+      router.push("/dashboard");
+    } catch (err: unknown) {
+      console.error("VERIFY OTP ERROR:", err);
+
+      autoSubmitRef.current = false;
+
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Invalid verification code");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCodeChange = (index: number, value: string) => {
@@ -91,7 +182,12 @@ export default function SignInPageContent() {
       const nextEmpty = newCode.findIndex((digit, i) => i > index && !digit);
       inputRefs.current[nextEmpty === -1 ? Math.min(index + digits.length, 5) : nextEmpty]?.focus();
     }
-    if (newCode.every(Boolean) && !autoSubmitRef.current) {
+    if (
+      newCode.every(Boolean) &&
+      newCode.join("").length === 6 &&
+      !autoSubmitRef.current &&
+      !isLoading
+    ) {
       autoSubmitRef.current = true;
       setTimeout(() => handleVerifyCode({ preventDefault: () => {} } as React.FormEvent, newCode.join("")), 0);
     }
@@ -119,22 +215,28 @@ export default function SignInPageContent() {
     const nextEmpty = newCode.findIndex((d) => !d);
     const focusIndex = nextEmpty === -1 ? 5 : nextEmpty;
     inputRefs.current[focusIndex]?.focus();
-    if (newCode.every((d) => d) && newCode.join("").length === 6) {
+    if (
+      newCode.every((d) => d) &&
+      newCode.join("").length === 6 &&
+      !autoSubmitRef.current &&
+      !isLoading
+    ) {
+      autoSubmitRef.current = true;
       setTimeout(() => handleVerifyCode({ preventDefault: () => {} } as React.FormEvent, newCode.join("")), 0);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#FBF6EF] flex flex-col font-sans">
+    <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col font-sans">
       {/* Top Nav */}
       <header className="flex items-center justify-between px-6 py-6">
         <Link href="/" className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-full bg-emerald-700 flex items-center justify-center text-white">
+          <div className="w-9 h-9 rounded-full bg-[#0D4F3C] flex items-center justify-center text-white">
             <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6" />
             </svg>
           </div>
-          <span className="font-bold text-lg text-emerald-950 tracking-tight">SusuChain</span>
+          <span className="font-bold text-lg text-[#0C0F14] dark:text-white tracking-tight">SousuBox</span>
         </Link>
       </header>
 
@@ -146,20 +248,20 @@ export default function SignInPageContent() {
           transition={{ duration: 0.4 }}
           className="w-full max-w-md"
         >
-          <div className="bg-white rounded-[28px] p-8 sm:p-10 shadow-[0_2px_8px_rgba(20,60,40,0.06),0_16px_40px_rgba(20,60,40,0.08)] border border-emerald-950/[0.04]">
+          <div className="bg-white dark:bg-[#151A1F] rounded-[28px] p-8 sm:p-10 shadow-[0_2px_8px_rgba(0,0,0,0.06),0_16px_40px_rgba(0,0,0,0.08)] dark:shadow-black/20 border border-black/[0.04] dark:border-white/10">
             {/* Header */}
             <div className="mb-8">
-              <div className="w-11 h-11 rounded-full bg-amber-100 flex items-center justify-center mb-5">
+              <div className="w-11 h-11 rounded-full bg-[#0D4F3C]/10 dark:bg-[#156B53]/10 flex items-center justify-center mb-5">
                 {step === "phone" ? (
-                  <PhoneCall className="w-5 h-5 text-amber-700" strokeWidth={2} />
+                  <PhoneCall className="w-5 h-5 text-[#0D4F3C] dark:text-[#156B53]" strokeWidth={2} />
                 ) : (
-                  <ShieldCheck className="w-5 h-5 text-amber-700" strokeWidth={2} />
+                  <ShieldCheck className="w-5 h-5 text-[#0D4F3C] dark:text-[#156B53]" strokeWidth={2} />
                 )}
               </div>
-              <h1 className="text-[26px] leading-tight font-bold text-emerald-950 tracking-tight">
+              <h1 className="text-[26px] leading-tight font-bold text-[#0C0F14] dark:text-white tracking-tight">
                 {step === "phone" ? "Welcome back" : "Check your phone"}
               </h1>
-              <p className="text-[15px] text-emerald-950/55 mt-2 leading-relaxed">
+              <p className="text-[15px] text-gray-500 dark:text-gray-400 mt-2 leading-relaxed">
                 {step === "phone"
                   ? "Sign in with the phone number on your account."
                   : `We sent a 6-digit code to ${phoneNumber}`}
@@ -185,7 +287,7 @@ export default function SignInPageContent() {
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(formatPhone(e.target.value))}
                       autoFocus
-                      className="flex-1 h-14 px-4 bg-[#FBF6EF] border border-emerald-950/10 rounded-2xl text-emerald-950 placeholder:text-emerald-950/30 text-[15px] font-medium focus:outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-700/10 transition-colors"
+                      className="flex-1 h-14 px-4 bg-[#FBF6EF] dark:bg-[#0C0F14] border border-black/10 dark:border-white/10 rounded-2xl text-[#0C0F14] dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 text-[15px] font-medium focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53] focus:ring-2 focus:ring-[#0D4F3C]/10 dark:focus:ring-[#156B53]/10 transition-colors"
                     />
                   </div>
 
@@ -197,7 +299,7 @@ export default function SignInPageContent() {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2.5"
+                        className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 rounded-xl px-4 py-2.5"
                       >
                         {error}
                       </motion.p>
@@ -207,7 +309,7 @@ export default function SignInPageContent() {
                   <button
                     type="submit"
                     disabled={!phoneNumber.trim() || isLoading}
-                    className="w-full h-14 bg-emerald-700 hover:bg-emerald-800 active:scale-[0.98] text-white font-semibold rounded-2xl transition-all disabled:opacity-40 disabled:active:scale-100 shadow-[0_4px_14px_rgba(4,120,87,0.25)]"
+                    className="w-full h-14 bg-[#0D4F3C] hover:bg-[#156B53] active:scale-[0.98] text-white font-semibold rounded-2xl transition-all disabled:opacity-40 disabled:active:scale-100 shadow-[0_4px_14px_rgba(13,79,60,0.25)]"
                   >
                     {isLoading ? (
                       <Loader2 className="w-5 h-5 animate-spin mx-auto" />
@@ -245,7 +347,7 @@ export default function SignInPageContent() {
                         onKeyDown={(e) => handleCodeKeyDown(i, e)}
                         onPaste={handleCodePaste}
                         autoComplete="one-time-code"
-                        className="w-12 h-14 text-center text-xl font-bold text-emerald-950 bg-[#FBF6EF] border-2 border-emerald-950/10 rounded-2xl focus:outline-none focus:border-emerald-700 transition-colors"
+                        className="w-12 h-14 text-center text-xl font-bold text-[#0C0F14] dark:text-white bg-[#FBF6EF] dark:bg-[#0C0F14] border-2 border-black/10 dark:border-white/10 rounded-2xl focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53] transition-colors"
                       />
                     ))}
                   </div>
@@ -256,7 +358,7 @@ export default function SignInPageContent() {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2.5 text-center"
+                        className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 rounded-xl px-4 py-2.5 text-center"
                       >
                         {error}
                       </motion.p>
@@ -267,7 +369,7 @@ export default function SignInPageContent() {
                     <button
                       type="submit"
                       disabled={code.join("").length < 6 || isLoading}
-                      className="w-full h-14 bg-emerald-700 hover:bg-emerald-800 active:scale-[0.98] text-white font-semibold rounded-2xl transition-all disabled:opacity-40 disabled:active:scale-100 shadow-[0_4px_14px_rgba(4,120,87,0.25)]"
+                      className="w-full h-14 bg-[#0D4F3C] hover:bg-[#156B53] active:scale-[0.98] text-white font-semibold rounded-2xl transition-all disabled:opacity-40 disabled:active:scale-100 shadow-[0_4px_14px_rgba(13,79,60,0.25)]"
                     >
                       {isLoading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "Sign in"}
                     </button>
@@ -279,7 +381,7 @@ export default function SignInPageContent() {
                         setCode(["", "", "", "", "", ""]);
                         setError("");
                       }}
-                      className="w-full text-center text-sm font-medium text-emerald-950/50 hover:text-emerald-700 transition-colors py-1"
+                      className="w-full text-center text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-[#0D4F3C] dark:hover:text-[#156B53] transition-colors py-1"
                     >
                       Use a different number
                     </button>
@@ -289,9 +391,9 @@ export default function SignInPageContent() {
             </AnimatePresence>
           </div>
 
-          <p className="text-center text-sm text-emerald-950/55 mt-6">
-            New to SusuChain?{" "}
-            <Link href="/signup" className="text-emerald-700 font-semibold hover:underline">
+          <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
+            New to SousuBox?{" "}
+            <Link href="/signup" className="text-[#0D4F3C] dark:text-[#156B53] font-semibold hover:underline">
               Create an account
             </Link>
           </p>

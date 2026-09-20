@@ -94,7 +94,7 @@ export default function LearnMorePage() {
             transition={{ duration: 0.6 }}
             className="text-center max-w-3xl mx-auto"
           >
-            <span className="inline-block text-xs font-medium text-primary mb-4 uppercase tracking-wider border-[#00E660] border px-3.5 py-1 rounded-full bg-[#00E660]/50">
+            <span className="inline-block text-xs font-medium text-primary mb-4 uppercase tracking-wider border-[#0D4F3C] dark:border-[#156B53] border px-3.5 py-1 rounded-full bg-[#0D4F3C]/50 dark:bg-[#156B53]/50">
               Premium Digital Banking
             </span>
             <h1 className="text-3xl md:text-5xl text-foreground mb-6">
@@ -111,7 +111,7 @@ export default function LearnMorePage() {
               <Button
                 variant="hero"
                 size="xl"
-                className="bg-[#00E660] text-black font-semibold rounded-2xl"
+                className="bg-[#0D4F3C] text-white font-semibold rounded-2xl"
               >
                 Get Started
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -131,7 +131,7 @@ export default function LearnMorePage() {
             transition={{ duration: 0.6 }}
             className="text-center max-w-2xl mx-auto mb-16"
           >
-            <span className="inline-block text-xs font-medium text-primary mb-4 uppercase tracking-wider border-[#00E660] border px-3.5 py-1 rounded-full bg-[#00E660]/50">
+            <span className="inline-block text-xs font-medium text-primary mb-4 uppercase tracking-wider border-[#0D4F3C] dark:border-[#156B53] border px-3.5 py-1 rounded-full bg-[#0D4F3C]/50 dark:bg-[#156B53]/50">
               Features
             </span>
             <h2 className="text-3xl md:text-5xl text-foreground mb-4">
@@ -153,7 +153,7 @@ export default function LearnMorePage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="group relative bg-card border border-border rounded-2xl p-6 md:p-8 transition-all duration-300 hover:bg-[#00E660]/10 hover:border-[#00E660]/45"
+                  className="group relative bg-card border border-border rounded-2xl p-6 md:p-8 transition-all duration-300 hover:bg-[#0D4F3C]/10 dark:hover:bg-[#156B53]/10 hover:border-[#0D4F3C]/45 dark:hover:border-[#156B53]/45"
                 >
                   {/* Hover glow */}
                   <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -179,7 +179,7 @@ export default function LearnMorePage() {
       {/* Security Highlight */}
       <section className="relative py-24 md:py-32 bg-card/30 overflow-hidden">
         {/* Radial background */}
-        <div className="absolute right-8 top-200 w-120 h-150 md:right-30 md:top-1/2 transform md:-translate-y-1/2 md:w-200 md:h-200 rounded-full bg-[#00E660]/8 blur-3xl -z-10 pointer-events-none" />
+        <div className="absolute right-8 top-200 w-120 h-150 md:right-30 md:top-1/2 transform md:-translate-y-1/2 md:w-200 md:h-200 rounded-full bg-[#0D4F3C]/8 dark:bg-[#156B53]/8 blur-3xl -z-10 pointer-events-none" />
 
         <div className="container px-4 md:px-6 max-w-7xl mx-auto">
           <motion.div
@@ -189,7 +189,7 @@ export default function LearnMorePage() {
             transition={{ duration: 0.6 }}
             className="text-center max-w-2xl mx-auto mb-16"
           >
-            <span className="inline-block text-xs font-medium text-primary mb-4 uppercase tracking-wider border-[#00E660] border px-3.5 py-1 rounded-full bg-[#00E660]/50">
+            <span className="inline-block text-xs font-medium text-primary mb-4 uppercase tracking-wider border-[#0D4F3C] dark:border-[#156B53] border px-3.5 py-1 rounded-full bg-[#0D4F3C]/50 dark:bg-[#156B53]/50">
               Security
             </span>
             <h2 className="text-3xl md:text-5xl text-foreground mb-4">
@@ -213,8 +213,8 @@ export default function LearnMorePage() {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   className="flex items-start gap-3 p-4 rounded-xl bg-[#101114]/80 hover:bg-secondary/50 transition-colors"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-[#00E660]/10 flex items-center justify-center shrink-0">
-                    <Icon className="w-5 h-5 text-[#00E660]" />
+                  <div className="w-10 h-10 rounded-lg bg-[#0D4F3C]/10 dark:bg-[#156B53]/10 flex items-center justify-center shrink-0">
+                    <Icon className="w-5 h-5 text-[#0D4F3C] dark:text-[#156B53]" />
                   </div>
                   <div>
                     <h4 className="font-medium text-foreground mb-1">
@@ -241,7 +241,7 @@ export default function LearnMorePage() {
             transition={{ duration: 0.6 }}
             className="text-center max-w-2xl mx-auto mb-16"
           >
-            <span className="inline-block text-xs font-medium text-primary mb-4 uppercase tracking-wider border-[#00E660] border px-3.5 py-1 rounded-full bg-[#00E660]/50">
+            <span className="inline-block text-xs font-medium text-primary mb-4 uppercase tracking-wider border-[#0D4F3C] dark:border-[#156B53] border px-3.5 py-1 rounded-full bg-[#0D4F3C]/50 dark:bg-[#156B53]/50">
               How It Works
             </span>
             <h2 className="text-3xl md:text-5xl text-foreground mb-4">
@@ -284,8 +284,8 @@ export default function LearnMorePage() {
                 >
                   <div className="relative shrink-0 w-16 h-16">
                     <div className="absolute inset-0 rounded-2xl bg-secondary/50 border-2 border-transparent group-hover:border-primary/30 group-hover:bg-primary/10 transition-all duration-300" />
-                    <div className="absolute inset-0 rounded-2xl flex items-center justify-center bg-[#101114] group-hover:bg-[#00E660]/5">
-                      <span className="text-2xl font-bold text-[#00E660]">
+                    <div className="absolute inset-0 rounded-2xl flex items-center justify-center bg-[#101114] group-hover:bg-[#0D4F3C]/5 dark:group-hover:bg-[#156B53]/5">
+                      <span className="text-2xl font-bold text-[#0D4F3C] dark:text-[#156B53]">
                         {step.step}
                       </span>
                     </div>
@@ -315,7 +315,7 @@ export default function LearnMorePage() {
             transition={{ duration: 0.6 }}
             className="relative max-w-4xl mx-auto text-center"
           >
-            <div className="absolute inset-0 bg-[#00E660]/10 blur-3xl rounded-3xl" />
+            <div className="absolute inset-0 bg-[#0D4F3C]/10 dark:bg-[#156B53]/10 blur-3xl rounded-3xl" />
             <div className="relative bg-[#101114] border border-border rounded-3xl p-8 md:p-16">
               <h2 className="text-3xl md:text-5xl text-foreground mb-4">
                 Ready to Experience Premium Banking?
@@ -328,7 +328,7 @@ export default function LearnMorePage() {
                 <Button
                   variant="hero"
                   size="xl"
-                  className="bg-[#00E660] text-black font-semibold rounded-2xl"
+                  className="bg-[#0D4F3C] text-white font-semibold rounded-2xl"
                 >
                   Create Your Account
                   <ArrowRight className="w-4 h-4" />

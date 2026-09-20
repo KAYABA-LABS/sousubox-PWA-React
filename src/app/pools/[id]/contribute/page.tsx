@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@clerk/nextjs";
 import { api } from "@/lib/api";
+import { isDevMode } from "@/lib/dev";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -54,7 +55,7 @@ export default function PoolContributePage() {
   }, [isLoaded, poolId]);
 
   const handleContribute = async () => {
-    if (!userId || !poolId) return;
+    if ((!userId && !isDevMode()) || !poolId) return;
     const numAmount = parseFloat(amount);
     if (isNaN(numAmount) || numAmount <= 0) {
       toast.error("Please enter a valid amount");
@@ -63,7 +64,7 @@ export default function PoolContributePage() {
 
     setIsContributing(true);
     try {
-      await api.contributeToPool(userId, poolId, numAmount);
+      await api.contributeToPool(userId || "", poolId, numAmount);
       setIsSuccess(true);
       toast.success(`GH₵ ${numAmount.toFixed(2)} contributed to pool`);
     } catch (err: unknown) {

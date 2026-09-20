@@ -1,4 +1,4 @@
-const CACHE_NAME = "sousuchain-v1";
+const CACHE_NAME = "sousuchain-v3";
 const STATIC_ASSETS = [
   "/",
   "/dashboard",
@@ -28,6 +28,9 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+
+  const url = new URL(event.request.url);
+  if (url.origin !== self.location.origin) return;
 
   event.respondWith(
     caches.match(event.request).then((cached) => {

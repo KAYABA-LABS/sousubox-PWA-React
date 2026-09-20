@@ -12,7 +12,7 @@ export function TransactionsList({ onViewAll }: TransactionsListProps) {
         <h2 className="text-xl font-bold text-white">Transactions</h2>
         <button
           onClick={onViewAll}
-          className="text-sm text-[#00E660] hover:text-[#00cc55] transition-colors"
+          className="text-sm text-[#0D4F3C] dark:text-[#156B53] hover:text-[#156B53] transition-colors"
         >
           See All
         </button>

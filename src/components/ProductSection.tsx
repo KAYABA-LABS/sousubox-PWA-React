@@ -21,7 +21,7 @@ export const ProductSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center max-w-2xl mx-auto mb-16"
         >
-          <span className="inline-block text-xs font-medium text-primary mb-4 uppercase tracking-wider border-[#00E660] border px-3.5 py-1 rounded-full bg-[#00E660]/50">
+          <span className="inline-block text-xs font-medium text-primary mb-4 uppercase tracking-wider border-[#0D4F3C] dark:border-[#156B53] border px-3.5 py-1 rounded-full bg-[#0D4F3C]/50 dark:bg-[#156B53]/50">
             Product
           </span>
           <h2 className="text-3xl md:text-5xl text-foreground mb-4">
@@ -43,7 +43,7 @@ export const ProductSection = () => {
             className="relative grid lg:grid-cols-2 gap-12 items-center"
           >
             <div className="order-2 lg:order-1">
-              <span className="inline-block text-xs font-medium text-primary mb-4 uppercase tracking-wider text-[#00E660]">
+              <span className="inline-block text-xs font-medium text-primary mb-4 uppercase tracking-wider text-[#0D4F3C] dark:text-[#156B53]">
                 Balance View
               </span>
               <h3 className="text-2xl md:text-3xl text-foreground mb-4 text-white">
@@ -64,7 +64,7 @@ export const ProductSection = () => {
                     key={item}
                     className="flex items-center gap-3 text-muted-foreground"
                   >
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#00E660]" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#0D4F3C]" />
                     {item}
                   </li>
                 ))}
@@ -74,7 +74,7 @@ export const ProductSection = () => {
               <div className="absolute inset-0 bg-primary/10 blur-3xl rounded-3xl" />
               <Card className="relative bg-[#101114] border border-white/20 rounded-2xl p-8">
               {/* Local radial background covering this feature block */}
-                <div className="absolute top-20 right-25 md:right-40 md:top-0 md:-translate-x-1/2 translate-y-1 md:-translate-y-1 w-60 h-15 md:w-40 md:h-40 rounded-full bg-[#00E660] blur-[140px] pointer-events-none -z-10" />
+                <div className="absolute top-20 right-25 md:right-40 md:top-0 md:-translate-x-1/2 translate-y-1 md:-translate-y-1 w-60 h-15 md:w-40 md:h-40 rounded-full bg-[#0D4F3C] blur-[140px] pointer-events-none -z-10" />
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-white/60">Available</span>
@@ -94,8 +94,8 @@ export const ProductSection = () => {
                     <span className="text-sm text-white/60">
                       Account Status
                     </span>
-                    <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[#00E660]">
-                      <div className="w-2 h-2 rounded-full bg-[#00E660] animate-pulse" />
+                    <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[#0D4F3C] dark:text-[#156B53]">
+                      <div className="w-2 h-2 rounded-full bg-[#0D4F3C] animate-pulse" />
                       Active
                     </span>
                   </div>
@@ -113,7 +113,7 @@ export const ProductSection = () => {
           >
             <Card className="relative bg-[#101114] border border-white/20 rounded-2xl p-8">
               {/* Local radial background covering this feature block */}
-              <div className="absolute right-35 top-25 w-35 h-50 md:right-40 md:top-0 md:-translate-x-10 md:translate-y-20 md:w-50 md:h-50 rounded-full bg-[#00E660] blur-[140px] pointer-events-none -z-10" />
+              <div className="absolute right-35 top-25 w-35 h-50 md:right-40 md:top-0 md:-translate-x-10 md:translate-y-20 md:w-50 md:h-50 rounded-full bg-[#0D4F3C] blur-[140px] pointer-events-none -z-10" />
               <div className="relative rounded-2xl p-2">
                 <p className="text-sm font-medium text-foreground mb-4">
                   Activity
@@ -159,7 +159,7 @@ export const ProductSection = () => {
                         <p
                           className={`text-sm font-medium ${
                             tx.amount.startsWith("+")
-                              ? "text-[#00E660]"
+                              ? "text-[#0D4F3C] dark:text-[#156B53]"
                               : "text-white"
                           }`}
                         >
@@ -181,7 +181,7 @@ export const ProductSection = () => {
               </div>
             </Card>
             <div>
-              <span className="inline-block text-xs font-medium text-primary mb-4 uppercase tracking-wider text-[#00E660]">
+              <span className="inline-block text-xs font-medium text-primary mb-4 uppercase tracking-wider text-[#0D4F3C] dark:text-[#156B53]">
                 Transactions
               </span>
               <h3 className="text-2xl md:text-3xl text-white mb-4">Track Every Movement</h3>
@@ -200,7 +200,7 @@ export const ProductSection = () => {
                     key={item}
                     className="flex items-center gap-3 text-muted-foreground"
                   >
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#00E660]" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#0D4F3C]" />
                     {item}
                   </li>
                 ))}

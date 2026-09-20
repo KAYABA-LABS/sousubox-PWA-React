@@ -55,10 +55,10 @@ const PLANS: Record<string, {
     ],
     exampleReturn: { principal: 1000, months: 12, earned: 98 },
   },
-  fixed: {
-    id: "fixed",
-    name: "Fixed Savings",
-    shortName: "Fixed",
+  vault: {
+    id: "vault",
+    name: "Lock Vault",
+    shortName: "Vault",
     tagline: "Lock your money and earn higher returns.",
     description:
       "Commit to a fixed term and unlock significantly higher returns. Ideal for funds you won't need in the near term.",
@@ -79,10 +79,10 @@ const PLANS: Record<string, {
     ],
     exampleReturn: { principal: 1000, months: 12, earned: 145 },
   },
-  goal: {
-    id: "goal",
-    name: "Goal Booster",
-    shortName: "Goal",
+  target: {
+    id: "target",
+    name: "Target Goal",
+    shortName: "Target",
     tagline: "Save towards a target and stay on track.",
     description:
       "Set a savings target and a deadline. We'll help you automate contributions and hit your goal with smart nudges.",
@@ -198,7 +198,7 @@ export default function PlanDetailPage() {
   const chartData = CHART_DATA[planId]?.[activeFilter] || CHART_DATA.flex["3M"];
 
   return (
-    <main id="main-content" role="main" className="min-h-screen bg-gray-50 flex flex-col pb-24">
+    <main id="main-content" role="main" className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col pb-24">
       {/* Hero */}
       <div
         className="relative px-5 pt-6 pb-8 overflow-hidden"
@@ -250,10 +250,10 @@ export default function PlanDetailPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white border border-gray-200 rounded-2xl p-5"
+          className="bg-white dark:bg-[#151A1F] border border-gray-200 dark:border-white/10 rounded-2xl p-5"
         >
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base font-bold text-gray-900">Growth Over Time</h2>
+            <h2 className="text-base font-bold text-[#0C0F14] dark:text-white">Growth Over Time</h2>
             <div className="flex gap-1">
               {(["3M", "6M", "1Y", "2Y"] as TimeFilter[]).map((f) => (
                 <Button
@@ -262,7 +262,7 @@ export default function PlanDetailPage() {
                   className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
                     activeFilter === f
                       ? "text-gray-900"
-                      : "text-gray-500 border border-gray-200"
+                      : "text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-white/10"
                   }`}
                   style={activeFilter === f ? { backgroundColor: plan.color } : {}}
                 >
@@ -284,14 +284,14 @@ export default function PlanDetailPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white border border-gray-200 rounded-2xl p-5"
+          className="bg-white dark:bg-[#151A1F] border border-gray-200 dark:border-white/10 rounded-2xl p-5"
         >
-          <h2 className="text-base font-bold text-gray-900 mb-3">Key Facts</h2>
-          <div className="divide-y divide-gray-200">
+          <h2 className="text-base font-bold text-[#0C0F14] dark:text-white mb-3">Key Facts</h2>
+          <div className="divide-y divide-gray-200 dark:divide-white/10">
             {plan.keyFacts.map((f, i) => (
               <div key={i} className="flex justify-between items-center py-3">
-                <span className="text-sm text-gray-500">{f.label}</span>
-                <span className="text-sm font-semibold text-gray-900">{f.value}</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">{f.label}</span>
+                <span className="text-sm font-semibold text-[#0C0F14] dark:text-white">{f.value}</span>
               </div>
             ))}
           </div>
@@ -308,28 +308,28 @@ export default function PlanDetailPage() {
             borderColor: `${plan.color}30`,
           }}
         >
-          <h2 className="text-base font-bold text-gray-900 mb-4">See it in action</h2>
+          <h2 className="text-base font-bold text-[#0C0F14] dark:text-white mb-4">See it in action</h2>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs text-gray-500">You invest</p>
-              <p className="text-xl font-bold text-gray-900 mt-1">
+              <p className="text-xs text-gray-500 dark:text-gray-400">You invest</p>
+              <p className="text-xl font-bold text-[#0C0F14] dark:text-white mt-1">
                 GH₵ {plan.exampleReturn.principal.toLocaleString()}
               </p>
             </div>
             <div className="flex flex-col items-center">
               <ChevronRight className="w-5 h-5" style={{ color: plan.color }} />
-              <p className="text-[10px] text-gray-500 mt-1">{plan.exampleReturn.months} months</p>
+              <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-1">{plan.exampleReturn.months} months</p>
             </div>
             <div className="text-right">
-              <p className="text-xs text-gray-500">You earn</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">You earn</p>
               <p className="text-xl font-bold mt-1" style={{ color: plan.color }}>
                 +GH₵ {plan.exampleReturn.earned}
               </p>
             </div>
           </div>
           <div className="flex items-center gap-1.5 mt-4 pt-3 border-t" style={{ borderColor: `${plan.color}25` }}>
-            <Info className="w-3.5 h-3.5 text-gray-500" />
-            <p className="text-[11px] text-gray-500">
+            <Info className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
+            <p className="text-[11px] text-gray-500 dark:text-gray-400">
               Illustration only. Returns may vary. {plan.rate}% p.a.
             </p>
           </div>
@@ -340,14 +340,14 @@ export default function PlanDetailPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="text-sm text-gray-500 leading-relaxed"
+          className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed"
         >
           {plan.description}
         </motion.p>
       </div>
 
       {/* Sticky CTA */}
-      <div className="fixed bottom-0 left-0 right-0 px-5 pb-6 pt-3 bg-gray-50 border-t border-gray-200">
+      <div className="fixed bottom-0 left-0 right-0 px-5 pb-6 pt-3 bg-[#FBF6EF] dark:bg-[#0C0F14] border-t border-gray-200 dark:border-white/10">
         <Button
           onClick={() => router.push(`/invest/new/setup?plan=${planId}`)}
           className="w-full py-4 rounded-xl text-gray-900 font-bold text-base transition-colors"

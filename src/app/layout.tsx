@@ -38,7 +38,7 @@ export const viewport: Viewport = {
   themeColor: "#FAFAFA",
 };
 
-const devBypass = process.env.DEV_BYPASS === "true";
+const devBypass = process.env.NEXT_PUBLIC_DEV_BYPASS === "true";
 
 if (devBypass && typeof window === "undefined") {
   // Server-side: log that bypass is active
@@ -52,7 +52,7 @@ export default function RootLayout({
 }>) {
   const content = (
     <ThemeProvider>
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
@@ -62,7 +62,7 @@ export default function RootLayout({
           <div id="app-root">
             {children}
           </div>
-          <Toaster position="top-center" theme="light" />
+          <Toaster position="top-center" />
           <SWRegistration />
           <SpeedInsights />
         </body>
@@ -70,7 +70,7 @@ export default function RootLayout({
     </ThemeProvider>
   );
 
-  if (devBypass) return content;
+  // if (devBypass) return content;
 
   return (
     <ClerkProvider>

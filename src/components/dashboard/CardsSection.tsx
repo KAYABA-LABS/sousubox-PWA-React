@@ -28,7 +28,7 @@ export function CardsSection({ onCardClick }: CardsSectionProps) {
             >
               <div className="absolute top-4 right-4">
                 <ArrowUpRight
-                  className="w-4 h-4 text-[#00E660]"
+                  className="w-4 h-4 text-[#0D4F3C] dark:text-[#156B53]"
                   strokeWidth={2}
                 />
               </div>

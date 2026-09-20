@@ -17,29 +17,40 @@ import {
   ShieldCheck,
   CheckCircle2,
   Loader2,
+  Plus,
 } from "lucide-react";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { Dock } from "@/components/dashboard/Dock";
 import { usePoolService } from "@/services/poolService";
 import { useSavingsService } from "@/services/savingsService";
 import { useKycService } from "@/services/kycService";
-import { api, type UserPoolMembership, type SavingsGoal, type UserProfile } from "@/lib/api";
+import {
+  api,
+  type UserPoolMembership,
+  type ActivePoolListItem,
+  type SavingsGoal,
+  type UserProfile,
+} from "@/lib/api";
+import { isDevMode } from "@/lib/dev";
 
 export default function ClientDashboard() {
   const router = useRouter();
   const { userId, isLoaded } = useAuth();
   const { user } = useUser();
+  const databaseUserId =
+    typeof user?.unsafeMetadata?.userId === "string" ? user.unsafeMetadata.userId : null;
   const searchParams = useSearchParams();
 
   const poolService = usePoolService();
   const savingsService = useSavingsService();
   const kycService = useKycService();
 
-  const [userName, setUserName] = useState("User");
+  const [userName, setUserName] = useState("******");
   const [isLoading, setIsLoading] = useState(true);
 
   // Live Backend State
   const [pools, setPools] = useState<UserPoolMembership[]>([]);
+  const [activePools, setActivePools] = useState<ActivePoolListItem[]>([]);
   const [savings, setSavings] = useState<SavingsGoal[]>([]);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isKycVerified, setIsKycVerified] = useState(false);
@@ -47,31 +58,29 @@ export default function ClientDashboard() {
 
   useEffect(() => {
     if (!isLoaded) return;
-    if (!userId) {
+    if (!userId && !isDevMode()) {
       router.push("/signin");
       return;
     }
 
-    const displayName =
-      (user?.firstName && user?.lastName
-        ? `${user.firstName} ${user.lastName}`
-        : user?.firstName) ||
-      user?.emailAddresses?.[0]?.emailAddress ||
-      "User";
-
-    setUserName(displayName);
+   
 
     // Fetch live backend data
     const fetchBackendData = async () => {
       try {
-        const [poolsData, savingsData, kycStatusData, profileData] = await Promise.all([
-          poolService.getUserPools(userId),
-          savingsService.getSavingsGoals(userId),
-          kycService.getStatus(userId),
-          api.getUserProfile(userId).catch(() => null),
+        const [ActivePoolsData, JoinedPoolsData, savingsData, kycStatusData, profileData] = await Promise.all([
+          poolService.getActivePools(databaseUserId || ""),
+          poolService.getJoinedPools(databaseUserId || ""),
+          savingsService.getSavingsGoals(databaseUserId || ""),
+          kycService.getStatus(databaseUserId || ""),
+          api.getUserProfile(databaseUserId || "").catch(() => null),
         ]);
 
-        setPools(poolsData || []);
+        console.log(ActivePoolsData);
+        console.log(JoinedPoolsData);
+
+        setPools([...ActivePoolsData, ...JoinedPoolsData]);
+        setActivePools(ActivePoolsData);
         setSavings(savingsData || []);
 
         const kycPassed = kycStatusData?.status === "VERIFIED";
@@ -79,6 +88,7 @@ export default function ClientDashboard() {
 
         if (profileData && profileData.data) {
           setProfile(profileData.data);
+          setUserName(profileData.data.firstName || "*******");
         }
       } catch (err) {
         console.error("Error fetching dashboard data:", err);
@@ -116,8 +126,8 @@ export default function ClientDashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#FBF6EF] flex items-center justify-center">
-        <Loader2 className="w-7 h-7 animate-spin text-emerald-700" />
+      <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center">
+        <Loader2 className="w-7 h-7 animate-spin text-[#0D4F3C] dark:text-[#156B53]" />
       </div>
     );
   }
@@ -133,35 +143,35 @@ export default function ClientDashboard() {
 
   const totalBalance = availableBalance + totalLockedInPools + totalPersonalSavings;
 
-  // Detect if any pool has due/overdue status
-  const dueSoon = pools.find(
-    (p) => p.pool.status === "DUE" || p.pool.status === "OVERDUE" || p.pool.status === "due"
+  // Active pools still awaiting this cycle's contribution
+  const pendingActivePools = activePools.filter(
+    (p) => p.contributionStatus?.toUpperCase() === "PENDING"
   );
 
   return (
-    <div className="min-h-screen bg-[#FBF6EF] flex flex-col pb-32 font-sans">
+    <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col pb-32 font-sans">
       {/* ── HEADER ── */}
       <header className="px-5 pt-6 pb-4">
         <div className="flex items-center justify-between max-w-xl mx-auto w-full">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-full bg-emerald-700 flex items-center justify-center text-white font-bold text-lg">
-              {userName.charAt(0).toUpperCase()}
+            <div className="w-11 h-11 rounded-full bg-[#0D4F3C] flex items-center justify-center text-white font-bold text-lg">
+              {profile?.firstName?.charAt(0).toUpperCase() || "*******"}
             </div>
             <div>
-              <p className="text-[10px] text-emerald-950/45 tracking-widest uppercase font-semibold">Akwaaba</p>
-              <p className="text-base font-bold text-emerald-950 flex items-center gap-1.5">
+              <p className="text-[10px] text-gray-500 dark:text-gray-400 tracking-widest uppercase font-semibold">Welcome</p>
+              <p className="text-base font-bold text-[#0C0F14] dark:text-white flex items-center gap-1.5">
                 {userName}
-                {isKycVerified && <CheckCircle2 className="w-4 h-4 text-emerald-700" />}
+                {isKycVerified && <CheckCircle2 className="w-4 h-4 text-[#0D4F3C] dark:text-[#156B53]" />}
               </p>
             </div>
           </div>
 
           <button
             onClick={() => router.push("/activity")}
-            className="w-10 h-10 rounded-full bg-white hover:bg-emerald-50 flex items-center justify-center border border-emerald-950/[0.06] relative transition-colors shadow-[0_1px_3px_rgba(20,60,40,0.06)]"
+            className="w-10 h-10 rounded-full bg-white dark:bg-[#151A1F] hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-center border border-black/[0.06] dark:border-white/10 relative transition-colors shadow-[0_1px_3px_rgba(0,0,0,0.06)] dark:shadow-black/20"
           >
-            <Bell className="w-[18px] h-[18px] text-emerald-950/60" strokeWidth={1.75} />
-            <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-amber-500 border-2 border-white" />
+            <Bell className="w-[18px] h-[18px] text-gray-500 dark:text-gray-400" strokeWidth={1.75} />
+            <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-amber-500 border-2 border-white dark:border-[#151A1F]" />
           </button>
         </div>
       </header>
@@ -173,11 +183,11 @@ export default function ClientDashboard() {
             initial={{ opacity: 0, y: -16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16 }}
-            className="mx-5 mb-4 max-w-xl lg:mx-auto w-auto lg:w-full bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl px-4 py-3 flex items-center gap-3"
+            className="mx-5 mb-4 max-w-xl lg:mx-auto w-auto lg:w-full bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-800 dark:text-emerald-400 rounded-2xl px-4 py-3 flex items-center gap-3"
           >
-            <ShieldCheck className="w-5 h-5 shrink-0 text-emerald-700" />
+            <ShieldCheck className="w-5 h-5 shrink-0 text-emerald-700 dark:text-emerald-400" />
             <div className="text-sm">
-              <span className="font-semibold">Verification complete!</span> Welcome aboard SusuChain.
+              <span className="font-semibold">Verification complete!</span> Welcome aboard Sousubox.
             </div>
           </motion.div>
         )}
@@ -189,20 +199,20 @@ export default function ClientDashboard() {
           <motion.div
             initial={{ opacity: 0, scale: 0.97 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="rounded-[24px] p-5 bg-white border border-emerald-950/[0.04] shadow-[0_2px_8px_rgba(20,60,40,0.06)]"
+            className="rounded-[24px] p-5 bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20"
           >
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 shrink-0">
+              <div className="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-500/10 flex items-center justify-center text-amber-700 dark:text-amber-400 shrink-0">
                 <ShieldAlert className="w-5 h-5" strokeWidth={2} />
               </div>
               <div className="space-y-1">
-                <h3 className="text-sm font-bold text-emerald-950">Complete KYC verification</h3>
-                <p className="text-[13px] text-emerald-950/55 leading-relaxed">
+                <h3 className="text-sm font-bold text-[#0C0F14] dark:text-white">Complete KYC verification</h3>
+                <p className="text-[13px] text-gray-500 dark:text-gray-400 leading-relaxed">
                   Verify your identity to unlock group savings circles, deposits, transfers, and platinum access.
                 </p>
                 <button
                   onClick={() => router.push("/kyc")}
-                  className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 active:scale-95 text-white text-xs font-bold rounded-full transition-all"
+                  className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 bg-[#0D4F3C] hover:bg-[#156B53] active:scale-95 text-white text-xs font-bold rounded-full transition-all"
                 >
                   Start verification
                   <ChevronRight className="w-3.5 h-3.5" />
@@ -213,12 +223,12 @@ export default function ClientDashboard() {
         )}
 
         {/* ── BALANCE CARD ── */}
-        <div className={`relative rounded-[28px] overflow-hidden shadow-[0_4px_16px_rgba(20,60,40,0.12),0_16px_40px_rgba(20,60,40,0.10)] transition-opacity duration-300 ${!isKycVerified ? "opacity-60" : ""}`}>
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-800 via-emerald-700 to-emerald-600 z-0" />
+        <div className={`relative rounded-[28px] overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.12),0_16px_40px_rgba(0,0,0,0.10)] dark:shadow-black/40 transition-opacity duration-300 ${!isKycVerified ? "opacity-60" : ""}`}>
+          <div className="absolute inset-0 bg-gradient-to-br from-[#0D4F3C] to-[#156B53] z-0" />
 
-          {/* Decorative rings, kept subtle against the new base */}
-          <div className="absolute right-[-40px] top-[-40px] w-[180px] h-[180px] rounded-full bg-amber-400/10 z-0" />
-          <svg className="absolute left-[-20px] bottom-[-40px] w-[160px] h-[160px] opacity-[0.08] text-white z-0" viewBox="0 0 100 100">
+          {/* Decorative rings, kept subtle against the dark green base */}
+          <div className="absolute right-[-40px] top-[-40px] w-[180px] h-[180px] rounded-full bg-white/5 z-0" />
+          <svg className="absolute left-[-20px] bottom-[-40px] w-[160px] h-[160px] opacity-[0.10] text-white z-0" viewBox="0 0 100 100">
             <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" strokeWidth="1" />
             <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" strokeWidth="0.7" />
           </svg>
@@ -227,21 +237,21 @@ export default function ClientDashboard() {
             {/* Top Row */}
             <div className="flex justify-between items-start">
               <div className="space-y-1">
-                <span className="text-[10px] text-white/65 uppercase tracking-widest font-semibold">Available balance</span>
+                <span className="text-[10px] text-white/60 uppercase tracking-widest font-semibold">Available balance</span>
                 <h1 className="text-3xl font-bold tracking-tight text-white">
                   GHS {totalBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                 </h1>
               </div>
-              <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-400/20 border border-amber-300/25 rounded-full">
-                <div className="w-1.5 h-1.5 rounded-full bg-amber-300" />
-                <span className="text-[9px] font-bold text-amber-100 tracking-wider">
+              <div className="flex items-center gap-1.5 px-3 py-1 bg-white/10 border border-white/10 rounded-full">
+                <div className="w-1.5 h-1.5 rounded-full bg-white/50" />
+                <span className="text-[9px] font-bold text-white/70 tracking-wider">
                   {isKycVerified ? "VERIFIED" : "PENDING"}
                 </span>
               </div>
             </div>
 
             {/* Split Locked Details */}
-            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/15">
+            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/10">
               <div className="space-y-0.5">
                 <div className="flex items-center gap-1.5 text-white/60">
                   <Users className="w-3.5 h-3.5" />
@@ -251,7 +261,7 @@ export default function ClientDashboard() {
                   GHS {totalLockedInPools.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                 </p>
               </div>
-              <div className="border-l border-white/15 pl-4 space-y-0.5">
+              <div className="border-l border-white/10 pl-4 space-y-0.5">
                 <div className="flex items-center gap-1.5 text-white/60">
                   <Lock className="w-3.5 h-3.5" />
                   <span className="text-[9px] font-bold uppercase tracking-wider">Personal savings</span>
@@ -273,23 +283,54 @@ export default function ClientDashboard() {
         </div>
 
         {/* ── DUE SOON BANNER ── */}
-        {isKycVerified && dueSoon && (
-          <div className="rounded-[24px] p-4 bg-white border border-emerald-950/[0.04] shadow-[0_2px_8px_rgba(20,60,40,0.06)] flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 shrink-0">
+        {/* {isKycVerified && dueSoon && (
+          <div className="rounded-[24px] p-4 bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-500/10 flex items-center justify-center text-amber-700 dark:text-amber-400 shrink-0">
               <Calendar className="w-5 h-5" strokeWidth={2} />
             </div>
             <div className="flex-1 min-w-0">
-              <h4 className="text-[11px] font-bold text-emerald-950 uppercase tracking-wide">Settle up</h4>
-              <p className="text-xs text-emerald-950/55 font-medium truncate mt-0.5">
+              <h4 className="text-[11px] font-bold text-[#0C0F14] dark:text-white uppercase tracking-wide">Settle up</h4>
+              <p className="text-xs text-gray-500 dark:text-gray-400 font-medium truncate mt-0.5">
                 {dueSoon.pool.template.name} — contribution due soon
               </p>
             </div>
             <button
               onClick={() => router.push(`/pools/${dueSoon.pool.id}`)}
-              className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 active:scale-95 text-white font-bold text-xs rounded-full transition-all shrink-0"
+              className="px-4 py-2 bg-[#0D4F3C] hover:bg-[#156B53] active:scale-95 text-white font-bold text-xs rounded-full transition-all shrink-0"
             >
               Pay now
             </button>
+          </div>
+        )} */}
+
+        {/* ── PENDING CONTRIBUTIONS ── */}
+        {pendingActivePools.length > 0 && (
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-bold text-[#0C0F14] dark:text-white">Pending contributions</h2>
+              <button
+                onClick={() => router.push("/pools?tab=active")}
+                className="text-xs font-semibold text-[#0D4F3C] dark:text-[#156B53] hover:text-[#0D4F3C]/80 dark:hover:text-[#156B53]/80"
+              >
+                See all
+              </button>
+            </div>
+            <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1">
+              {pendingActivePools.map((pool) => (
+                <PoolCardCompact
+                  key={pool.id}
+                  pool={pool}
+                  onClick={() => router.push(`/pools/${pool.id}?type=active`)}
+                />
+              ))}
+              <button
+                onClick={() => router.push("/pools?tab=discover")}
+                className="shrink-0 w-[140px] h-[136px] rounded-2xl bg-transparent border-[1.5px] border-dashed border-black/15 dark:border-white/15 cursor-pointer flex flex-col items-center justify-center gap-1.5 text-gray-500 dark:text-gray-400 text-xs font-semibold hover:border-[#0D4F3C]/30 dark:hover:border-[#156B53]/30 hover:text-[#0D4F3C] dark:hover:text-[#156B53] transition-colors"
+              >
+                <Plus className="w-[22px] h-[22px]" strokeWidth={1.75} />
+                Find a pool
+              </button>
+            </div>
           </div>
         )}
       </main>
@@ -322,7 +363,85 @@ function QuickActionButton({ icon: Icon, label, onClick, enabled }: QuickActionB
       <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
         <Icon className="w-5 h-5 text-white" strokeWidth={1.75} />
       </div>
-      <span className="text-[10px] text-white/85 font-semibold">{label}</span>
+      <span className="text-[10px] text-white/70 font-semibold">{label}</span>
     </button>
+  );
+}
+
+interface PoolCardCompactProps {
+  pool: ActivePoolListItem;
+  onClick: () => void;
+}
+
+function PoolCardCompact({ pool, onClick }: PoolCardCompactProps) {
+  const progress = pool.totalCycles > 0 ? pool.currentCycle / pool.totalCycles : 0;
+  return (
+    <button
+      onClick={onClick}
+      className="shrink-0 w-[140px] h-[136px] p-3.5 rounded-2xl bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20 text-left cursor-pointer flex flex-col justify-between gap-2 hover:border-[#0D4F3C]/30 dark:hover:border-[#156B53]/30 active:scale-[0.98] transition-all"
+    >
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0">
+          <p className="text-xs font-bold text-[#0C0F14] dark:text-white truncate">{pool.template.name}</p>
+          <p className="text-[10px] text-gray-500 dark:text-gray-400 font-medium mt-0.5">
+            Cycle {pool.currentCycle} of {pool.totalCycles}
+          </p>
+        </div>
+        <ProgressRing value={progress} size={32} stroke={3}>
+          <span className="text-[8px] font-bold text-[#0D4F3C] dark:text-[#156B53]">{Math.round(progress * 100)}%</span>
+        </ProgressRing>
+      </div>
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-bold text-[#0C0F14] dark:text-white">
+          GHS {pool.contributionAmount.toLocaleString("en-US")}
+        </span>
+        <span className="px-2 py-0.5 rounded-full text-[8px] font-bold tracking-wide uppercase bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400">
+          {pool.contributionStatus}
+        </span>
+      </div>
+    </button>
+  );
+}
+
+interface ProgressRingProps {
+  value: number;
+  size: number;
+  stroke: number;
+  children?: React.ReactNode;
+}
+
+function ProgressRing({ value, size, stroke, children }: ProgressRingProps) {
+  const radius = (size - stroke) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const clamped = Math.max(0, Math.min(1, value));
+  const offset = circumference * (1 - clamped);
+
+  return (
+    <div className="relative shrink-0" style={{ width: size, height: size }}>
+      <svg width={size} height={size} className="-rotate-90">
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={stroke}
+          className="text-black/10 dark:text-white/10"
+        />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={stroke}
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          className="text-[#0D4F3C] dark:text-[#156B53]"
+        />
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center">{children}</div>
+    </div>
   );
 }

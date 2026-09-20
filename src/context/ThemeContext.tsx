@@ -13,13 +13,13 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [mode, setModeState] = useState<ThemeMode>("light");
+  const [mode, setModeState] = useState<ThemeMode>("dark");
 
   useEffect(() => {
     const saved = localStorage.getItem("sousuchain-theme") as ThemeMode | null;
-    if (saved) {
-      setModeState(saved);
-    }
+    const initial = saved ?? "dark";
+    setModeState(initial);
+    document.documentElement.classList.toggle("dark", initial === "dark");
   }, []);
 
   const setMode = (newMode: ThemeMode) => {
