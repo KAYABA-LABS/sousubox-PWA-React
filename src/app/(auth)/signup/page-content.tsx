@@ -36,7 +36,7 @@ export default function SignUpPageContent() {
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const autoSubmitRef = useRef(false);
-  // const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL
+  // const API_BASE_URL = process.env.API_URL
 
   useEffect(() => {
     if (step !== "verify") return;
