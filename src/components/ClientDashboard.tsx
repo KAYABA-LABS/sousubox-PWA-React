@@ -68,7 +68,8 @@ export default function ClientDashboard() {
     // Fetch live backend data
     const fetchBackendData = async () => {
       try {
-        const [ActivePoolsData, JoinedPoolsData, savingsData, kycStatusData, profileData] = await Promise.all([
+        const [userPoolsData, ActivePoolsData, JoinedPoolsData, savingsData, kycStatusData, profileData] = await Promise.all([
+          poolService.getUserPools(databaseUserId || ""),
           poolService.getActivePools(databaseUserId || ""),
           poolService.getJoinedPools(databaseUserId || ""),
           savingsService.getSavingsGoals(databaseUserId || ""),
@@ -79,7 +80,7 @@ export default function ClientDashboard() {
         console.log(ActivePoolsData);
         console.log(JoinedPoolsData);
 
-        setPools([...ActivePoolsData, ...JoinedPoolsData]);
+        setPools(userPoolsData);
         setActivePools(ActivePoolsData);
         setSavings(savingsData || []);
 
