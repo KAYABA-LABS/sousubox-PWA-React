@@ -1,6 +1,6 @@
 const API_BASE =
   typeof window === "undefined"
-    ? process.env.NEXT_PUBLIC_API_URL || "http://192.168.0.166:8000/api/v1"
+    ? process.env.API_URL || "http://192.168.0.166:8000/api/v1"
     : "/api/backend";
 
 let authTokenGetter: (() => Promise<string | null>) | null = null;

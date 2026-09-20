@@ -14,7 +14,7 @@ export function AuthTokenProvider({ children }: { children: React.ReactNode }) {
     setApiUserIdGetter(() => {
       const databaseUserId = user?.unsafeMetadata?.userId;
       if (typeof databaseUserId === "string") return databaseUserId;
-      return isDevMode() ? process.env.NEXT_PUBLIC_DEV_USERID ?? null : null;
+      return isDevMode() ? process.env.DEV_USERID ?? null : null;
     });
 
     return () => {

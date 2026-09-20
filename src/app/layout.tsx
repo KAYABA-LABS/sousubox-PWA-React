@@ -38,7 +38,7 @@ export const viewport: Viewport = {
   themeColor: "#FAFAFA",
 };
 
-const devBypass = process.env.NEXT_PUBLIC_DEV_BYPASS === "true";
+const devBypass = process.env.DEV_BYPASS === "true";
 
 if (devBypass && typeof window === "undefined") {
   // Server-side: log that bypass is active
