@@ -17,7 +17,7 @@ const isPublicRoute = createRouteMatcher([
 
 export default clerkMiddleware(async (auth, request) => {
   // Skip auth if dev bypass enabled
-  if (process.env.DEV_BYPASS === "true") {
+  if (process.env.NEXT_PUBLIC_DEV_BYPASS === "true") {
     if (
       request.nextUrl.pathname === "/signin" ||
       request.nextUrl.pathname === "/signup"

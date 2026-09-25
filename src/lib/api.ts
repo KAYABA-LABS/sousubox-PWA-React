@@ -1,6 +1,6 @@
 const API_BASE =
   typeof window === "undefined"
-    ? process.env.API_URL || "http://192.168.0.166:8000/api/v1"
+    ? process.env.NEXT_PUBLIC_API_URL || "http://192.168.0.166:8000/api/v1"
     : "/api/backend";
 
 let authTokenGetter: (() => Promise<string | null>) | null = null;
@@ -185,6 +185,16 @@ export interface ActivePoolContributionEntry {
   completed: boolean;
   isMine: boolean;
   prepaid: boolean;
+}
+
+export interface UserRecentContribution {
+  id: string;
+  poolId: string;
+  poolName: string;
+  cycleNumber: number;
+  amount: number;
+  status: string;
+  completed: boolean;
 }
 
 export interface ActivePoolDetails {
@@ -407,6 +417,9 @@ export const api = {
 
   getJoinedPools: (userId: string) =>
     apiFetch<BackendEnvelope<JoinedPoolListItem[]>>(`/getUserJoinedPoolsList/${resolveUserId(userId)}`),
+
+  getRecentContributions: (userId: string) =>
+    apiFetch<BackendEnvelope<UserRecentContribution[]>>(`/getUserRecentContributions/${resolveUserId(userId)}`),
 
   getJoinedPoolDetails: (userId: string, poolId: string) =>
     apiFetch<PoolDetailsEnvelope<JoinedPoolDetails>>(`/${poolId}/joinedPoolDetails/${resolveUserId(userId)}`),

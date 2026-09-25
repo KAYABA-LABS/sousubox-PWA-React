@@ -10,6 +10,7 @@ import {
   type JoinedPoolListItem,
   type JoinedPoolDetails,
   type AvailablePoolDetails,
+  type UserRecentContribution,
 } from "@/lib/api";
 
 export function usePoolService() {
@@ -44,6 +45,11 @@ export function usePoolService() {
     getJoinedPools: async (userId: string): Promise<JoinedPoolListItem[]> => {
       const result = await api.getJoinedPools(userId);
       return result.data || [];
+    },
+
+    getRecentContributions: async (userId: string, limit: number = 5): Promise<UserRecentContribution[]> => {
+      const result = await api.getRecentContributions(userId);
+      return (result.data || []).slice(0, limit);
     },
 
     getJoinedPoolDetails: async (userId: string, poolId: string): Promise<JoinedPoolDetails> => {

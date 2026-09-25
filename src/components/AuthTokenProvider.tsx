@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { setApiUserIdGetter, setAuthTokenGetter } from "@/lib/api";
-import { isDevMode } from "@/lib/dev";
 
 export function AuthTokenProvider({ children }: { children: React.ReactNode }) {
   const { getToken } = useAuth();
@@ -14,7 +13,9 @@ export function AuthTokenProvider({ children }: { children: React.ReactNode }) {
     setApiUserIdGetter(() => {
       const databaseUserId = user?.unsafeMetadata?.userId;
       if (typeof databaseUserId === "string") return databaseUserId;
-      return isDevMode() ? process.env.DEV_USERID ?? null : null;
+      return process.env.NEXT_PUBLIC_DEV_BYPASS === "true"
+        ? process.env.NEXT_PUBLIC_DEV_USERID ?? null
+        : null;
     });
 
     return () => {

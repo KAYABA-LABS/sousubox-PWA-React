@@ -16,8 +16,8 @@ import {
   Users,
   ShieldCheck,
   CheckCircle2,
-  Loader2,
   Plus,
+  BanknoteX
 } from "lucide-react";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { Dock } from "@/components/dashboard/Dock";
@@ -30,6 +30,7 @@ import {
   type ActivePoolListItem,
   type SavingsGoal,
   type UserProfile,
+  type UserRecentContribution,
 } from "@/lib/api";
 import { isDevMode } from "@/lib/dev";
 
@@ -51,6 +52,7 @@ export default function ClientDashboard() {
   // Live Backend State
   const [pools, setPools] = useState<UserPoolMembership[]>([]);
   const [activePools, setActivePools] = useState<ActivePoolListItem[]>([]);
+  const [recentContributions, setRecentContributions] = useState<UserRecentContribution[]>([]);
   const [savings, setSavings] = useState<SavingsGoal[]>([]);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isKycVerified, setIsKycVerified] = useState(false);
@@ -68,13 +70,14 @@ export default function ClientDashboard() {
     // Fetch live backend data
     const fetchBackendData = async () => {
       try {
-        const [userPoolsData, ActivePoolsData, JoinedPoolsData, savingsData, kycStatusData, profileData] = await Promise.all([
+        const [userPoolsData, ActivePoolsData, JoinedPoolsData, savingsData, kycStatusData, profileData, recentContributionsData] = await Promise.all([
           poolService.getUserPools(databaseUserId || ""),
           poolService.getActivePools(databaseUserId || ""),
           poolService.getJoinedPools(databaseUserId || ""),
           savingsService.getSavingsGoals(databaseUserId || ""),
           kycService.getStatus(databaseUserId || ""),
           api.getUserProfile(databaseUserId || "").catch(() => null),
+          poolService.getRecentContributions(databaseUserId || "", 5).catch(() => []),
         ]);
 
         console.log(ActivePoolsData);
@@ -83,6 +86,7 @@ export default function ClientDashboard() {
         setPools(userPoolsData);
         setActivePools(ActivePoolsData);
         setSavings(savingsData || []);
+        setRecentContributions(recentContributionsData || []);
 
         const kycPassed = kycStatusData?.status === "VERIFIED";
         setIsKycVerified(kycPassed);
@@ -124,14 +128,6 @@ export default function ClientDashboard() {
   const handleWithdraw = () => router.push("/withdraw");
   const handleTransfer = () => router.push("/transfer");
   const handlePay = () => router.push("/pay");
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center">
-        <Loader2 className="w-7 h-7 animate-spin text-[#0D4F3C] dark:text-[#156B53]" />
-      </div>
-    );
-  }
 
   // Calculate totals from live profile stats or dynamic states
   const totalLockedInPools = pools.reduce((acc, p) => acc + (p.totalContributed || 0), 0);
@@ -255,7 +251,7 @@ export default function ClientDashboard() {
             <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/10">
               <div className="space-y-0.5">
                 <div className="flex items-center gap-1.5 text-white/60">
-                  <Users className="w-3.5 h-3.5" />
+                  <Lock className="w-3.5 h-3.5" />
                   <span className="text-[9px] font-bold uppercase tracking-wider">Locked in pools</span>
                 </div>
                 <p className="text-sm font-bold text-white">
@@ -264,8 +260,8 @@ export default function ClientDashboard() {
               </div>
               <div className="border-l border-white/10 pl-4 space-y-0.5">
                 <div className="flex items-center gap-1.5 text-white/60">
-                  <Lock className="w-3.5 h-3.5" />
-                  <span className="text-[9px] font-bold uppercase tracking-wider">Personal savings</span>
+                  <BanknoteX className="w-3.5 h-3.5" />
+                  <span className="text-[9px] font-bold uppercase tracking-wider">Defaulted Payments</span>
                 </div>
                 <p className="text-sm font-bold text-white">
                   GHS {totalPersonalSavings.toLocaleString("en-US", { minimumFractionDigits: 2 })}
@@ -304,8 +300,8 @@ export default function ClientDashboard() {
           </div>
         )} */}
 
-        {/* ── PENDING CONTRIBUTIONS ── */}
-        {pendingActivePools.length > 0 && (
+        {/* ── PENDING ACTIVE POOLS ── */}
+        {(isLoading || pendingActivePools.length > 0) && (
           <div>
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-sm font-bold text-[#0C0F14] dark:text-white">Pending contributions</h2>
@@ -317,20 +313,62 @@ export default function ClientDashboard() {
               </button>
             </div>
             <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1">
-              {pendingActivePools.map((pool) => (
-                <PoolCardCompact
-                  key={pool.id}
-                  pool={pool}
-                  onClick={() => router.push(`/pools/${pool.id}?type=active`)}
-                />
-              ))}
+              {isLoading ? (
+                <>
+                  <PoolCardSkeleton />
+                  <PoolCardSkeleton />
+                  <PoolCardSkeleton />
+                </>
+              ) : (
+                <>
+                  {pendingActivePools.map((pool) => (
+                    <PoolCardCompact
+                      key={pool.id}
+                      pool={pool}
+                      onClick={() => router.push(`/pools/${pool.id}?type=active`)}
+                    />
+                  ))}
+                  <button
+                    onClick={() => router.push("/pools?tab=discover")}
+                    className="shrink-0 w-[140px] h-[136px] rounded-2xl bg-transparent border-[1.5px] border-dashed border-black/15 dark:border-white/15 cursor-pointer flex flex-col items-center justify-center gap-1.5 text-gray-500 dark:text-gray-400 text-xs font-semibold hover:border-[#0D4F3C]/30 dark:hover:border-[#156B53]/30 hover:text-[#0D4F3C] dark:hover:text-[#156B53] transition-colors"
+                  >
+                    <Plus className="w-[22px] h-[22px]" strokeWidth={1.75} />
+                    Find a pool
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ── RECENT TRANSACTIONS ── */}
+        {(isLoading || recentContributions.length > 0) && (
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-bold text-[#0C0F14] dark:text-white">Recent Contributions</h2>
               <button
-                onClick={() => router.push("/pools?tab=discover")}
-                className="shrink-0 w-[140px] h-[136px] rounded-2xl bg-transparent border-[1.5px] border-dashed border-black/15 dark:border-white/15 cursor-pointer flex flex-col items-center justify-center gap-1.5 text-gray-500 dark:text-gray-400 text-xs font-semibold hover:border-[#0D4F3C]/30 dark:hover:border-[#156B53]/30 hover:text-[#0D4F3C] dark:hover:text-[#156B53] transition-colors"
+                onClick={() => router.push("/activity")}
+                className="text-xs font-semibold text-[#0D4F3C] dark:text-[#156B53] hover:text-[#0D4F3C]/80 dark:hover:text-[#156B53]/80"
               >
-                <Plus className="w-[22px] h-[22px]" strokeWidth={1.75} />
-                Find a pool
+                See all
               </button>
+            </div>
+            <div className="space-y-3">
+              {isLoading ? (
+                <>
+                  <RecentContributionCardSkeleton />
+                  <RecentContributionCardSkeleton />
+                  <RecentContributionCardSkeleton />
+                </>
+              ) : (
+                recentContributions.map((entry) => (
+                  <RecentContributionCard
+                    key={entry.id}
+                    entry={entry}
+                    onClick={() => router.push(`/pools/${entry.poolId}?type=active`)}
+                  />
+                ))
+              )}
             </div>
           </div>
         )}
@@ -401,6 +439,78 @@ function PoolCardCompact({ pool, onClick }: PoolCardCompactProps) {
         </span>
       </div>
     </button>
+  );
+}
+
+function ShimmerBlock({ className = "" }: { className?: string }) {
+  return <div className={`skeleton-shimmer rounded-md ${className}`} />;
+}
+
+function PoolCardSkeleton() {
+  return (
+    <div
+      aria-hidden="true"
+      className="shrink-0 w-[140px] h-[136px] p-3.5 rounded-2xl bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20 flex flex-col justify-between gap-2"
+    >
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1 space-y-1.5">
+          <ShimmerBlock className="h-3 w-4/5" />
+          <ShimmerBlock className="h-2.5 w-3/5" />
+        </div>
+        <ShimmerBlock className="shrink-0 w-8 h-8 rounded-full" />
+      </div>
+      <div className="flex items-center justify-between">
+        <ShimmerBlock className="h-3 w-10" />
+        <ShimmerBlock className="h-3.5 w-12 rounded-full" />
+      </div>
+    </div>
+  );
+}
+
+interface RecentContributionCardProps {
+  entry: UserRecentContribution;
+  onClick: () => void;
+}
+
+function RecentContributionCard({ entry, onClick }: RecentContributionCardProps) {
+  return (
+    <button
+      onClick={onClick}
+      className="w-full p-4 rounded-2xl bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20 text-left cursor-pointer flex items-center gap-3 hover:border-[#0D4F3C]/30 dark:hover:border-[#156B53]/30 active:scale-[0.98] transition-all"
+    >
+      <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 flex items-center justify-center shrink-0">
+        <CheckCircle2 className="w-5 h-5" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-bold text-[#0C0F14] dark:text-white truncate">{entry.poolName}</p>
+        <p className="text-[11px] text-gray-500 dark:text-gray-400 font-medium mt-0.5">Cycle {entry.cycleNumber}</p>
+      </div>
+      <div className="text-right shrink-0">
+        <p className="text-sm font-bold text-[#0C0F14] dark:text-white">GHS {entry.amount.toLocaleString("en-US")}</p>
+        <span className="inline-block mt-1 px-2 py-0.5 rounded-full text-[8px] font-bold tracking-wide uppercase bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">
+          Paid
+        </span>
+      </div>
+    </button>
+  );
+}
+
+function RecentContributionCardSkeleton() {
+  return (
+    <div
+      aria-hidden="true"
+      className="w-full p-4 rounded-2xl bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20 flex items-center gap-3"
+    >
+      <ShimmerBlock className="w-10 h-10 rounded-full shrink-0" />
+      <div className="flex-1 min-w-0 space-y-1.5">
+        <ShimmerBlock className="h-3.5 w-2/3" />
+        <ShimmerBlock className="h-2.5 w-1/3" />
+      </div>
+      <div className="text-right shrink-0 space-y-1.5">
+        <ShimmerBlock className="h-3.5 w-14 ml-auto" />
+        <ShimmerBlock className="h-3 w-10 rounded-full ml-auto" />
+      </div>
+    </div>
   );
 }
 
