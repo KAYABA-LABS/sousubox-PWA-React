@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
   async rewrites() {
-    const backendApi = process.env.API_URL || "http://192.168.100.24:8000/api/v1";
+    const backendApi = process.env.NEXT_PUBLIC_API_URL || "http://192.168.100.24:8000/api/v1";
 
     return [
       {
