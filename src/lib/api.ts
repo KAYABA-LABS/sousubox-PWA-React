@@ -29,11 +29,13 @@ export class ApiError extends Error {
 
 async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = authTokenGetter ? await authTokenGetter() : null;
+  // FormData bodies need the browser to set the multipart boundary itself
+  const isFormData = typeof FormData !== "undefined" && options.body instanceof FormData;
 
   const res = await fetch(`${API_BASE}${path}`, {
     ...options,
     headers: {
-      "Content-Type": "application/json",
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },
@@ -78,6 +80,14 @@ export interface UserProfile {
   lastLoginAt: string | null;
 }
 
+export interface UpdateProfilePhotoResponse {
+  success: boolean;
+  message?: string;
+  photoUrl: string;
+  user?: unknown;
+  error?: string;
+}
+
 export interface UserStats {
   totalContributions: number;
   totalPayouts: number;
@@ -99,6 +109,19 @@ export interface UserStats {
   followingCount: number;
   lastActivityAt: string | null;
   lastContributionAt: string | null;
+}
+
+export interface UserCheckingAccount {
+  availableBalance: number;
+  lockedBalance: number;
+  amountOwedBalance: number;
+}
+
+export interface CheckingAccountResponse {
+  success: boolean;
+  message?: string;
+  checkingAccount: UserCheckingAccount;
+  error?: string;
 }
 
 // ── Pools ─────────────────────────────────────────────────────────────────────
@@ -390,11 +413,23 @@ export const api = {
   getUserProfile: (userId: string) =>
     apiFetch<BackendEnvelope<UserProfile>>(`/getUserProfile/${resolveUserId(userId)}`),
 
+  getUserCheckingAccount: (userId: string) =>
+    apiFetch<CheckingAccountResponse>(`/getUserCheckingAccount/${resolveUserId(userId)}`),
+
   updateProfile: (userId: string, data: Record<string, string>) =>
     apiFetch<BackendEnvelope<UserProfile>>("/updateProfile", {
       method: "PATCH",
       body: JSON.stringify({ userId: resolveUserId(userId), ...data }),
     }),
+
+  updateUserProfilePhoto: (userId: string, photo: Blob, filename: string) => {
+    const form = new FormData();
+    form.append("photo", photo, filename);
+    return apiFetch<UpdateProfilePhotoResponse>(`/updateUserProfilePhoto/${resolveUserId(userId)}`, {
+      method: "PUT",
+      body: form,
+    });
+  },
 
   // Pools
   discoverPools: (userId: string) =>

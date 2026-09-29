@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Ubuntu } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { AuthTokenProvider } from "@/components/AuthTokenProvider";
@@ -8,25 +8,23 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { Toaster } from "@/components/ui/sonner";
 import "./Index.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const ubuntu = Ubuntu({
+  variable: "--font-ubuntu",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["300", "400", "500", "700"],
+  style: ["normal", "italic"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "SousuChain - Your Premium Digital Account",
+  title: "Sousubox - Your Premium Digital Account",
   description:
     "A modern, secure space to manage your funds with clarity and confidence. Bank-level security meets exceptional design.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "SousuChain",
+    title: "Sousubox",
   },
 };
 
@@ -54,7 +52,7 @@ export default function RootLayout({
     <ThemeProvider>
       <html lang="en" suppressHydrationWarning>
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          className={`${ubuntu.variable} antialiased`}
         >
           <a href="#main-content" className="skip-link">
             Skip to main content

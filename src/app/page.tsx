@@ -15,7 +15,7 @@ export default function HomePage() {
     if (isSignedIn) {
       router.replace("/dashboard");
     } else {
-      const hasSeenOnboarding = localStorage.getItem("sousuchain_onboarded");
+      const hasSeenOnboarding = localStorage.getItem("Sousubox_onboarded");
       if (hasSeenOnboarding) {
         router.replace("/signin");
       } else {

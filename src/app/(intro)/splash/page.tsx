@@ -9,7 +9,7 @@ export default function SplashPage() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      const hasSeenOnboarding = localStorage.getItem("sousuchain_onboarded");
+      const hasSeenOnboarding = localStorage.getItem("Sousubox_onboarded");
       if (hasSeenOnboarding) {
         router.replace("/dashboard");
       } else {
@@ -38,7 +38,7 @@ export default function SplashPage() {
         transition={{ delay: 0.5 }}
         className="text-3xl font-extrabold text-[#0C0F14] dark:text-white tracking-tight"
       >
-        SousuChain
+        Sousubox
       </motion.h1>
 
       <motion.p

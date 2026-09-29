@@ -1,6 +1,6 @@
 {
-  "name": "SousuChain",
-  "short_name": "SousuChain",
+  "name": "Sousubox",
+  "short_name": "Sousubox",
   "description": "Your premium digital savings account",
   "start_url": "/",
   "display": "standalone",

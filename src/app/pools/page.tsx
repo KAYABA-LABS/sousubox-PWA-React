@@ -187,11 +187,11 @@ function PoolsHubContent() {
         className="px-5 pt-6 pb-4 max-w-xl mx-auto w-full"
       >
         <div className="mb-5">
-          <p className="text-[10px] text-gray-500 dark:text-gray-400 tracking-widest uppercase font-semibold">Your finances</p>
+          <p className="text-[10px] text-gray-500 dark:text-gray-400 tracking-widest uppercase font-semibold">Your Group</p>
           <h1 className="text-2xl font-bold text-[#0C0F14] dark:text-white tracking-tight">Pools</h1>
         </div>
 
-        <div className="relative mb-4">
+        {/* <div className="relative mb-4">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500" />
           <input
             type="text"
@@ -200,7 +200,7 @@ function PoolsHubContent() {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full h-12 pl-11 pr-4 bg-white dark:bg-[#151A1F] border border-black/10 dark:border-white/10 rounded-2xl text-[#0C0F14] dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 text-sm font-medium focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53] focus:ring-2 focus:ring-[#0D4F3C]/10 dark:focus:ring-[#156B53]/10 transition-colors shadow-[0_2px_8px_rgba(0,0,0,0.04)] dark:shadow-black/10"
           />
-        </div>
+        </div> */}
 
         <Tabs value={activeTab} onValueChange={handleTabChange}>
           <TabsList className="w-full h-auto bg-white dark:bg-[#151A1F] border border-black/10 dark:border-white/10 rounded-full p-1 gap-1 justify-between">
