@@ -41,13 +41,13 @@ export default function OnboardingPage() {
     if (currentSlide < SLIDES.length - 1) {
       setCurrentSlide(currentSlide + 1);
     } else {
-      localStorage.setItem("sousuchain_onboarded", "true");
+      localStorage.setItem("Sousubox_onboarded", "true");
       router.push("/signup");
     }
   };
 
   const handleSkip = () => {
-    localStorage.setItem("sousuchain_onboarded", "true");
+    localStorage.setItem("Sousubox_onboarded", "true");
     router.push("/signup");
   };
 

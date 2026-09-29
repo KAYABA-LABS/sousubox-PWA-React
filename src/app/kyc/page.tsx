@@ -1,15 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import { useKycService } from "@/services/kycService";
 import { isDevMode } from "@/lib/dev";
 import { ArrowLeft, Shield, CheckCircle, XCircle, Clock, Loader2, AlertCircle, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 
 interface KycData {
@@ -71,21 +80,42 @@ const STATUS_CONFIG: Record<
   },
 };
 
-export default function KycPage() {
+function KycLoadingSpinner() {
+  return (
+    <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col items-center justify-center relative overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(13,79,60,0.08),transparent_60%)]" />
+      <Loader2 className="w-10 h-10 animate-spin text-[#0D4F3C] dark:text-[#156B53] z-10" />
+      <span className="text-zinc-500 dark:text-zinc-400 text-sm mt-4 font-medium animate-pulse z-10">Loading KYC Details...</span>
+    </div>
+  );
+}
+
+function KycPageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { userId, isLoaded } = useAuth();
+  const { user, isLoaded: isUserLoaded } = useUser();
   const kycService = useKycService();
 
   const [kycData, setKycData] = useState<KycData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
+  const [isVerificationReturn] = useState(() => searchParams.get("kycReturn") === "1");
+  const [showReturnModal, setShowReturnModal] = useState(isVerificationReturn);
+
+  const effectiveUserId =
+    (typeof user?.unsafeMetadata?.userId === "string" ? user.unsafeMetadata.userId : null) ||
+    userId ||
+    "";
 
   useEffect(() => {
-    if (!isLoaded || (!userId && !isDevMode())) return;
+    if (!isLoaded || !isUserLoaded) return;
+    if (!userId && !isDevMode()) return;
+    if (showReturnModal) return;
 
     const loadKycStatus = async () => {
       try {
-        const status = await kycService.getStatus(userId || "");
+        const status = await kycService.getStatus(effectiveUserId);
         setKycData(status);
       } catch {
         toast.error("Failed to load KYC status");
@@ -96,14 +126,31 @@ export default function KycPage() {
 
     loadKycStatus();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoaded, userId]);
+  }, [isLoaded, isUserLoaded, userId, user, showReturnModal]);
+
+  useEffect(() => {
+    if (!isVerificationReturn) return;
+
+    window.history.pushState(null, "", window.location.href);
+    const handlePopState = () => {
+      router.replace("/settings");
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isVerificationReturn]);
+
+  const handleDismissReturnModal = () => {
+    setShowReturnModal(false);
+    router.replace("/kyc");
+  };
 
   const handleStartVerification = async () => {
     if (!userId && !isDevMode()) return;
     setIsCreating(true);
     try {
-      const session = await kycService.createSession(userId || "", {
-        callback: `${window.location.origin}/kyc`,
+      const session = await kycService.createSession(effectiveUserId, {
+        callback: `${window.location.origin}/kyc?kycReturn=1`,
       });
       if (session.url) {
         window.location.href = session.url;
@@ -121,29 +168,46 @@ export default function KycPage() {
   const config = STATUS_CONFIG[status] || STATUS_CONFIG.NOT_SUBMITTED;
   const StatusIcon = config.icon;
 
-  if (!isLoaded || isLoading) {
+  const returnModal = (
+    <AlertDialog open={showReturnModal} onOpenChange={(open) => !open && handleDismissReturnModal()}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Verification Submitted</AlertDialogTitle>
+          <AlertDialogDescription>
+            Thank you for submitting your verification details. Please give us a couple of minutes to review your documents.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogAction onClick={handleDismissReturnModal}>Got it</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+
+  if (!isLoaded || !isUserLoaded || isLoading) {
     return (
-      <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col items-center justify-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(13,79,60,0.08),transparent_60%)]" />
-        <Loader2 className="w-10 h-10 animate-spin text-[#0D4F3C] dark:text-[#156B53] z-10" />
-        <span className="text-zinc-500 dark:text-zinc-400 text-sm mt-4 font-medium animate-pulse z-10">Loading KYC Details...</span>
-      </div>
+      <>
+        {returnModal}
+        <KycLoadingSpinner />
+      </>
     );
   }
 
   return (
-    <main
-      id="main-content"
-      role="main"
-      className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] text-[#0C0F14] dark:text-white flex flex-col relative overflow-hidden pb-24"
-    >
-      {/* Background glow effects */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(13,79,60,0.08),transparent_60%)]" />
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-[#0D4F3C]/5 dark:bg-[#156B53]/5 rounded-full blur-[100px] pointer-events-none" />
-      <div className="absolute top-1/2 -right-40 w-96 h-96 bg-[#0D4F3C]/3 dark:bg-[#156B53]/3 rounded-full blur-[120px] pointer-events-none" />
+    <>
+      {returnModal}
+      <main
+        id="main-content"
+        role="main"
+        className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] text-[#0C0F14] dark:text-white flex flex-col relative overflow-hidden pb-24"
+      >
+        {/* Background glow effects */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(13,79,60,0.08),transparent_60%)]" />
+        <div className="absolute -top-40 -left-40 w-96 h-96 bg-[#0D4F3C]/5 dark:bg-[#156B53]/5 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute top-1/2 -right-40 w-96 h-96 bg-[#0D4F3C]/3 dark:bg-[#156B53]/3 rounded-full blur-[120px] pointer-events-none" />
 
-      {/* Header */}
-      <motion.header
+        {/* Header */}
+        <motion.header
         role="banner"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -254,7 +318,7 @@ export default function KycPage() {
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { title: "Higher Limits", text: "Increase your contribution and withdrawal limits significantly." },
+              { title: "Higher Limits", text: "Increase your contribution amount limits significantly." },
               { title: "Elite Pools Access", text: "Join exclusive, high-yield pools with verified members." },
               { title: "Faster Payouts", text: "Get priority settlement on your pool payouts." },
               { title: "Reputation Boost", text: "Build credibility and raise your reliability score." },
@@ -298,6 +362,15 @@ export default function KycPage() {
           </Card>
         </motion.div>
       </div>
-    </main>
+      </main>
+    </>
+  );
+}
+
+export default function KycPage() {
+  return (
+    <Suspense fallback={<KycLoadingSpinner />}>
+      <KycPageContent />
+    </Suspense>
   );
 }

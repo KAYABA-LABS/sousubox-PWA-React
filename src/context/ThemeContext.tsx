@@ -16,7 +16,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [mode, setModeState] = useState<ThemeMode>("dark");
 
   useEffect(() => {
-    const saved = localStorage.getItem("sousuchain-theme") as ThemeMode | null;
+    const saved = localStorage.getItem("Sousubox-theme") as ThemeMode | null;
     const initial = saved ?? "dark";
     setModeState(initial);
     document.documentElement.classList.toggle("dark", initial === "dark");
@@ -24,7 +24,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const setMode = (newMode: ThemeMode) => {
     setModeState(newMode);
-    localStorage.setItem("sousuchain-theme", newMode);
+    localStorage.setItem("Sousubox-theme", newMode);
     document.documentElement.classList.toggle("dark", newMode === "dark");
   };
 

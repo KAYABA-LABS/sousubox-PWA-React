@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    /* SousuChain Light Theme */
+    /* Sousubox Light Theme */
     --background: 35 60% 96%;
     --foreground: 220 25% 6%;
 
@@ -35,7 +35,7 @@
 
     --radius: 0.75rem;
 
-    /* Custom SousuChain tokens */
+    /* Custom Sousubox tokens */
     --vaulta-black: 220 15% 8%;
     --vaulta-dark: 220 14% 12%;
     --vaulta-mid: 220 12% 96%;
@@ -327,6 +327,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
+  --font-sans: var(--font-ubuntu), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
   @keyframes accordion-down {
     from {
@@ -362,7 +363,7 @@
     color: hsl(var(--foreground));
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-family: 'Instrument Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: var(--font-ubuntu), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-feature-settings: "ss01", "ss02", "cv01";
   }
 

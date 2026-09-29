@@ -31,6 +31,7 @@ import {
   type SavingsGoal,
   type UserProfile,
   type UserRecentContribution,
+  type UserCheckingAccount,
 } from "@/lib/api";
 import { isDevMode } from "@/lib/dev";
 
@@ -55,6 +56,7 @@ export default function ClientDashboard() {
   const [recentContributions, setRecentContributions] = useState<UserRecentContribution[]>([]);
   const [savings, setSavings] = useState<SavingsGoal[]>([]);
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [checkingAccount, setCheckingAccount] = useState<UserCheckingAccount | null>(null);
   const [isKycVerified, setIsKycVerified] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
 
@@ -70,7 +72,7 @@ export default function ClientDashboard() {
     // Fetch live backend data
     const fetchBackendData = async () => {
       try {
-        const [userPoolsData, ActivePoolsData, JoinedPoolsData, savingsData, kycStatusData, profileData, recentContributionsData] = await Promise.all([
+        const [userPoolsData, ActivePoolsData, JoinedPoolsData, savingsData, kycStatusData, profileData, recentContributionsData, checkingAccountData] = await Promise.all([
           poolService.getUserPools(databaseUserId || ""),
           poolService.getActivePools(databaseUserId || ""),
           poolService.getJoinedPools(databaseUserId || ""),
@@ -78,6 +80,7 @@ export default function ClientDashboard() {
           kycService.getStatus(databaseUserId || ""),
           api.getUserProfile(databaseUserId || "").catch(() => null),
           poolService.getRecentContributions(databaseUserId || "", 5).catch(() => []),
+          api.getUserCheckingAccount(databaseUserId || "").catch(() => null),
         ]);
 
         console.log(ActivePoolsData);
@@ -90,6 +93,10 @@ export default function ClientDashboard() {
 
         const kycPassed = kycStatusData?.status === "VERIFIED";
         setIsKycVerified(kycPassed);
+
+        if (checkingAccountData?.success && checkingAccountData.checkingAccount) {
+          setCheckingAccount(checkingAccountData.checkingAccount);
+        }
 
         if (profileData && profileData.data) {
           setProfile(profileData.data);
@@ -129,16 +136,12 @@ export default function ClientDashboard() {
   const handleTransfer = () => router.push("/transfer");
   const handlePay = () => router.push("/pay");
 
-  // Calculate totals from live profile stats or dynamic states
-  const totalLockedInPools = pools.reduce((acc, p) => acc + (p.totalContributed || 0), 0);
-  const totalPersonalSavings = savings.reduce((acc, s) => acc + (s.balance || 0), 0);
+  // Balances come straight from the checking account; show 0 until it loads.
+  const availableBalance = Number(checkingAccount?.availableBalance ?? 0);
+  const lockedBalance = Number(checkingAccount?.lockedBalance ?? 0);
+  const amountOwedBalance = Number(checkingAccount?.amountOwedBalance ?? 0);
 
-  // Do not invent a balance when the backend has not returned one.
-  const availableBalance = profile?.stats?.totalAmountSaved
-    ? profile.stats.totalAmountSaved - totalLockedInPools - totalPersonalSavings
-    : 0;
-
-  const totalBalance = availableBalance + totalLockedInPools + totalPersonalSavings;
+  console.log("balances:" , availableBalance, lockedBalance, amountOwedBalance)
 
   // Active pools still awaiting this cycle's contribution
   const pendingActivePools = activePools.filter(
@@ -236,7 +239,7 @@ export default function ClientDashboard() {
               <div className="space-y-1">
                 <span className="text-[10px] text-white/60 uppercase tracking-widest font-semibold">Available balance</span>
                 <h1 className="text-3xl font-bold tracking-tight text-white">
-                  GHS {totalBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                  GHS {availableBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                 </h1>
               </div>
               <div className="flex items-center gap-1.5 px-3 py-1 bg-white/10 border border-white/10 rounded-full">
@@ -255,7 +258,7 @@ export default function ClientDashboard() {
                   <span className="text-[9px] font-bold uppercase tracking-wider">Locked in pools</span>
                 </div>
                 <p className="text-sm font-bold text-white">
-                  GHS {totalLockedInPools.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                  GHS {lockedBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                 </p>
               </div>
               <div className="border-l border-white/10 pl-4 space-y-0.5">
@@ -264,7 +267,7 @@ export default function ClientDashboard() {
                   <span className="text-[9px] font-bold uppercase tracking-wider">Defaulted Payments</span>
                 </div>
                 <p className="text-sm font-bold text-white">
-                  GHS {totalPersonalSavings.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                  GHS {amountOwedBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                 </p>
               </div>
             </div>
@@ -301,17 +304,34 @@ export default function ClientDashboard() {
         )} */}
 
         {/* ── PENDING ACTIVE POOLS ── */}
-        {(isLoading || pendingActivePools.length > 0) && (
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-bold text-[#0C0F14] dark:text-white">Pending contributions</h2>
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-bold text-[#0C0F14] dark:text-white">Pending Contributions</h2>
+            {pendingActivePools.length > 0 && (
               <button
                 onClick={() => router.push("/pools?tab=active")}
                 className="text-xs font-semibold text-[#0D4F3C] dark:text-[#156B53] hover:text-[#0D4F3C]/80 dark:hover:text-[#156B53]/80"
               >
                 See all
               </button>
+            )}
+          </div>
+          {!isLoading && pendingActivePools.length === 0 ? (
+            <div className="rounded-2xl p-5 bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20 flex flex-col items-center text-center gap-3">
+              <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+                No current pending contributions
+              </p>
+              {activePools.length === 0 && (
+                <button
+                  onClick={() => router.push("/pools?tab=discover")}
+                  className="px-4 py-2 bg-[#0D4F3C] hover:bg-[#156B53] active:scale-95 text-white font-bold text-xs rounded-full transition-all flex items-center gap-1.5"
+                >
+                  <Plus className="w-4 h-4" strokeWidth={2} />
+                  Find a pool
+                </button>
+              )}
             </div>
+          ) : (
             <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1">
               {isLoading ? (
                 <>
@@ -338,21 +358,38 @@ export default function ClientDashboard() {
                 </>
               )}
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* ── RECENT TRANSACTIONS ── */}
-        {(isLoading || recentContributions.length > 0) && (
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-bold text-[#0C0F14] dark:text-white">Recent Contributions</h2>
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-bold text-[#0C0F14] dark:text-white">Recent Contributions</h2>
+            {recentContributions.length > 0 && (
               <button
                 onClick={() => router.push("/activity")}
                 className="text-xs font-semibold text-[#0D4F3C] dark:text-[#156B53] hover:text-[#0D4F3C]/80 dark:hover:text-[#156B53]/80"
               >
                 See all
               </button>
+            )}
+          </div>
+          {!isLoading && recentContributions.length === 0 ? (
+            <div className="rounded-2xl p-5 bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20 flex flex-col items-center text-center gap-3">
+              <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+                No recent contributions
+              </p>
+              {activePools.length === 0 && (
+                <button
+                  onClick={() => router.push("/pools?tab=discover")}
+                  className="px-4 py-2 bg-[#0D4F3C] hover:bg-[#156B53] active:scale-95 text-white font-bold text-xs rounded-full transition-all flex items-center gap-1.5"
+                >
+                  <Plus className="w-4 h-4" strokeWidth={2} />
+                  Find a pool
+                </button>
+              )}
             </div>
+          ) : (
             <div className="space-y-3">
               {isLoading ? (
                 <>
@@ -370,8 +407,8 @@ export default function ClientDashboard() {
                 ))
               )}
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </main>
 
       {/* ── NAVIGATION DOCK ── */}

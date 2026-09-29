@@ -42,11 +42,13 @@ import {
   ChevronRight,
   CheckCircle2,
   ShieldAlert,
+  Camera,
 } from "lucide-react";
 import { useAuth, useUser, useClerk } from "@clerk/nextjs";
 import { isDevMode } from "@/lib/dev";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useKycService } from "@/services/kycService";
 import { useUserService } from "@/services/userService";
 
@@ -61,6 +63,7 @@ export default function Settings() {
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [userInitials, setUserInitials] = useState("U");
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isVerified, setIsVerified] = useState(false);
   const [kycStatusStr, setKycStatusStr] = useState("NOT_SUBMITTED");
@@ -96,6 +99,8 @@ export default function Settings() {
       try {
         const profile = await userService.getUserProfile(userId || "").catch(() => null);
 
+        console.log("Loaded profile in settings:", profile);
+
         const backendName = profile
           ? [profile.firstName, profile.lastName].filter(Boolean).join(" ")
           : "";
@@ -105,6 +110,7 @@ export default function Settings() {
         setUserEmail(email);
         setUserName(displayName);
         setUserInitials(getInitials(displayName));
+        setPhotoUrl(profile?.photoUrl || null);
 
         // Load actual KYC status from the backend
         try {
@@ -139,9 +145,8 @@ export default function Settings() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center relative">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(13,79,60,0.05),transparent_60%)]" />
-        <div className="w-8 h-8 border-2 border-[#0D4F3C] dark:border-[#156B53] border-t-transparent rounded-full animate-spin z-10" />
+      <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-[#0D4F3C] dark:border-[#156B53] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -150,69 +155,66 @@ export default function Settings() {
     <main
       id="main-content"
       role="main"
-      className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] text-[#0C0F14] dark:text-white flex flex-col px-6 pt-8 pb-32 relative overflow-hidden"
+      className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col pb-32 font-sans"
     >
-      {/* Background glow effects */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(13,79,60,0.06),transparent_60%)] pointer-events-none" />
-
-      <motion.div
+      <motion.header
+        role="banner"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-8"
+        className="px-5 pt-6 pb-4 max-w-xl mx-auto w-full"
       >
-        <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-[#0C0F14] via-zinc-700 to-zinc-500 dark:from-white dark:via-zinc-200 dark:to-zinc-400 bg-clip-text text-transparent">
-          Settings
-        </h1>
-        <p className="text-zinc-400 dark:text-zinc-500 text-sm">Manage your profile, cards, notifications and application preferences.</p>
-      </motion.div>
-
-      {/* Profile Card */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.05 }}
-        className="mb-8"
-      >
-        <div
-          onClick={() => router.push("/settings/profile")}
-          className="bg-white dark:bg-white/[0.02] border border-black/[0.06] dark:border-white/[0.08] backdrop-blur-md rounded-2xl p-6 hover:bg-gray-50 dark:hover:bg-white/[0.05] transition-all duration-300 w-full flex items-center justify-between cursor-pointer group hover:shadow-[0_0_30px_rgba(13,79,60,0.08)]"
-        >
-          <div className="flex items-center gap-5">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#0D4F3C] to-[#156B53] flex items-center justify-center shadow-[0_0_20px_rgba(13,79,60,0.3)] group-hover:scale-105 transition-transform duration-300">
-              <span className="text-xl font-bold text-white select-none">
-                {userInitials}
-              </span>
-            </div>
-            <div className="text-left">
-              <div className="flex items-center gap-2.5">
-                <p className="text-lg font-bold text-[#0C0F14] dark:text-white tracking-tight">{userName}</p>
-                {isVerified ? (
-                  <div className="flex items-center gap-1 bg-[#0D4F3C]/10 dark:bg-[#156B53]/10 border border-[#0D4F3C]/20 dark:border-[#156B53]/20 rounded-full px-2 py-0.5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#0D4F3C] dark:text-[#156B53]" />
-                    <span className="text-[10px] text-[#0D4F3C] dark:text-[#156B53] font-semibold uppercase tracking-wider">Verified</span>
-                  </div>
-                ) : (
-                  <div
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      router.push("/kyc");
-                    }}
-                    className="flex items-center gap-1 bg-rose-50 border border-rose-200 hover:bg-rose-100 dark:bg-rose-500/10 dark:border-rose-500/20 dark:hover:bg-rose-500/20 rounded-full px-2 py-0.5 cursor-pointer transition-all"
-                  >
-                    <ShieldAlert className="w-3.5 h-3.5 text-rose-600 dark:text-rose-500" />
-                    <span className="text-[10px] text-rose-600 dark:text-rose-500 font-semibold uppercase tracking-wider">Verify Identity</span>
-                  </div>
-                )}
-              </div>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1 font-medium">{userEmail}</p>
-            </div>
-          </div>
-          <ChevronRight className="w-6 h-6 text-zinc-400 dark:text-zinc-500 group-hover:text-[#0C0F14] dark:group-hover:text-white group-hover:translate-x-1 transition-all duration-300" />
-        </div>
-      </motion.div>
+        <p className="text-[10px] text-gray-500 dark:text-gray-400 tracking-widest uppercase font-semibold">Your account</p>
+        <h1 className="text-2xl font-bold text-[#0C0F14] dark:text-white tracking-tight">Settings</h1>
+      </motion.header>
 
       {/* Settings Sections */}
-      <div className="space-y-8 max-w-4xl">
+      <div className="flex-1 px-5 max-w-xl mx-auto w-full space-y-5">
+        {/* Profile Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 rounded-[24px] p-4 flex items-center gap-3 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20"
+        >
+          <Avatar className="w-11 h-11">
+            {photoUrl && <AvatarImage src={photoUrl} alt={userName} className="object-cover" />}
+            <AvatarFallback className="bg-[#0D4F3C] text-lg font-bold text-white select-none">
+              {userInitials}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1 min-w-0 text-left">
+            <div className="flex items-center gap-2 flex-wrap">
+              <p className="text-base font-bold text-[#0C0F14] dark:text-white tracking-tight truncate max-w-full">{userName}</p>
+              {isVerified ? (
+                <div className="flex items-center gap-1 bg-[#0D4F3C]/10 dark:bg-[#156B53]/10 border border-[#0D4F3C]/20 dark:border-[#156B53]/20 rounded-full px-2 py-0.5">
+                  <CheckCircle2 className="w-3 h-3 text-[#0D4F3C] dark:text-[#156B53]" />
+                  <span className="text-[9px] text-[#0D4F3C] dark:text-[#156B53] font-bold uppercase tracking-wide">Verified</span>
+                </div>
+              ) : (
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    router.push("/kyc");
+                  }}
+                  className="flex items-center gap-1 bg-rose-50 border border-rose-200 hover:bg-rose-100 dark:bg-rose-500/10 dark:border-rose-500/20 dark:hover:bg-rose-500/20 rounded-full px-2 py-0.5 cursor-pointer transition-all"
+                >
+                  <ShieldAlert className="w-3 h-3 text-rose-600 dark:text-rose-500" />
+                  <span className="text-[9px] text-rose-600 dark:text-rose-500 font-bold uppercase tracking-wide">Verify Identity</span>
+                </div>
+              )}
+            </div>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 font-medium truncate">{userEmail}</p>
+          </div>
+          <Button
+            type="button"
+            onClick={() => router.push("/settings/photo")}
+            className="shrink-0 h-auto rounded-full px-3 py-1.5 bg-[#0D4F3C]/10 dark:bg-[#156B53]/10 border border-[#0D4F3C]/20 dark:border-[#156B53]/20 hover:bg-[#0D4F3C]/15 dark:hover:bg-[#156B53]/20 text-[#0D4F3C] dark:text-[#156B53] text-[11px] font-bold flex items-center gap-1.5 cursor-pointer active:scale-[0.97] transition-all"
+          >
+            <Camera className="w-3.5 h-3.5" />
+            Change Image
+          </Button>
+        </motion.div>
+
         <SettingsSection title="Account">
           <SettingsRow
             icon={<User className="w-5 h-5" />}
@@ -288,6 +290,12 @@ export default function Settings() {
 
         <SettingsSection title="App Preferences">
           <SettingsRow
+            icon={<Palette className="w-5 h-5" />}
+            label="App Theme"
+            subtitle="Dark Mode (Impeccable)"
+            onClick={() => router.push("/settings/theme")}
+          />
+          <SettingsRow
             icon={<Languages className="w-5 h-5" />}
             label="Language"
             subtitle="English (US)"
@@ -298,12 +306,6 @@ export default function Settings() {
             label="Currency"
             subtitle="GH (₵)"
             onClick={() => router.push("")}
-          />
-          <SettingsRow
-            icon={<Palette className="w-5 h-5" />}
-            label="App Theme"
-            subtitle="Dark Mode (Impeccable)"
-            onClick={() => router.push("/settings/theme")}
           />
           {/* <SettingsRow
             icon={<SettingsIcon className="w-5 h-5" />}
@@ -453,10 +455,10 @@ export default function Settings() {
         >
           <Button
             onClick={handleLogout}
-            className="w-full bg-rose-50 border border-rose-200 hover:bg-rose-100 dark:bg-rose-500/10 dark:border-rose-500/20 dark:hover:bg-rose-500/20 transition-all rounded-2xl py-6 mt-4 flex items-center justify-center gap-3 cursor-pointer text-rose-600 dark:text-rose-500 font-bold"
+            className="w-full h-auto bg-rose-50 border border-rose-200 hover:bg-rose-100 dark:bg-rose-500/10 dark:border-rose-500/20 dark:hover:bg-rose-500/20 active:scale-[0.99] transition-all rounded-full py-3 flex items-center justify-center gap-2 cursor-pointer text-rose-600 dark:text-rose-500 font-bold"
           >
-            <LogOut className="w-5 h-5" strokeWidth={2} />
-            <span className="text-sm tracking-wide">Log Out</span>
+            <LogOut className="w-4 h-4" strokeWidth={2} />
+            <span className="text-xs tracking-wide">Log Out</span>
           </Button>
         </motion.div>
       </div>
@@ -477,12 +479,12 @@ function SettingsSection({
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-3"
+      className="space-y-2"
     >
-      <h2 className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest px-1">
+      <h2 className="text-[10px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-widest px-1">
         {title}
       </h2>
-      <div className="bg-white dark:bg-white/[0.02] border border-black/[0.06] dark:border-white/[0.06] backdrop-blur-md rounded-2xl overflow-hidden divide-y divide-black/[0.06] dark:divide-white/[0.04]">
+      <div className="bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 rounded-[24px] overflow-hidden divide-y divide-black/[0.06] dark:divide-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20">
         {children}
       </div>
     </motion.div>
@@ -520,31 +522,31 @@ function SettingsRow({
   return (
     <div
       onClick={onClick}
-      className="w-full flex items-center gap-4 p-4.5 hover:bg-black/[0.04] dark:hover:bg-white/[0.04] transition-all duration-200 cursor-pointer group"
+      className="w-full flex items-center gap-4 px-6 py-[18px] hover:bg-black/[0.03] dark:hover:bg-white/[0.04] active:bg-black/[0.05] dark:active:bg-white/[0.06] transition-all duration-200 cursor-pointer group"
     >
       <div
-        className={`${destructive ? "text-rose-600 dark:text-rose-500" : "text-zinc-500 dark:text-zinc-400 group-hover:text-[#0C0F14] dark:group-hover:text-white"} shrink-0 transition-colors duration-200`}
+        className={`${destructive ? "text-rose-600 dark:text-rose-500" : "text-gray-500 dark:text-gray-400 group-hover:text-[#0C0F14] dark:group-hover:text-white"} shrink-0 transition-colors duration-200 [&_svg]:w-[18px] [&_svg]:h-[18px]`}
       >
         {icon}
       </div>
-      <div className="flex-1 text-left">
+      <div className="flex-1 min-w-0 text-left">
         <p
-          className={`text-sm font-semibold tracking-tight ${
+          className={`text-sm font-semibold tracking-tight truncate ${
             destructive ? "text-rose-600 dark:text-rose-500" : "text-[#0C0F14] dark:text-white"
           }`}
         >
           {label}
         </p>
-        {subtitle && <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 font-medium">{subtitle}</p>}
+        {subtitle && <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5 font-medium line-clamp-1">{subtitle}</p>}
       </div>
       {badge && (
-        <Badge className={`px-2.5 py-1 text-xs font-semibold rounded-full ${getBadgeClass()}`}>
+        <Badge className={`shrink-0 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wide rounded-full ${getBadgeClass()}`}>
           {badge}
         </Badge>
       )}
       <ChevronRight
-        className={`w-5 h-5 shrink-0 transition-all duration-200 ${
-          destructive ? "text-rose-400/50 dark:text-rose-500/50" : "text-zinc-400 dark:text-zinc-500 group-hover:text-[#0C0F14] dark:group-hover:text-white group-hover:translate-x-0.5"
+        className={`w-4 h-4 shrink-0 transition-all duration-200 ${
+          destructive ? "text-rose-400/50 dark:text-rose-500/50" : "text-gray-400 dark:text-gray-500 group-hover:text-[#0C0F14] dark:group-hover:text-white group-hover:translate-x-0.5"
         }`}
       />
     </div>

@@ -15,6 +15,11 @@ export function useUserService() {
       if (!result.success) throw new Error(result.error || "Failed to update profile");
       return result.data;
     },
+    updateUserProfilePhoto: async (userId: string, photo: Blob, filename: string): Promise<string> => {
+      const result = await api.updateUserProfilePhoto(userId, photo, filename);
+      if (!result.success || !result.photoUrl) throw new Error(result.message || result.error || "Failed to update profile photo");
+      return result.photoUrl;
+    },
     getFundingSources: async (userId: string): Promise<FundingSource[]> => {
       const result = await api.getFundingSources(userId);
       if (!result.success || !result.data) throw new Error(result.message || result.error || "Failed to fetch funding sources");
