@@ -97,6 +97,7 @@ export interface UserStats {
   completionRate: number;
   reputationScore: number;
   reputationTier: string;
+  contributionScore: number;
   riskLevel: string;
   currentStreak: number;
   longestStreak: number;
@@ -288,6 +289,7 @@ export interface AvailablePoolTemplate {
   name: string;
   tier: string;
   contributionAmount: number;
+  joinAmount: number;
   joiningFee: number;
   frequency: string;
   maxMembers: number;
@@ -301,6 +303,7 @@ export interface AvailablePoolDetails {
   spotsRemaining: number;
   contributionAmount: number;
   payoutAmount: number;
+  joinAmount: number;
   frequency: string;
   totalCycles: number;
   startDate: string | null;

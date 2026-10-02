@@ -1,6 +1,5 @@
-import React from "react";
 import { Home, Users, TrendingUp, User, LucideIcon } from "lucide-react";
-import { Dock as MotionDock, DockItem, DockSeparator } from "@/components/motion/dock";
+import { Dock as MotionDock, DockItem } from "@/components/motion/dock";
 import { dock } from "@/lib/variants";
 
 interface DockItemType {
@@ -25,14 +24,13 @@ const dockItems: DockItemType[] = [
 export const Dock = ({ activeItem, onItemClick }: DockProps) => {
   return (
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
-      <MotionDock size={48} className={dock()}>
-        {dockItems.map((item, index) => {
+      <MotionDock size={48} className={`${dock()} gap-6 px-6`}>
+        {dockItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeItem === item.id || activeItem === item.href;
 
           return (
-            <React.Fragment key={item.id}>
-              {index === 3 && <DockSeparator className="bg-black/10 dark:bg-white/10" />}
+            <div key={item.id} className="flex flex-col items-center">
               <DockItem
                 aria-label={item.label}
                 active={isActive}
@@ -44,7 +42,16 @@ export const Dock = ({ activeItem, onItemClick }: DockProps) => {
                   strokeWidth={isActive ? 2 : 1.75}
                 />
               </DockItem>
-            </React.Fragment>
+              <span
+                aria-hidden="true"
+                onClick={() => onItemClick(item.href)}
+                className={`mt-3 text-[10px] leading-none font-medium cursor-pointer select-none ${
+                  isActive ? "text-[#0D4F3C] dark:text-emerald-400" : "text-gray-500 dark:text-gray-400"
+                }`}
+              >
+                {item.label}
+              </span>
+            </div>
           );
         })}
       </MotionDock>

@@ -10,8 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { api, type FundingSource } from "@/lib/api";
-import { usePoolService } from "@/services/poolService";
-import { useSavingsService } from "@/services/savingsService";
 import { useUserService } from "@/services/userService";
 import { getNetworkLabel, maskLast4, extractLast4 } from "@/lib/momo";
 
@@ -19,8 +17,8 @@ export default function WithdrawPage() {
   const router = useRouter();
   const { userId, isLoaded } = useAuth();
   const { user } = useUser();
-  const poolService = usePoolService();
-  const savingsService = useSavingsService();
+  const databaseUserId =
+    typeof user?.unsafeMetadata?.userId === "string" ? user.unsafeMetadata.userId : null;
   const userService = useUserService();
 
   const [availableBalance, setAvailableBalance] = useState<number>(0);
@@ -36,18 +34,15 @@ export default function WithdrawPage() {
 
     const loadWithdrawData = async () => {
       try {
-        const [userPools, savingsGoals, profileResult, sources] = await Promise.all([
-          poolService.getUserPools(userId || ""),
-          savingsService.getSavingsGoals(userId || ""),
-          api.getUserProfile(userId || "").catch(() => null),
+        const [checkingAccountData, sources] = await Promise.all([
+          api.getUserCheckingAccount(databaseUserId || "").catch(() => null),
           userService.getFundingSources(userId || "").catch(() => []),
         ]);
 
-        const lockedInPools = userPools.reduce((acc, p) => acc + (p.totalContributed || 0), 0);
-        const personalSavings = savingsGoals.reduce((acc, s) => acc + (s.balance || 0), 0);
-        const totalAmountSaved = profileResult?.data?.stats?.totalAmountSaved || 0;
-
-        setAvailableBalance(Math.max(0, totalAmountSaved - lockedInPools - personalSavings));
+        // Balance comes straight from the checking account, same as ClientDashboard.
+        if (checkingAccountData?.success && checkingAccountData.checkingAccount) {
+          setAvailableBalance(Number(checkingAccountData.checkingAccount.availableBalance ?? 0));
+        }
         setFundingSources(sources);
       } catch (err) {
         console.error("Failed to load withdrawal data:", err);
@@ -57,7 +52,7 @@ export default function WithdrawPage() {
     };
 
     loadWithdrawData();
-    // poolService/savingsService are re-created every render (not memoized) — omitted
+    // userService is re-created every render (not memoized) — omitted
     // from deps to avoid a fetch loop, matching ClientDashboard.tsx's same pattern.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, isLoaded, user, router]);

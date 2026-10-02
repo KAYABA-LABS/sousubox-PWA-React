@@ -208,7 +208,7 @@ export default function Settings() {
           <Button
             type="button"
             onClick={() => router.push("/settings/photo")}
-            className="shrink-0 h-auto rounded-full px-3 py-1.5 bg-[#0D4F3C]/10 dark:bg-[#156B53]/10 border border-[#0D4F3C]/20 dark:border-[#156B53]/20 hover:bg-[#0D4F3C]/15 dark:hover:bg-[#156B53]/20 text-[#0D4F3C] dark:text-[#156B53] text-[11px] font-bold flex items-center gap-1.5 cursor-pointer active:scale-[0.97] transition-all"
+            className="shrink-0 h-auto rounded-full px-3 py-1.5 bg-[#0D4F3C] hover:bg-[#156B53] text-white text-[11px] font-bold flex items-center gap-1.5 cursor-pointer active:scale-[0.97] transition-all"
           >
             <Camera className="w-3.5 h-3.5" />
             Change Image
