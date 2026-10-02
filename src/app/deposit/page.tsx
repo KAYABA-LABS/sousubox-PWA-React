@@ -29,6 +29,7 @@ const depositMethods = [
     processingTime: "COMING SOON",
     badge: "No Fee",
     badgeColor: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+    disabled: true,
   },
   // {
   //   id: "card",
@@ -112,7 +113,7 @@ export default function DepositPage() {
           className="space-y-6 w-full"
         >
           {/* Current Balance Card */}
-          <Card className="bg-black/[0.02] dark:bg-white/[0.02] backdrop-blur-xl border border-black/[0.06] dark:border-white/[0.06] shadow-2xl relative overflow-hidden">
+          {/* <Card className="bg-black/[0.02] dark:bg-white/[0.02] backdrop-blur-xl border border-black/[0.06] dark:border-white/[0.06] shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
             <CardHeader className="text-center pb-2">
               <CardDescription className="text-xs font-medium tracking-wider uppercase text-emerald-600 dark:text-emerald-400/80 flex items-center justify-center gap-1.5">
@@ -132,7 +133,7 @@ export default function DepositPage() {
                 )}
               </CardTitle>
             </CardHeader>
-          </Card>
+          </Card> */}
 
           {/* Deposit Methods Section */}
           <div className="space-y-3">
@@ -151,7 +152,9 @@ export default function DepositPage() {
                   >
                     <button
                       onClick={() => handleMethodSelect(method.id)}
-                      className="w-full text-left bg-black/[0.02] dark:bg-white/[0.02] hover:bg-black/[0.04] dark:hover:bg-white/[0.04] active:bg-black/[0.06] dark:active:bg-white/[0.06] border border-black/[0.06] dark:border-white/[0.06] hover:border-emerald-500/30 rounded-2xl p-5 flex items-center gap-4 transition-all duration-300 group relative overflow-hidden"
+                      disabled={method.disabled}
+                      aria-disabled={method.disabled}
+                      className="w-full text-left bg-black/[0.02] dark:bg-white/[0.02] hover:bg-black/[0.04] dark:hover:bg-white/[0.04] active:bg-black/[0.06] dark:active:bg-white/[0.06] border border-black/[0.06] dark:border-white/[0.06] hover:border-emerald-500/30 rounded-2xl p-5 flex items-center gap-4 transition-all duration-300 group relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
                     >
                       <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] bg-gradient-to-tr from-emerald-500/0 via-emerald-500/0 to-emerald-500/[0.02] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
@@ -203,7 +206,7 @@ export default function DepositPage() {
                 Withdrawal Unlock Requirements
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
-                A minimum cumulative deposit of <span className="text-[#0C0F14] dark:text-white font-medium">GH₵ 350.00</span> is required to fully activate and unlock your withdrawal capabilities.
+                A minimum cumulative deposit of <span className="text-[#0C0F14] dark:text-white font-medium">GH₵ 1.00</span> is required to fully activate and unlock your withdrawal capabilities.
               </p>
             </div>
           </motion.div>

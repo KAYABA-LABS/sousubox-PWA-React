@@ -127,11 +127,7 @@ export default function ProfilePage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded, userId]);
 
-  const handleSignOut = async () => {
-    await signOut();
-    router.push("/");
-  };
-
+  console.log(stats)
   const userInitials = userName
     .split(" ")
     .filter(Boolean)
@@ -153,12 +149,12 @@ export default function ProfilePage() {
     : "Not started";
 
   const statCards = [
+    { label: "Reputation", value: stats?.reputationScore ?? "—", icon: Sparkles, color: "text-amber-500 dark:text-amber-400" },
     { label: "Total saved", value: stats ? `GHS ${stats.totalSaved.toLocaleString()}` : "—", icon: Coins, color: "text-[#0D4F3C] dark:text-[#1F8C6C]" },
     { label: "Total earned", value: stats ? `GHS ${stats.totalEarned.toLocaleString()}` : "—", icon: PiggyBank, color: "text-pink-500 dark:text-pink-400" },
     { label: "Pools completed", value: profile?.stats?.poolsCompleted ?? "—", icon: Users, color: "text-blue-600 dark:text-blue-400" },
-    { label: "Goals achieved", value: profile?.stats?.personalInstrumentsCompleted ?? "—", icon: Flag, color: "text-violet-600 dark:text-violet-400" },
+    { label: "Contribution Score", value: profile?.stats?.contributionScore ?? "—", icon: Flag, color: "text-violet-600 dark:text-violet-400" },
     { label: "Contribution streak", value: stats ? `${stats.savingStreak} wks` : "—", icon: Flame, color: "text-orange-500 dark:text-orange-400" },
-    { label: "Reputation", value: stats?.reputationScore ?? "—", icon: Sparkles, color: "text-amber-500 dark:text-amber-400" },
   ];
 
 

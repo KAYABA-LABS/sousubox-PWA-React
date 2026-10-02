@@ -15,8 +15,17 @@ import {
   AlertTriangle,
   Users,
   FileText,
+  Info,
   Loader2,
   XCircle,
+  Repeat,
+  HandCoins,
+  Wallet,
+  Receipt,
+  Clock,
+  Globe,
+  RefreshCw,
+  CalendarDays,
 } from "lucide-react";
 import type { DiscoverPool, AvailablePoolDetails } from "@/lib/api";
 
@@ -45,13 +54,15 @@ export function PoolDetailModal({
   const [activeTab, setActiveTab] = useState("info");
 
   const spotsRemaining = details?.spotsRemaining ?? listItem.spotsRemaining;
+  const joiningAmount = details?.joinAmount ?? 0;
   const joiningFee = details?.template.joiningFee ?? 0;
+
 
   const getFrequencyLabel = (freq: string) => {
     switch (freq?.toUpperCase()) {
       case "DAILY": return "daily";
       case "WEEKLY": return "weekly";
-      case "BI_WEEKLY": return "every 2 weeks";
+      case "BI_WEEKLY": return "Twice Weekly";
       case "MONTHLY": return "monthly";
       default: return freq?.toLowerCase() || "daily";
     }
@@ -113,11 +124,11 @@ export function PoolDetailModal({
                   <div>
                     <p className="text-sm text-gray-900 dark:text-gray-100">
                       <span className="font-semibold">Entry payment:</span>{" "}
-                      <span className="text-amber-600 dark:text-amber-400 font-bold">GH₵{joiningFee.toFixed(2)} per slot</span>
-                      {" "}— it&apos;s added to your payout when it&apos;s your turn.
+                      <span className="text-amber-600 dark:text-amber-400 font-bold">GH₵{joiningAmount.toFixed(2)} per slot</span>
+                      {" "} It&apos;s added to your payout when it&apos;s your turn.
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      Your first contribution is due on the group&apos;s start day.
+                      Your first contribution would be due on the group&apos;s start day.
                     </p>
                   </div>
                 </div>
@@ -143,34 +154,41 @@ export function PoolDetailModal({
 
         {details && !detailsError && (
           <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 overflow-hidden flex flex-col">
-            <TabsList className="flex border-b border-gray-200 dark:border-white/10 bg-transparent p-0 h-auto rounded-none">
-              {["info", "members", "rules"].map((tab) => (
+            <TabsList className="mx-5 mt-4 flex h-auto gap-1 rounded-full bg-emerald-50 p-1.5 dark:bg-emerald-500/10">
+              {([
+                { value: "info", label: "Info", icon: Info },
+                { value: "members", label: "Members", icon: Users },
+                { value: "rules", label: "Rules", icon: FileText },
+              ] as const).map(({ value, label, icon: Icon }) => (
                 <TabsTrigger
-                  key={tab}
-                  value={tab}
-                  className={cn(
-                    "flex-1 py-3 text-sm font-medium rounded-none border-b-2 border-transparent data-[state=active]:border-emerald-600 dark:data-[state=active]:border-emerald-400 data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:bg-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
-                  )}
+                  key={value}
+                  value={value}
+                  className="flex-1 gap-1.5 rounded-full px-5 py-2 text-sm font-medium text-emerald-800/70 shadow-none transition-all hover:text-emerald-900 dark:text-emerald-200/60 dark:hover:text-emerald-100 data-[state=active]:bg-[#0D4F3C] data-[state=active]:text-white data-[state=active]:shadow-md data-[state=active]:shadow-[#0D4F3C]/30 data-[state=active]:hover:bg-[#156B53] dark:data-[state=active]:text-white"
                 >
-                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                  <Icon className="h-4 w-4" />
+                  {label}
                 </TabsTrigger>
               ))}
             </TabsList>
 
             <div className="flex-1 overflow-y-auto p-5">
               <TabsContent value="info" className="mt-0">
-                <div className="space-y-3">
-                  {[
-                    ["Pay", getFrequencyLabel(details.frequency)],
-                    ["Payout", `GH₵${details.payoutAmount}`],
-                    ["Entry Fee", `GH₵${joiningFee.toFixed(2)}`],
-                    ["Late Fee", "GH₵0.00"],
-                    ["Type", "Public"],
-                    ["Cycles", String(details.totalCycles)],
-                    ["Started", details.startDate ? new Date(details.startDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "TBD"],
-                  ].map(([label, value], i) => (
-                    <div key={label} className={cn("flex justify-between items-center py-2", i < 6 && "border-b border-gray-200 dark:border-white/10")}>
-                      <span className="text-sm text-gray-500 dark:text-gray-400">{label}</span>
+                <div className="space-y-3 border border-gray-200 dark:border-white/10 rounded-xl p-4">
+                  {([
+                    [Repeat, "Pay", getFrequencyLabel(details.frequency)],
+                    [HandCoins, "Payout", `GH₵${details.payoutAmount}`],
+                    [Wallet, "Join Amount", `GH₵${joiningAmount.toFixed(2)}`],
+                    [Receipt, "Entry Fee", `GH₵${joiningFee.toFixed(2)}`],
+                    [Clock, "Late Fee", "GH₵0.00"],
+                    [Globe, "Type", "Public"],
+                    [RefreshCw, "Cycles", String(details.totalCycles)],
+                    [CalendarDays, "Started", details.startDate ? new Date(details.startDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "TBD"],
+                  ] as const).map(([Icon, label, value]) => (
+                    <div key={label} className="flex justify-between items-center py-2">
+                      <span className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                        <Icon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                        {label}
+                      </span>
                       <span className="text-sm font-medium text-gray-900 dark:text-white">{value}</span>
                     </div>
                   ))}
@@ -202,8 +220,9 @@ export function PoolDetailModal({
                   <div className="bg-gray-100 dark:bg-white/5 rounded-xl p-4">
                     <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                       <span className="font-semibold text-amber-600 dark:text-amber-400">Entry fee:</span>{" "}
-                      GH₵{joiningFee.toFixed(2)} per slot is required as insurance against defaults.
-                      This fee is returned in your payout when it&apos;s your turn.
+                      GH₵{joiningAmount.toFixed(2)} per slot is required as insurance against defaults.
+                      {/* This fee is returned in your payout when it&apos;s your turn. */}
+                      This Amount is stored as reserve funds for user contributions and used as a lifeline.
                     </p>
                   </div>
                 </div>
@@ -215,17 +234,17 @@ export function PoolDetailModal({
         {/* Footer */}
         {details && !detailsError && (
           <div className="px-5 pb-5 pt-3 border-t border-gray-200 dark:border-white/10">
-            <div className="flex items-start gap-2 mb-4">
+            {/* <div className="flex items-start gap-2 mb-4">
               <Shield className="w-4 h-4 text-[#0D4F3C] dark:text-[#156B53] mt-0.5 shrink-0" />
               <p className="text-xs text-gray-500 dark:text-gray-400">
                 Submit your ID verification to join. Your payout is only released once you&apos;re fully verified.{" "}
                 <a href="/kyc" className="text-[#0D4F3C] dark:text-[#156B53] underline">Submit your ID</a>
               </p>
-            </div>
+            </div> */}
             <Button
               onClick={() => onJoin(listItem.id, slots)}
               disabled={isJoining}
-              className="w-full h-14 bg-[#0D4F3C] hover:bg-[#156B53] text-white font-semibold rounded-xl"
+              className="w-full h-14 bg-[#0D4F3C] hover:bg-[#156B53] text-white font-semibold rounded-full"
             >
               {isJoining ? <Loader2 className="w-5 h-5 animate-spin" /> : (
                 <><FileText className="w-5 h-5" /> Join Pool</>

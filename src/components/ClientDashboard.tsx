@@ -32,8 +32,52 @@ import {
   type UserProfile,
   type UserRecentContribution,
   type UserCheckingAccount,
+  type KycStatus,
 } from "@/lib/api";
 import { isDevMode } from "@/lib/dev";
+
+// Badge styling per KYC status, tuned to read on the dark green balance card
+const KYC_BADGE_STYLES: Record<
+  KycStatus["status"],
+  { container: string; dot: string; text: string; label: string }
+> = {
+  VERIFIED: {
+    container: "bg-emerald-400/20 border-emerald-300/30",
+    dot: "bg-emerald-300",
+    text: "text-emerald-100",
+    label: "VERIFIED",
+  },
+  PENDING: {
+    container: "bg-amber-400/20 border-amber-300/30",
+    dot: "bg-amber-300",
+    text: "text-amber-100",
+    label: "PENDING",
+  },
+  UNDER_REVIEW: {
+    container: "bg-sky-400/20 border-sky-300/30",
+    dot: "bg-sky-300",
+    text: "text-sky-100",
+    label: "UNDER REVIEW",
+  },
+  REJECTED: {
+    container: "bg-red-500/25 border-red-300/30",
+    dot: "bg-red-300",
+    text: "text-red-100",
+    label: "REJECTED",
+  },
+  EXPIRED: {
+    container: "bg-orange-500/20 border-orange-300/30",
+    dot: "bg-orange-300",
+    text: "text-orange-100",
+    label: "EXPIRED",
+  },
+  NOT_SUBMITTED: {
+    container: "bg-white/10 border-white/10",
+    dot: "bg-white/50",
+    text: "text-white/70",
+    label: "NOT VERIFIED",
+  },
+};
 
 export default function ClientDashboard() {
   const router = useRouter();
@@ -57,7 +101,8 @@ export default function ClientDashboard() {
   const [savings, setSavings] = useState<SavingsGoal[]>([]);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [checkingAccount, setCheckingAccount] = useState<UserCheckingAccount | null>(null);
-  const [isKycVerified, setIsKycVerified] = useState(false);
+  const [kycStatus, setKycStatus] = useState<KycStatus["status"]>("NOT_SUBMITTED");
+  const isKycVerified = kycStatus === "VERIFIED";
   const [showWelcome, setShowWelcome] = useState(false);
 
   useEffect(() => {
@@ -91,8 +136,7 @@ export default function ClientDashboard() {
         setSavings(savingsData || []);
         setRecentContributions(recentContributionsData || []);
 
-        const kycPassed = kycStatusData?.status === "VERIFIED";
-        setIsKycVerified(kycPassed);
+        setKycStatus(kycStatusData?.status ?? "NOT_SUBMITTED");
 
         if (checkingAccountData?.success && checkingAccountData.checkingAccount) {
           setCheckingAccount(checkingAccountData.checkingAccount);
@@ -118,7 +162,7 @@ export default function ClientDashboard() {
 
     if (wasVerified) {
       setShowWelcome(true);
-      setIsKycVerified(true);
+      setKycStatus("VERIFIED");
       if (sessionStorage.getItem("verified") === "true") {
         sessionStorage.removeItem("verified");
       }
@@ -142,6 +186,8 @@ export default function ClientDashboard() {
   const amountOwedBalance = Number(checkingAccount?.amountOwedBalance ?? 0);
 
   console.log("balances:" , availableBalance, lockedBalance, amountOwedBalance)
+
+  const kycBadge = KYC_BADGE_STYLES[kycStatus] ?? KYC_BADGE_STYLES.NOT_SUBMITTED;
 
   // Active pools still awaiting this cycle's contribution
   const pendingActivePools = activePools.filter(
@@ -227,7 +273,7 @@ export default function ClientDashboard() {
           <div className="absolute inset-0 bg-gradient-to-br from-[#0D4F3C] to-[#156B53] z-0" />
 
           {/* Decorative rings, kept subtle against the dark green base */}
-          <div className="absolute right-[-40px] top-[-40px] w-[180px] h-[180px] rounded-full bg-white/5 z-0" />
+          <div className="absolute right-[-40px] top-[-40px] w-[180px] h-[180px] rounded-full bg-[#B58A28]/60 z-0" />
           <svg className="absolute left-[-20px] bottom-[-40px] w-[160px] h-[160px] opacity-[0.10] text-white z-0" viewBox="0 0 100 100">
             <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" strokeWidth="1" />
             <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" strokeWidth="0.7" />
@@ -242,10 +288,10 @@ export default function ClientDashboard() {
                   GHS {availableBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                 </h1>
               </div>
-              <div className="flex items-center gap-1.5 px-3 py-1 bg-white/10 border border-white/10 rounded-full">
-                <div className="w-1.5 h-1.5 rounded-full bg-white/50" />
-                <span className="text-[9px] font-bold text-white/70 tracking-wider">
-                  {isKycVerified ? "VERIFIED" : "PENDING"}
+              <div className={`flex items-center gap-1.5 px-3 py-1 border rounded-full ${kycBadge.container}`}>
+                <div className={`w-1.5 h-1.5 rounded-full ${kycBadge.dot}`} />
+                <span className={`text-[9px] font-bold tracking-wider ${kycBadge.text}`}>
+                  {kycBadge.label}
                 </span>
               </div>
             </div>

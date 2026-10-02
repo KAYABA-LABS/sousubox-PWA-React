@@ -15,6 +15,8 @@ export interface ProfileStats {
   reputationScore: number;
   reliabilityScore: number;
   completionRate: number;
+  contributionScore: number;
+  trustScore: number;
 }
 
 export function useProfileService() {
@@ -37,6 +39,8 @@ export function useProfileService() {
           reputationScore: stats?.reputationScore || 538,
           reliabilityScore: stats?.reliabilityScore || 100,
           completionRate: stats?.completionRate || 100,
+          contributionScore: stats?.contributionScore || 0,
+          trustScore: stats?.reliabilityScore || 100,
         };
       } catch {
         return {
@@ -51,6 +55,8 @@ export function useProfileService() {
           reputationScore: 538,
           reliabilityScore: 100,
           completionRate: 100,
+          contributionScore: 0,
+          trustScore: 100,
         };
       }
     },
