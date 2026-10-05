@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useEffectEvent, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth, useUser } from "@clerk/nextjs";
 import {
@@ -15,7 +15,7 @@ import {
   ShieldAlert,
   Smartphone,
 } from "lucide-react";
-import { api, type FundingSource, type FundingSourceNetwork } from "@/lib/api";
+import { api, getApiUserId, type FundingSource, type FundingSourceNetwork, type MomoChargeResult, type MomoChargeStatus } from "@/lib/api";
 import { isDevMode } from "@/lib/dev";
 import { getNetworkLabel, maskLast4, extractLast4 } from "@/lib/momo";
 import { useUserService } from "@/services/userService";
@@ -35,11 +35,15 @@ const methodData: Record<string, {
   manual: { name: "Manual deposit", icon: FileText },
 };
 
-const paymentProviderByNetwork: Record<FundingSourceNetwork, string> = {
+const paymentProviderByNetwork: Record<FundingSourceNetwork, "mtn" | "vod" | "atl"> = {
   MTN: "mtn",
-  TELECEL: "vodafone",
-  AIRTELTIGO: "airteltigo",
+  TELECEL: "vod",
+  AIRTELTIGO: "atl",
 };
+
+const MOMO_POLL_INTERVAL_MS = 5000;
+const MOMO_POLL_TIMEOUT_MS = 2 * 60 * 1000;
+const MOMO_STILL_PROCESSING_TEXT = "Still processing — your balance will update once the payment completes.";
 
 const accountDetails = {
   accountName: "Vaulta Mobile Banking",
@@ -54,6 +58,7 @@ function DepositAmountContent() {
   const { userId, isLoaded } = useAuth();
   const { user } = useUser();
   const userService = useUserService();
+  const databaseUserId = getApiUserId(userId);
 
   const methodId = searchParams.get("method") || "bank";
   const method = methodData[methodId] || methodData.bank;
@@ -68,6 +73,11 @@ function DepositAmountContent() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [referenceCode] = useState(() => `DEP${Date.now().toString().slice(-8)}`);
+  const [momoPhase, setMomoPhase] = useState<"idle" | "otp" | "waiting">("idle");
+  const [chargeReference, setChargeReference] = useState<string | null>(null);
+  const [otp, setOtp] = useState("");
+  const [waitingText, setWaitingText] = useState("");
+  const pollInFlight = useRef(false);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -96,7 +106,7 @@ function DepositAmountContent() {
     if (isMomo) {
       setIsLoadingFundingSource(true);
       try {
-        const sources = await userService.getFundingSources(userId || "");
+        const sources = await userService.getFundingSources(databaseUserId || "");
         const activeSource = sources.find((source) => source.active);
         if (!activeSource) {
           throw new Error("No active mobile money account was found. Please link an account first.");
@@ -128,12 +138,62 @@ function DepositAmountContent() {
     }))}&force_blocked=1`);
   };
 
+  const goToStatus = (status: MomoChargeStatus, displayText: string, reference: string) => {
+    if (!fundingSource) return;
+    router.push(`/deposit/status?data=${encodeURIComponent(JSON.stringify({
+      method: methodId,
+      methodName: method.name,
+      amount: displayAmount,
+      referenceCode: reference,
+      status,
+      displayText,
+      phone: fundingSource.phoneNumber,
+      providerName: getNetworkLabel(fundingSource.networkId),
+    }))}`);
+  };
+
+  const handleChargeResult = (result: Pick<MomoChargeResult, "reference" | "status" | "display_text" | "message">) => {
+    const text = result.display_text || result.message || "";
+    switch (result.status) {
+      case "send_otp":
+        setOtp("");
+        setMomoPhase("otp");
+        break;
+      case "pay_offline":
+      case "pending":
+        setWaitingText(text);
+        setMomoPhase("waiting");
+        break;
+      case "success":
+        goToStatus("success", text || "Payment received.", result.reference);
+        break;
+      case "failed":
+        goToStatus("failed", text || "The payment could not be completed.", result.reference);
+        break;
+      default:
+        setErrorMessage("Unexpected payment status. Please try again.");
+    }
+  };
+
+  const resetMomoCharge = () => {
+    setMomoPhase("idle");
+    setChargeReference(null);
+    setOtp("");
+    setWaitingText("");
+  };
+
   const handleMomoPayment = async () => {
-    if (!fundingSource || !userId) {
+    if (!fundingSource) {
       setErrorMessage("No active mobile money account was found.");
       return;
     }
+    if (!databaseUserId) {
+      setErrorMessage("We couldn't identify your account. Please sign in again.");
+      return;
+    }
 
+    // A retry always starts a new charge; never reuse an old reference
+    resetMomoCharge();
     setErrorMessage(null);
     setIsSubmitting(true);
 
@@ -147,30 +207,15 @@ function DepositAmountContent() {
           provider: paymentProviderByNetwork[fundingSource.networkId],
         },
         currency: "GHS",
-        metadata: { userId, referenceCode, networkId: fundingSource.networkId },
+        metadata: { userId: databaseUserId, referenceCode, networkId: fundingSource.networkId },
       });
 
-      if (!response.success || !response.data) {
+      if (!response.success || !response.data?.reference) {
         throw new Error(response.message || "Failed to initiate payment.");
       }
 
-      const result = response.data as {
-        reference?: string;
-        status?: string;
-        display_text?: string;
-        message?: string;
-      };
-
-      router.push(`/deposit/status?data=${encodeURIComponent(JSON.stringify({
-        method: methodId,
-        methodName: method.name,
-        amount: displayAmount,
-        referenceCode: result.reference || referenceCode,
-        status: result.status || "pending",
-        displayText: result.display_text || result.message || "Payment initiated successfully.",
-        phone: fundingSource.phoneNumber,
-        providerName: getNetworkLabel(fundingSource.networkId),
-      }))}`);
+      setChargeReference(response.data.reference);
+      handleChargeResult(response.data);
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Failed to initiate payment. Please try again.");
     } finally {
@@ -178,12 +223,84 @@ function DepositAmountContent() {
     }
   };
 
+  const handleSubmitOtp = async () => {
+    if (!chargeReference || !databaseUserId || otp.length !== 6) return;
+
+    setErrorMessage(null);
+    setIsSubmitting(true);
+
+    try {
+      const response = await api.submitMomoOtp({ otp, reference: chargeReference, userId: databaseUserId });
+      if (!response.success || !response.data) {
+        throw new Error(response.message || "Failed to verify OTP.");
+      }
+      handleChargeResult({ ...response.data, reference: response.data.reference || chargeReference });
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Failed to verify OTP. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const onPollResult = useEffectEvent(handleChargeResult);
+  const onPollTimeout = useEffectEvent((reference: string) => {
+    goToStatus("pending", MOMO_STILL_PROCESSING_TEXT, reference);
+  });
+
+  // Single poller: only runs while waiting, torn down on phase change and unmount
+  useEffect(() => {
+    if (momoPhase !== "waiting" || !chargeReference || !databaseUserId) return;
+
+    let cancelled = false;
+    const interval = window.setInterval(async () => {
+      if (pollInFlight.current) return;
+      pollInFlight.current = true;
+      try {
+        const response = await api.getMomoChargeStatus(chargeReference, databaseUserId);
+        if (cancelled || !response.success || !response.data) return;
+        const { status } = response.data;
+        // Still waiting on the customer; keep polling
+        if (status === "pending" || status === "pay_offline") return;
+        cancelled = true;
+        window.clearInterval(interval);
+        window.clearTimeout(timeout);
+        onPollResult({ ...response.data, reference: response.data.reference || chargeReference });
+      } catch (error) {
+        console.error("Failed to poll mobile money charge status:", error);
+      } finally {
+        pollInFlight.current = false;
+      }
+    }, MOMO_POLL_INTERVAL_MS);
+
+    const timeout = window.setTimeout(() => {
+      cancelled = true;
+      window.clearInterval(interval);
+      onPollTimeout(chargeReference);
+    }, MOMO_POLL_TIMEOUT_MS);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(interval);
+      window.clearTimeout(timeout);
+    };
+  }, [momoPhase, chargeReference, databaseUserId]);
+
+  const handleBack = () => {
+    if (step === "instructions") {
+      resetMomoCharge();
+      setErrorMessage(null);
+      setStep("amount");
+      return;
+    }
+    router.back();
+  };
+
   return (
     <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] text-[#0C0F14] dark:text-white flex flex-col">
       <header className="px-5 pt-6 pb-4 border-b border-black/5 dark:border-white/5">
         <div className="flex items-center gap-4">
           <button
-            onClick={() => step === "instructions" ? setStep("amount") : router.back()}
+            onClick={handleBack}
             className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 flex items-center justify-center transition-colors"
             aria-label="Go back"
           >
@@ -297,9 +414,63 @@ function DepositAmountContent() {
                         </div>
                       </div>
                     )}
-                    <Button onClick={handleMomoPayment} disabled={isSubmitting || !fundingSource} className="w-full bg-[#0D4F3C] hover:bg-[#156B53] text-white py-6 rounded-xl">
-                      {isSubmitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Initiating secure charge...</> : "Authorize payment"}
-                    </Button>
+                    {momoPhase === "idle" && (
+                      <Button onClick={handleMomoPayment} disabled={isSubmitting || !fundingSource} className="w-full bg-[#0D4F3C] hover:bg-[#156B53] text-white py-6 rounded-xl">
+                        {isSubmitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Initiating secure charge...</> : "Authorize payment"}
+                      </Button>
+                    )}
+
+                    {momoPhase === "otp" && (
+                      <motion.form
+                        key="momo-otp"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="space-y-4"
+                        onSubmit={(event) => {
+                          event.preventDefault();
+                          handleSubmitOtp();
+                        }}
+                      >
+                        <div className="space-y-2">
+                          <label htmlFor="momo-otp" className="text-sm font-medium">Enter the OTP sent to your phone</label>
+                          <input
+                            id="momo-otp"
+                            type="text"
+                            inputMode="numeric"
+                            autoComplete="one-time-code"
+                            maxLength={6}
+                            autoFocus
+                            value={otp}
+                            onChange={(event) => setOtp(event.target.value.replace(/[^0-9]/g, "").slice(0, 6))}
+                            disabled={isSubmitting}
+                            className="w-full rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 px-4 py-4 text-center text-2xl font-mono tracking-[0.5em] outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53]"
+                            placeholder="••••••"
+                          />
+                        </div>
+                        <Button type="submit" disabled={isSubmitting || otp.length !== 6} className="w-full bg-[#0D4F3C] hover:bg-[#156B53] text-white py-6 rounded-xl">
+                          {isSubmitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Verifying...</> : "Confirm"}
+                        </Button>
+                      </motion.form>
+                    )}
+
+                    {momoPhase === "waiting" && (
+                      <motion.div
+                        key="momo-waiting"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="rounded-xl border border-[#0D4F3C]/20 bg-[#0D4F3C]/5 dark:bg-[#156B53]/10 p-5 flex items-start gap-3"
+                        role="status"
+                        aria-live="polite"
+                      >
+                        <Loader2 className="w-5 h-5 mt-0.5 shrink-0 animate-spin text-[#0D4F3C] dark:text-[#156B53]" />
+                        <div className="space-y-1">
+                          <p className="font-medium">Approve the prompt on your phone</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            {waitingText || "We've sent a payment request to your mobile money wallet. Approve it to complete your deposit."}
+                          </p>
+                        </div>
+                      </motion.div>
+                    )}
                   </CardContent>
                 </Card>
               ) : (

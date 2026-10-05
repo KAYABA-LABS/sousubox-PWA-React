@@ -6,9 +6,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useSignUp, useUser } from "@clerk/nextjs";
 import { PhoneCodeSwitcher } from "@/components/ui/phone-code-switcher";
 import { api } from "@/lib/api";
+import { useCountdown, formatCountdown } from "@/hooks/use-countdown";
 import { Loader2, ArrowRight, ShieldCheck, PhoneCall, Check, UserRound } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import axios from "axios"
+
+const RESEND_SECONDS = 10;
 
 const STEPS = ["phone", "verify", "details"] as const;
 type Step = (typeof STEPS)[number];
@@ -33,6 +37,8 @@ export default function SignUpPageContent() {
   const [backendUserId, setBackendUserId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isResending, setIsResending] = useState(false);
+  const { secondsLeft, start: startResendTimer } = useCountdown(RESEND_SECONDS);
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const autoSubmitRef = useRef(false);
@@ -193,6 +199,7 @@ export default function SignUpPageContent() {
 
         setCode(["", "", "", "", "", ""]);
         autoSubmitRef.current = false;
+        startResendTimer();
       } catch (err: unknown) {
         console.error("SEND OTP ERROR:", err);
 
@@ -203,6 +210,39 @@ export default function SignUpPageContent() {
         }
       } finally {
         setIsLoading(false);
+      }
+    };
+
+    const handleResendCode = async () => {
+      if (!isClerkLoaded || !signUp || secondsLeft > 0 || isResending) {
+        return;
+      }
+
+      setIsResending(true);
+      setError("");
+
+      try {
+        const verification =
+          await signUp.verifications.sendPhoneCode();
+
+        if (verification.error) {
+          throw verification.error;
+        }
+
+        setCode(["", "", "", "", "", ""]);
+        autoSubmitRef.current = false;
+        startResendTimer();
+        inputRefs.current[0]?.focus();
+      } catch (err: unknown) {
+        console.error("RESEND OTP ERROR:", err);
+
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Failed to resend verification code");
+        }
+      } finally {
+        setIsResending(false);
       }
     };
 
@@ -643,11 +683,7 @@ export default function SignUpPageContent() {
       {/* Header */}
       <header className="flex items-center justify-between px-6 py-6">
         <Link href="/" className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-full bg-[#0D4F3C] flex items-center justify-center text-white">
-            <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6" />
-            </svg>
-          </div>
+          <Image src="/logo.png" alt="SousuBox logo" width={36} height={36} className="w-9 h-9" priority />
           <span className="font-bold text-lg text-[#0C0F14] dark:text-white tracking-tight">Sousubox</span>
         </Link>
 
@@ -800,6 +836,29 @@ export default function SignUpPageContent() {
                     >
                       {isLoading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "Continue"}
                     </button>
+
+                    {secondsLeft > 0 ? (
+                      <p className="text-center text-sm text-gray-500 dark:text-gray-400 py-1">
+                        Resend code in{" "}
+                        <span className="font-semibold tabular-nums text-[#0C0F14] dark:text-white">
+                          {formatCountdown(secondsLeft)}
+                        </span>
+                      </p>
+                    ) : (
+                      <p className="text-center text-sm text-gray-500 dark:text-gray-400 py-1">
+                        Didn&apos;t get a code?{" "}
+                        <button
+                          type="button"
+                          onClick={handleResendCode}
+                          disabled={isResending}
+                          className="inline-flex items-center gap-1.5 font-semibold text-[#0D4F3C] dark:text-[#156B53] hover:underline disabled:opacity-50 disabled:no-underline"
+                        >
+                          {isResending && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                          Resend code
+                        </button>
+                      </p>
+                    )}
+
                     <button
                       type="button"
                       onClick={() => {

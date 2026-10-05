@@ -1,8 +1,10 @@
+import type { FundingSourceNetwork } from "@/lib/api";
+
 export const MOMO_PROVIDERS = [
   { value: "MTN", label: "MTN Mobile Money" },
   { value: "TELECEL", label: "Telecel / Vodafone Cash" },
   { value: "AIRTELTIGO", label: "AirtelTigo Money" },
-] as const;
+] as const satisfies ReadonlyArray<{ value: FundingSourceNetwork; label: string }>;
 
 export const GHANA_PHONE_REGEX = /^(?:0|\+233)[235]\d{8}$/;
 export const GHANA_PHONE_ERROR =

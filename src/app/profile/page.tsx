@@ -28,8 +28,7 @@ import {
 import { toast } from "sonner";
 import { Dock } from "@/components/dashboard/Dock";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import type { ProfileStats } from "@/services/profileService";
-import type { UserProfile } from "@/lib/api";
+import type { UserProfile, UserStats } from "@/lib/api";
 
 const cardClass =
   "bg-[#FFFEFB] dark:bg-[#151A1F] rounded-2xl border border-[#E8E3D7] dark:border-white/10 shadow-[0_1px_0_rgba(26,35,50,0.02),0_1px_2px_rgba(26,35,50,0.04),0_4px_14px_rgba(26,35,50,0.04)] dark:shadow-black/20";
@@ -97,7 +96,7 @@ export default function ProfilePage() {
 
   const [userName, setUserName] = useState("******");
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [stats, setStats] = useState<ProfileStats | null>(null);
+  const [stats, setStats] = useState<UserStats | null>(null);
   const [kycStatus, setKycStatus] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -150,11 +149,11 @@ export default function ProfilePage() {
 
   const statCards = [
     { label: "Reputation", value: stats?.reputationScore ?? "—", icon: Sparkles, color: "text-amber-500 dark:text-amber-400" },
-    { label: "Total saved", value: stats ? `GHS ${stats.totalSaved.toLocaleString()}` : "—", icon: Coins, color: "text-[#0D4F3C] dark:text-[#1F8C6C]" },
-    { label: "Total earned", value: stats ? `GHS ${stats.totalEarned.toLocaleString()}` : "—", icon: PiggyBank, color: "text-pink-500 dark:text-pink-400" },
-    { label: "Pools completed", value: profile?.stats?.poolsCompleted ?? "—", icon: Users, color: "text-blue-600 dark:text-blue-400" },
-    { label: "Contribution Score", value: profile?.stats?.contributionScore ?? "—", icon: Flag, color: "text-violet-600 dark:text-violet-400" },
-    { label: "Contribution streak", value: stats ? `${stats.savingStreak} wks` : "—", icon: Flame, color: "text-orange-500 dark:text-orange-400" },
+    { label: "Total saved", value: stats ? `GHS ${stats.totalAmountSaved.toLocaleString()}` : "—", icon: Coins, color: "text-[#0D4F3C] dark:text-[#1F8C6C]" },
+    { label: "Total earned", value: stats ? `GHS ${stats.totalAmountEarned.toLocaleString()}` : "—", icon: PiggyBank, color: "text-pink-500 dark:text-pink-400" },
+    { label: "Pools completed", value: stats?.poolsCompleted ?? "—", icon: Users, color: "text-blue-600 dark:text-blue-400" },
+    { label: "Contribution Score", value: stats?.contributionScore ?? "—", icon: Flag, color: "text-violet-600 dark:text-violet-400" },
+    { label: "Contribution streak", value: stats ? `${stats.currentStreak} wks` : "—", icon: Flame, color: "text-orange-500 dark:text-orange-400" },
   ];
 
 
@@ -211,7 +210,7 @@ export default function ProfilePage() {
               user?.emailAddresses?.[0]?.emailAddress}
           </p>
           <div className="mt-2.5">
-            <TierBadge tier={stats?.accountTier || "SILVER"} />
+            <TierBadge tier={profile?.tier || "SILVER"} />
           </div>
         </motion.div>
 
