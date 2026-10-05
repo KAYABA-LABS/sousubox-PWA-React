@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Clock, CheckCircle2, XCircle, ShieldAlert, ArrowRight, Info, Loader2 } from "lucide-react";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { isDevMode } from "@/lib/dev";
+import { api, getApiUserId } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -32,6 +33,9 @@ function DepositStatusContent() {
 
   const [errorMsg, setErrorMsg] = useState("");
   const [blocked, setBlocked] = useState(false);
+  const [refreshedBalance, setRefreshedBalance] = useState<number | null>(null);
+  const [isRefreshingBalance, setIsRefreshingBalance] = useState(false);
+  const databaseUserId = getApiUserId(userId);
 
   const depositData = useMemo(() => {
     const dataParam = searchParams.get("data");
@@ -64,6 +68,62 @@ function DepositStatusContent() {
       );
     }
   }, [userId, isLoaded, user, router, searchParams]);
+
+  // After a successful momo charge, wait (up to ~30s) for the webhook to credit
+  // the balance, then refetch it. The amount is never added locally.
+  const shouldRefreshBalance =
+    depositData?.method === "momo" && depositData.status?.toLowerCase() === "success";
+  const chargeReference = depositData?.referenceCode;
+
+  useEffect(() => {
+    if (!shouldRefreshBalance || !chargeReference || !databaseUserId) return;
+
+    let cancelled = false;
+    let pollTimer: number | undefined;
+    const deadline = Date.now() + 30_000;
+
+    const refetchBalance = async () => {
+      try {
+        const res = await api.getUserCheckingAccount(databaseUserId);
+        if (!cancelled && res.success && res.checkingAccount) {
+          setRefreshedBalance(res.checkingAccount.availableBalance);
+        }
+      } catch (err) {
+        console.error("Failed to refresh balance after deposit:", err);
+      } finally {
+        if (!cancelled) setIsRefreshingBalance(false);
+      }
+    };
+
+    const pollCredited = async () => {
+      try {
+        const res = await api.getMomoChargeStatus(chargeReference, databaseUserId);
+        if (cancelled) return;
+        if (res.success && res.data?.credited) {
+          await refetchBalance();
+          return;
+        }
+      } catch (err) {
+        console.error("Failed to check deposit credit status:", err);
+      }
+      if (cancelled) return;
+      if (Date.now() >= deadline) {
+        await refetchBalance();
+        return;
+      }
+      pollTimer = window.setTimeout(pollCredited, 3000);
+    };
+
+    pollTimer = window.setTimeout(() => {
+      setIsRefreshingBalance(true);
+      pollCredited();
+    }, 0);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(pollTimer);
+    };
+  }, [shouldRefreshBalance, chargeReference, databaseUserId]);
 
   if (!depositData) {
     return (
@@ -154,6 +214,8 @@ function DepositStatusContent() {
           <h1 className="text-2xl font-bold tracking-tight text-[#0C0F14] dark:text-white mb-2">
             {blocked
               ? "Deposit Suspended"
+              : isSuccess && isMomo
+              ? "Payment Received"
               : isSuccess
               ? "Deposit Successful"
               : isFailed
@@ -163,12 +225,14 @@ function DepositStatusContent() {
           <p className="text-sm text-gray-500 dark:text-gray-400 px-4">
             {blocked
               ? "Compliance holding process active"
+              : isSuccess && isMomo
+              ? "Payment received — your balance will update shortly"
               : isSuccess
               ? "Your funds have been credited to your wallet"
               : isFailed
               ? "We could not process this payment request"
               : isMomo
-              ? "Complete the network approval prompt on your phone"
+              ? "Still processing — your balance will update once the payment completes."
               : "Awaiting wire confirmation from Vaulta settlement"}
           </p>
         </motion.div>
@@ -230,6 +294,21 @@ function DepositStatusContent() {
                 <div className="p-4 flex items-center justify-between text-sm">
                   <span className="text-gray-500 dark:text-gray-400">Payment wallet</span>
                   <span className="text-[#0C0F14] dark:text-white font-mono">{depositData.phone} ({depositData.providerName})</span>
+                </div>
+              )}
+
+              {shouldRefreshBalance && (
+                <div className="p-4 flex items-center justify-between text-sm">
+                  <span className="text-gray-500 dark:text-gray-400">Available balance</span>
+                  {isRefreshingBalance ? (
+                    <Loader2 className="w-4 h-4 animate-spin text-[#0D4F3C] dark:text-[#156B53]" />
+                  ) : refreshedBalance !== null ? (
+                    <span className="text-[#0C0F14] dark:text-white font-medium">
+                      GH₵ {refreshedBalance.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </span>
+                  ) : (
+                    <span className="text-gray-500 dark:text-gray-400">Updating shortly</span>
+                  )}
                 </div>
               )}
 

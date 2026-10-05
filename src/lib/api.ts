@@ -18,6 +18,10 @@ function resolveUserId(userId: string) {
   return apiUserIdGetter?.() || userId;
 }
 
+export function getApiUserId(fallback?: string | null): string | null {
+  return apiUserIdGetter?.() || fallback || null;
+}
+
 export class ApiError extends Error {
   code?: string;
   constructor(message: string, code?: string) {
@@ -43,7 +47,9 @@ async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> 
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    throw new ApiError(body.message || body.error || `API error ${res.status}`, body.error);
+    const details = body.details ?? body.errors;
+    const message = body.message || body.error || `API error ${res.status}`;
+    throw new ApiError(details ? `${message}: ${typeof details === "string" ? details : JSON.stringify(details)}` : message, body.error);
   }
 
   return res.json();
@@ -88,28 +94,81 @@ export interface UpdateProfilePhotoResponse {
   error?: string;
 }
 
+export type RiskLevel = "LOW" | "MEDIUM" | "HIGH";
+export type ReputationTier = "RESTRICTED" | "STARTER" | "TRUSTED" | "GOLD_TRUST" | "ELITE";
+
 export interface UserStats {
+  id: string;
+  userId: string;
+
+  // Financial totals
   totalContributions: number;
   totalPayouts: number;
   totalAmountSaved: number;
   totalAmountEarned: number;
-  reliabilityScore: number;
-  completionRate: number;
-  reputationScore: number;
-  reputationTier: string;
-  contributionScore: number;
-  riskLevel: string;
+
+  // Contribution behavior
+  successfulContributions: number;
+  failedContributions: number;
+  missedContributions: number;
+  onTimeContributions: number;
+  lateContributions: number;
+  earlyContributions: number;
+  totalLateDays: number;
   currentStreak: number;
   longestStreak: number;
+
+  // Pool performance
   poolsJoined: number;
   poolsCompleted: number;
   poolsDefaulted: number;
+
+  // Savings performance
   personalInstrumentsActive: number;
   personalInstrumentsCompleted: number;
+  personalGoalsAchieved: number;
+
+  // Social trust
   followersCount: number;
   followingCount: number;
-  lastActivityAt: string | null;
+  positiveReviews: number;
+  negativeReviews: number;
+  disputeCount: number;
+  resolvedDisputes: number;
+  referralCount: number;
+
+  // Reputation sub-scores (0–1000)
+  contributionScore: number;
+  punctualityScore: number;
+  completionScore: number;
+  longevityScore: number;
+  trustScore: number;
+  walletScore: number;
+  verificationScore: number;
+
+  // Final trust engine
+  reputationScore: number;
+  reliabilityScore: number; // percentage 0–100
+  completionRate: number; // percentage 0–100
+  riskLevel: RiskLevel;
+  reputationTier: ReputationTier;
+
+  // Activity (ISO date strings)
+  totalActiveDays: number;
   lastContributionAt: string | null;
+  lastPayoutAt: string | null;
+  lastActivityAt: string;
+
+  // System
+  scoreLastCalculatedAt: string | null;
+  updatedAt: string;
+}
+
+export interface GetUserStatsResponse {
+  success: boolean;
+  message: string;
+  data?: UserStats;
+  error?: string;
 }
 
 export interface UserCheckingAccount {
@@ -372,6 +431,24 @@ export interface FundingSourcesEnvelope {
   error?: string;
 }
 
+// ── Mobile Money Payments ─────────────────────────────────────────────────────
+
+export type MomoChargeStatus = "send_otp" | "pay_offline" | "pending" | "success" | "failed";
+
+export interface MomoChargeResult {
+  reference: string;
+  status: MomoChargeStatus;
+  display_text?: string;
+  message?: string;
+}
+
+export interface MomoChargeStatusResult {
+  reference: string;
+  status: MomoChargeStatus;
+  display_text?: string;
+  credited: boolean;
+}
+
 // ── API Methods ───────────────────────────────────────────────────────────────
 
 export const api = {
@@ -415,6 +492,9 @@ export const api = {
 
   getUserProfile: (userId: string) =>
     apiFetch<BackendEnvelope<UserProfile>>(`/getUserProfile/${resolveUserId(userId)}`),
+
+  getUserStats: (userId: string) =>
+    apiFetch<GetUserStatsResponse>(`/getUserStats/${resolveUserId(userId)}`),
 
   getUserCheckingAccount: (userId: string) =>
     apiFetch<CheckingAccountResponse>(`/getUserCheckingAccount/${resolveUserId(userId)}`),
@@ -516,10 +596,21 @@ export const api = {
     currency?: string;
     metadata?: Record<string, unknown>;
   }) =>
-    apiFetch<BackendEnvelope<Record<string, unknown>>>("/mobileMoneyPayment", {
+    apiFetch<BackendEnvelope<MomoChargeResult>>("/mobileMoneyPayment", {
       method: "POST",
       body: JSON.stringify(data),
     }),
+
+  submitMomoOtp: (data: { otp: string; reference: string; userId: string }) =>
+    apiFetch<BackendEnvelope<MomoChargeResult>>("/mobileMoneyPayment/submit-otp", {
+      method: "POST",
+      body: JSON.stringify({ ...data, userId: resolveUserId(data.userId) }),
+    }),
+
+  getMomoChargeStatus: (reference: string, userId: string) =>
+    apiFetch<BackendEnvelope<MomoChargeStatusResult>>(
+      `/mobileMoneyPayment/${encodeURIComponent(reference)}/status?userId=${encodeURIComponent(resolveUserId(userId))}`
+    ),
 
   // Withdrawals
   requestWithdrawal: (userId: string, data: {

@@ -29,6 +29,16 @@ export default clerkMiddleware(async (auth, request) => {
     return;
   }
 
+  // Didit redirects back here cross-site after KYC. Clerk can't reliably
+  // read the session server-side on that hop, so let the client-side
+  // Clerk session handle auth for this landing (see /kyc page guard).
+  if (
+    request.nextUrl.pathname === "/kyc" &&
+    request.nextUrl.searchParams.get("kycReturn") === "1"
+  ) {
+    return;
+  }
+
   const { userId } = await auth();
 
   // A session can exist mid-signup (created as soon as the phone is

@@ -108,6 +108,16 @@ function KycPageContent() {
     userId ||
     "";
 
+  // The Didit return URL skips server-side protection in middleware,
+  // so guard it here once Clerk has loaded on the client.
+  useEffect(() => {
+    if (!isLoaded) return;
+    if (!userId && !isDevMode()) {
+      router.replace(`/signin?redirect_url=${encodeURIComponent("/kyc")}`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded, userId]);
+
   useEffect(() => {
     if (!isLoaded || !isUserLoaded) return;
     if (!userId && !isDevMode()) return;
