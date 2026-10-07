@@ -198,8 +198,8 @@ export default function Settings() {
                   }}
                   className="flex items-center gap-1 bg-rose-50 border border-rose-200 hover:bg-rose-100 dark:bg-rose-500/10 dark:border-rose-500/20 dark:hover:bg-rose-500/20 rounded-full px-2 py-0.5 cursor-pointer transition-all"
                 >
-                  <ShieldAlert className="w-3 h-3 text-rose-600 dark:text-rose-500" />
-                  <span className="text-[9px] text-rose-600 dark:text-rose-500 font-bold uppercase tracking-wide">Verify Identity</span>
+                  {/* <ShieldAlert className="w-3 h-3 text-rose-600 dark:text-rose-500" /> */}
+                  {/* <span className="text-[9px] text-rose-600 dark:text-rose-500 font-bold uppercase tracking-wide">Verify Identity</span> */}
                 </div>
               )}
             </div>

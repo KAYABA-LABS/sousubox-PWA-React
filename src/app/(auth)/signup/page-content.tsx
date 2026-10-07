@@ -34,6 +34,7 @@ export default function SignUpPageContent() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
+  const [referralCode, setReferralCode] = useState("");
   const [backendUserId, setBackendUserId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -120,7 +121,7 @@ export default function SignUpPageContent() {
       userId: string,
       data: Record<string, string>
     ) => {
-      const result = await api.updateProfile(userId, data);
+      const result = await api.signUpUserProfileUpdate(userId, data);
 
       if (!result.success) {
         throw new Error(
@@ -422,6 +423,7 @@ export default function SignUpPageContent() {
       username: username.trim(),
       email: email.trim(),
       dateOfBirth: new Date(dateOfBirth + "T00:00:00Z").toISOString(),
+      ...(referralCode.trim() && { referralCode: referralCode.trim() }),
     });
 
     console.log("Updating Clerk profile...");
@@ -928,6 +930,14 @@ export default function SignUpPageContent() {
                         className="w-full h-14 px-4 bg-[#FBF6EF] dark:bg-[#0C0F14] border border-black/10 dark:border-white/10 rounded-2xl text-[#0C0F14] dark:text-white text-[15px] font-medium focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53] focus:ring-2 focus:ring-[#0D4F3C]/10 dark:focus:ring-[#156B53]/10 transition-colors scheme-light dark:scheme-dark"
                       />
                     </div>
+                    <input
+                      type="text"
+                      placeholder="Referral code (optional)"
+                      value={referralCode}
+                      onChange={(e) => setReferralCode(e.target.value)}
+                      autoCapitalize="characters"
+                      className="w-full h-14 px-4 bg-[#FBF6EF] dark:bg-[#0C0F14] border border-black/10 dark:border-white/10 rounded-2xl text-[#0C0F14] dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 text-[15px] font-medium focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53] focus:ring-2 focus:ring-[#0D4F3C]/10 dark:focus:ring-[#156B53]/10 transition-colors"
+                    />
                   </div>
 
                   {error && (
