@@ -171,6 +171,20 @@ export interface GetUserStatsResponse {
   error?: string;
 }
 
+export interface UserReferral {
+  referralCode: string;
+  referralCount: number;
+  referralReputationScore: number;
+  referralLink: string;
+}
+
+export interface GetUserReferralResponse {
+  success: boolean;
+  message?: string;
+  data?: UserReferral;
+  error?: string;
+}
+
 export interface UserCheckingAccount {
   availableBalance: number;
   lockedBalance: number;
@@ -496,11 +510,20 @@ export const api = {
   getUserStats: (userId: string) =>
     apiFetch<GetUserStatsResponse>(`/getUserStats/${resolveUserId(userId)}`),
 
+  getUserReferral: (userId: string) =>
+    apiFetch<GetUserReferralResponse>(`/userReferral/${resolveUserId(userId)}`),
+
   getUserCheckingAccount: (userId: string) =>
     apiFetch<CheckingAccountResponse>(`/getUserCheckingAccount/${resolveUserId(userId)}`),
 
   updateProfile: (userId: string, data: Record<string, string>) =>
     apiFetch<BackendEnvelope<UserProfile>>("/updateProfile", {
+      method: "PATCH",
+      body: JSON.stringify({ userId: resolveUserId(userId), ...data }),
+    }),
+
+  signUpUserProfileUpdate: (userId: string, data: Record<string, string>) =>
+    apiFetch<BackendEnvelope<UserProfile>>("/signUpUserProfileUpdate", {
       method: "PATCH",
       body: JSON.stringify({ userId: resolveUserId(userId), ...data }),
     }),

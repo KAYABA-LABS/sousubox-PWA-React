@@ -24,11 +24,15 @@ import {
   Lock,
   Info,
   ChevronRight,
+  Gift,
+  Copy,
+  Check,
+  Share2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Dock } from "@/components/dashboard/Dock";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import type { UserProfile, UserStats } from "@/lib/api";
+import type { UserProfile, UserReferral, UserStats } from "@/lib/api";
 
 const cardClass =
   "bg-[#FFFEFB] dark:bg-[#151A1F] rounded-2xl border border-[#E8E3D7] dark:border-white/10 shadow-[0_1px_0_rgba(26,35,50,0.02),0_1px_2px_rgba(26,35,50,0.04),0_4px_14px_rgba(26,35,50,0.04)] dark:shadow-black/20";
@@ -78,7 +82,7 @@ function Gauge({ value, size = 200, children }: { value: number; size?: number; 
   );
 }
 
-function reliabilityLabel(score: number) {
+function reputationLabel(score: number) {
   if (score >= 85) return "Excellent";
   if (score >= 70) return "Good";
   if (score >= 50) return "Fair";
@@ -89,7 +93,6 @@ export default function ProfilePage() {
   const router = useRouter();
   const { userId, isLoaded } = useAuth();
   const { user } = useUser();
-  const { signOut } = useClerk();
   const profileService = useProfileService();
   const userService = useUserService();
   const kycService = useKycService();
@@ -98,16 +101,20 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [stats, setStats] = useState<UserStats | null>(null);
   const [kycStatus, setKycStatus] = useState<string | null>(null);
+  const [referral, setReferral] = useState<UserReferral | null>(null);
+  const [codeCopied, setCodeCopied] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const loadProfileData = async () => {
     if (!userId && !isDevMode()) return;
     try {
-      const [userProfile, profileStats, kyc] = await Promise.all([
+      const [userProfile, profileStats, kyc, userReferral] = await Promise.all([
         userService.getUserProfile(userId || "").catch(() => null),
         profileService.getUserStats(userId || ""),
         kycService.getStatus(userId || "").catch(() => ({ status: "NOT_SUBMITTED" })),
+        profileService.getUserReferral(userId || ""),
       ]);
+      setReferral(userReferral);
       setProfile(userProfile);
       setUserName(
         [userProfile?.firstName, userProfile?.lastName].filter(Boolean).join(" ") || "****"
@@ -126,7 +133,39 @@ export default function ProfilePage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded, userId]);
 
+  const copyReferralCode = async () => {
+    if (!referral) return;
+    try {
+      await navigator.clipboard.writeText(referral.referralCode);
+      setCodeCopied(true);
+      toast.success("Referral code copied");
+      setTimeout(() => setCodeCopied(false), 2000);
+    } catch {
+      toast.error("Couldn't copy code");
+    }
+  };
+
   console.log(stats)
+
+  const shareReferralLink = async () => {
+    if (!referral) return;
+    const text = `Join me on Sousubox! Use my referral code ${referral.referralCode}`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: "Join me on Sousubox", text, url: referral.referralLink });
+      } catch {
+        // user dismissed the share sheet
+      }
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(referral.referralLink);
+      toast.success("Invite link copied");
+    } catch {
+      toast.error("Couldn't copy link");
+    }
+  };
+
   const userInitials = userName
     .split(" ")
     .filter(Boolean)
@@ -139,7 +178,7 @@ export default function ProfilePage() {
     ? `Since ${new Date(profile.createdAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })}`
     : null;
 
-  const reliability = Math.round(stats?.reliabilityScore ?? 0);
+  const reputation = Math.round(stats?.reputationScore ?? 0); 
 
   const kycLabel = kycStatus
     ? kycStatus === "NOT_SUBMITTED"
@@ -149,11 +188,11 @@ export default function ProfilePage() {
 
   const statCards = [
     { label: "Reputation", value: stats?.reputationScore ?? "—", icon: Sparkles, color: "text-amber-500 dark:text-amber-400" },
-    { label: "Total saved", value: stats ? `GHS ${stats.totalAmountSaved.toLocaleString()}` : "—", icon: Coins, color: "text-[#0D4F3C] dark:text-[#1F8C6C]" },
-    { label: "Total earned", value: stats ? `GHS ${stats.totalAmountEarned.toLocaleString()}` : "—", icon: PiggyBank, color: "text-pink-500 dark:text-pink-400" },
-    { label: "Pools completed", value: stats?.poolsCompleted ?? "—", icon: Users, color: "text-blue-600 dark:text-blue-400" },
-    { label: "Contribution Score", value: stats?.contributionScore ?? "—", icon: Flag, color: "text-violet-600 dark:text-violet-400" },
     { label: "Contribution streak", value: stats ? `${stats.currentStreak} wks` : "—", icon: Flame, color: "text-orange-500 dark:text-orange-400" },
+    { label: "Trust Score", value: stats ? `${stats.trustScore.toLocaleString()}` : "—", icon: Coins, color: "text-[#0D4F3C] dark:text-[#1F8C6C]" },
+    { label: "Contribution Score", value: stats?.contributionScore ?? "—", icon: Flag, color: "text-violet-600 dark:text-violet-400" },
+    { label: "Missed Contributions", value: stats ? `${stats.missedContributions.toLocaleString()}` : "—", icon: PiggyBank, color: "text-pink-500 dark:text-pink-400" },
+    { label: "Pools completed", value: stats?.poolsCompleted ?? "—", icon: Users, color: "text-blue-600 dark:text-blue-400" },
   ];
 
 
@@ -221,14 +260,14 @@ export default function ProfilePage() {
           transition={{ delay: 0.05 }}
           className={`${cardClass} mt-4 px-4 pt-[18px] pb-4 flex flex-col items-center`}
         >
-          <Gauge value={reliability / 100}>
-            <div className="text-[40px] leading-none font-extrabold tabular-nums">{stats ? reliability : "—"}</div>
-            <div className="text-[11px] font-semibold text-[#6E788A] dark:text-gray-400">Reliability score</div>
+          <Gauge value={reputation / 100}>
+            <div className="text-[40px] leading-none font-extrabold tabular-nums">{stats ? reputation : "—"}</div>
+            <div className="text-[11px] font-semibold text-[#6E788A] dark:text-gray-400">Reputation score</div>
           </Gauge>
           {stats && (
             <div className="mt-1.5 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#0D4F3C] dark:text-[#1F8C6C]">
               <span className="w-[7px] h-[7px] rounded-full bg-current" />
-              {reliabilityLabel(reliability)}
+              {reputationLabel(reputation)}
             </div>
           )}
         </motion.div>
@@ -253,6 +292,59 @@ export default function ProfilePage() {
           })}
         </div>
 
+        {/* ── REFERRALS ── */}
+        {referral && (
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35 }}
+            className={`${cardClass} mt-4 p-4`}
+          >
+            <div className="flex items-center gap-2.5">
+              <span className="w-9 h-9 rounded-full bg-[#E6EEEC] dark:bg-[#156B53]/20 flex items-center justify-center">
+                <Gift className="w-[17px] h-[17px] text-[#0D4F3C] dark:text-[#1F8C6C]" strokeWidth={1.6} />
+              </span>
+              <div className="min-w-0">
+                <h3 className="text-[15px] font-bold tracking-tight">Invite friends</h3>
+                <p className="text-[12px] text-[#6E788A] dark:text-gray-400">Share your code and grow your reputation</p>
+              </div>
+            </div>
+
+            <div className="mt-3.5 flex items-center justify-between gap-2 rounded-xl border border-dashed border-[#0D4F3C]/30 dark:border-[#156B53]/40 bg-[#F7F5F0] dark:bg-white/5 pl-4 pr-1.5 py-1.5">
+              <span className="font-mono text-base font-bold tracking-wider truncate">{referral.referralCode}</span>
+              <button
+                onClick={copyReferralCode}
+                aria-label="Copy referral code"
+                className="w-9 h-9 flex items-center justify-center rounded-lg text-[#0D4F3C] dark:text-[#1F8C6C] hover:bg-[#0D4F3C]/10 transition-colors"
+              >
+                {codeCopied ? (
+                  <Check className="w-[17px] h-[17px]" strokeWidth={2} />
+                ) : (
+                  <Copy className="w-[17px] h-[17px]" strokeWidth={1.6} />
+                )}
+              </button>
+            </div>
+
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <div className="rounded-xl bg-[#F7F5F0] dark:bg-white/5 px-3 py-2.5">
+                <p className="text-[15px] font-bold tracking-tight tabular-nums">{referral.referralCount}</p>
+                <p className="mt-0.5 text-[10.5px] leading-tight text-[#6E788A] dark:text-gray-400">Friends referred</p>
+              </div>
+              <div className="rounded-xl bg-[#F7F5F0] dark:bg-white/5 px-3 py-2.5">
+                <p className="text-[15px] font-bold tracking-tight tabular-nums">{referral.referralReputationScore}</p>
+                <p className="mt-0.5 text-[10.5px] leading-tight text-[#6E788A] dark:text-gray-400">Referral score</p>
+              </div>
+            </div>
+
+            {/* <button
+              onClick={shareReferralLink}
+              className="mt-3.5 w-full h-11 inline-flex items-center justify-center gap-2 rounded-xl bg-[#0D4F3C] dark:bg-[#156B53] text-white text-sm font-semibold hover:opacity-95 active:scale-[0.99] transition"
+            >
+              <Share2 className="w-4 h-4" strokeWidth={1.8} />
+              Share invite link
+            </button> */}
+          </motion.div>
+        )}
       </main>
 
       <Dock activeItem="profile" onItemClick={(href) => router.push(href)} />
