@@ -34,6 +34,7 @@ function WithdrawAmountContent() {
   const searchParams = useSearchParams();
   const { userId, isLoaded } = useAuth();
   const { user } = useUser();
+  const databaseUserId = typeof user?.unsafeMetadata?.userId === "string" ? user.unsafeMetadata.userId : null;
   const poolService = usePoolService();
   const savingsService = useSavingsService();
   const userService = useUserService();
@@ -54,7 +55,7 @@ function WithdrawAmountContent() {
 
   useEffect(() => {
     if (!isLoaded) return;
-    if (!userId && !isDevMode()) {
+    if (!databaseUserId && !isDevMode()) {
       router.push("/signin");
       return;
     }
@@ -62,10 +63,10 @@ function WithdrawAmountContent() {
     const loadData = async () => {
       try {
         const [userPools, savingsGoals, profileResult, sources] = await Promise.all([
-          poolService.getUserPools(userId || ""),
-          savingsService.getSavingsGoals(userId || ""),
-          api.getUserProfile(userId || "").catch(() => null),
-          userService.getFundingSources(userId || "").catch(() => []),
+          poolService.getUserPools(databaseUserId || ""),
+          savingsService.getSavingsGoals(databaseUserId || ""),
+          api.getUserProfile(databaseUserId || "").catch(() => null),
+          userService.getFundingSources(databaseUserId || "").catch(() => []),
         ]);
 
         const lockedInPools = userPools.reduce((acc, p) => acc + (p.totalContributed || 0), 0);
@@ -93,7 +94,7 @@ function WithdrawAmountContent() {
     // poolService/savingsService are re-created every render (not memoized) — omitted
     // from deps to avoid a fetch loop, matching ClientDashboard.tsx's same pattern.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoaded, userId, user, router, networkId, phoneNumber]);
+  }, [isLoaded, databaseUserId, user, router, networkId, phoneNumber]);
 
   const formatAmount = (value: string) => {
     const numericValue = value.replace(/[^0-9]/g, "");
@@ -116,7 +117,7 @@ function WithdrawAmountContent() {
   };
 
   const handleConfirmWithdrawal = async () => {
-    if (!fundingSource || !userId) {
+    if (!fundingSource || !databaseUserId) {
       setErrorMessage("No withdrawal destination was found.");
       return;
     }
@@ -125,7 +126,7 @@ function WithdrawAmountContent() {
     setIsSubmitting(true);
 
     try {
-      const response = await api.requestWithdrawal(userId, {
+      const response = await api.requestWithdrawal(databaseUserId, {
         amount: numericAmount,
         fundingSource: {
           networkId: fundingSource.networkId,

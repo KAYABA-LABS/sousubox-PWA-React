@@ -27,7 +27,7 @@ export default function WithdrawPage() {
 
   useEffect(() => {
     if (!isLoaded) return;
-    if (!userId && !isDevMode()) {
+    if (!databaseUserId && !isDevMode()) {
       router.push("/signin");
       return;
     }
@@ -36,7 +36,7 @@ export default function WithdrawPage() {
       try {
         const [checkingAccountData, sources] = await Promise.all([
           api.getUserCheckingAccount(databaseUserId || "").catch(() => null),
-          userService.getFundingSources(userId || "").catch(() => []),
+          userService.getFundingSources(databaseUserId || "").catch(() => []),
         ]);
 
         // Balance comes straight from the checking account, same as ClientDashboard.
@@ -55,7 +55,7 @@ export default function WithdrawPage() {
     // userService is re-created every render (not memoized) — omitted
     // from deps to avoid a fetch loop, matching ClientDashboard.tsx's same pattern.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId, isLoaded, user, router]);
+  }, [databaseUserId, isLoaded, user, router]);
 
   const sortedSources = [...fundingSources].sort((a, b) => Number(b.active) - Number(a.active));
 

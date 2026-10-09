@@ -42,6 +42,7 @@ export default function ProfilePhotoSettings() {
   const router = useRouter();
   const { userId, isLoaded } = useAuth();
   const { user } = useUser();
+  const databaseUserId = typeof user?.unsafeMetadata?.userId === "string" ? user.unsafeMetadata.userId : null;
   const userService = useUserService();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -54,14 +55,14 @@ export default function ProfilePhotoSettings() {
 
   useEffect(() => {
     if (!isLoaded) return;
-    if (!userId && !isDevMode()) {
+    if (!databaseUserId && !isDevMode()) {
       router.push("/signin");
       return;
     }
 
     const loadProfile = async () => {
       try {
-        const profile = await userService.getUserProfile(userId || "");
+        const profile = await userService.getUserProfile(databaseUserId || "");
         setCurrentPhotoUrl(profile.photoUrl || null);
         const name = [profile.firstName, profile.lastName].filter(Boolean).join(" ")
           || [user?.firstName, user?.lastName].filter(Boolean).join(" ");
@@ -114,7 +115,7 @@ export default function ProfilePhotoSettings() {
   };
 
   const handleSave = async () => {
-    if (!userId && !isDevMode()) {
+    if (!databaseUserId && !isDevMode()) {
       router.push("/signin");
       return;
     }
@@ -131,7 +132,7 @@ export default function ProfilePhotoSettings() {
         return;
       }
 
-      const uid = userId || "dev";
+      const uid = databaseUserId || "dev";
       const newPhotoUrl = await userService.updateUserProfilePhoto(uid, blob, `${uid}-${Date.now()}.jpg`);
       setCurrentPhotoUrl(newPhotoUrl);
       toast.success("Profile photo updated");

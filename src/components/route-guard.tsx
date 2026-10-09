@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import { isDevMode } from "@/lib/dev";
 
 interface RouteGuardProps {
@@ -16,12 +16,15 @@ export function RouteGuard({
 }: RouteGuardProps) {
   const router = useRouter();
   const { userId, isLoaded } = useAuth();
+  const { user } = useUser();
+  const databaseUserId = typeof user?.unsafeMetadata?.userId === "string" ? user.unsafeMetadata.userId : null;
+
   const [isAuthorized, setIsAuthorized] = useState(false);
 
   useEffect(() => {
     if (!isLoaded) return;
 
-    if (!userId && !isDevMode()) {
+    if (!databaseUserId && !isDevMode()) {
       router.push(redirectTo);
       return;
     }

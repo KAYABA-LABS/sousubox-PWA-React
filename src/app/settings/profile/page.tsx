@@ -29,6 +29,7 @@ export default function ProfileSettings() {
   const router = useRouter();
   const { userId, isLoaded } = useAuth();
   const { user } = useUser();
+  const databaseUserId =typeof user?.unsafeMetadata?.userId === "string" ? user.unsafeMetadata.userId : null;
   const userService = useUserService();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -44,15 +45,18 @@ export default function ProfileSettings() {
 
   useEffect(() => {
     if (!isLoaded) return;
-    if (!userId && !isDevMode()) {
+    if (!databaseUserId && !isDevMode()) {
       router.push("/signin");
       return;
     }
 
+    console.log("User ID:", userId);
+    console.log("Database User ID:", databaseUserId);
+
     const loadProfileData = async () => {
       try {
-        if (userId || isDevMode()) {
-          const profile = await userService.getUserProfile(userId || "");
+        if (databaseUserId || isDevMode()) {
+          const profile = await userService.getUserProfile(databaseUserId || "");
 
           const backendName = [profile.firstName, profile.lastName].filter(Boolean).join(" ");
           setFullName(backendName || (user ? [user.firstName, user.lastName].filter(Boolean).join(" ") : ""));
@@ -91,7 +95,7 @@ export default function ProfileSettings() {
   }, [userId, isLoaded, user, router, userService]);
 
   const handleSave = async () => {
-    if (!userId && !isDevMode()) return;
+    if (!databaseUserId && !isDevMode()) return;
     setIsSaving(true);
     setSaveSuccess(false);
 
@@ -100,7 +104,7 @@ export default function ProfileSettings() {
       const firstName = first || "";
       const lastName = last.join(" ") || "";
 
-      await userService.updateUserProfile(userId || "", {
+      await userService.updateUserProfile(databaseUserId || "", {
         firstName,
         lastName,
         phoneNumber: phone,
