@@ -139,23 +139,7 @@ export default function SignUpPageContent() {
     return `${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6, 10)}`;
   };
 
-  // const handleSendOTP = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   if (!isLoaded || !phoneNumber.trim()) return;
-  //   setIsLoading(true);
-  //   setError("");
-  //   try {
-  //     const fullPhone = phoneNumber.replace(/\s/g, "");
-  //     const localPhone = fullPhone.replace(/^0+/, "");
-  //     const formattedPhone = fullPhone.startsWith("+") ? fullPhone : `${countryCode}${localPhone}`;
-  //     await signUp.create({ phoneNumber: formattedPhone });
-  //     await signUp.preparePhoneNumberVerification({ strategy: "phone_code" });
-  //     setStep("verify");
-  //   } catch (err: unknown) {
-  //     setError(err instanceof Error ? err.message : "Failed to send code");
-  //   }
-  //   setIsLoading(false);
-  // };
+
 
     const handleSendOTP = async (e: React.FormEvent) => {
       e.preventDefault();
@@ -247,28 +231,7 @@ export default function SignUpPageContent() {
       }
     };
 
-  // const handleVerifyCode = async (e: React.FormEvent, submittedCode?: string) => {
-  //   e.preventDefault();
-  //   const fullCode = submittedCode ?? code.join("");
-  //   if (!isLoaded || fullCode.length < 6) return;
-  //   setIsLoading(true);
-  //   setError("");
-  //   try {
-  //     const result = await signUp.attemptPhoneNumberVerification({ code: fullCode });
-  //     if (result.status === "complete") {
-  //       const backendUserId = await registerBackendUser(result.createdSessionId);
-  //       await setActive({ session: result.createdSessionId });
-  //       await persistBackendUserId(backendUserId);
-  //       router.push("/dashboard");
-  //     } else if (result.status === "missing_requirements") {
-  //       setStep("details");
-  //     }
-  //   } catch (err: unknown) {
-  //     autoSubmitRef.current = false;
-  //     setError(err instanceof Error ? err.message : "Invalid code");
-  //   }
-  //   setIsLoading(false);
-  // };
+
     const handleVerifyCode = async (
         e: React.FormEvent,
         submittedCode?: string
@@ -371,25 +334,7 @@ export default function SignUpPageContent() {
 
 
 
-  // const handleCompleteProfile = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   if (!isLoaded) return;
-  //   setIsLoading(true);
-  //   setError("");
-  //   try {
-  //     await signUp.update({ firstName: firstName.trim(), lastName: lastName.trim() });
-  //     if (signUp.status !== "complete") {
-  //       throw new Error("Please complete the remaining signup requirements.");
-  //     }
-  //     const backendUserId = await registerBackendUser(signUp.createdSessionId);
-  //     await setActive({ session: signUp.createdSessionId });
-  //     await persistBackendUserId(backendUserId);
-  //     router.push("/dashboard");
-  //   } catch (err: unknown) {
-  //     setError(err instanceof Error ? err.message : "Failed to complete profile");
-  //   }
-  //   setIsLoading(false);
-  // };
+
   const handleCompleteProfile = async (
   e: React.FormEvent
 ) => {
@@ -474,24 +419,7 @@ export default function SignUpPageContent() {
     details: <UserRound className="w-5 h-5 text-[#0D4F3C] dark:text-[#156B53]" strokeWidth={2} />,
   };
 
-  // const handleCodeChange = (index: number, value: string) => {
-  //   if (!/^\d*$/.test(value)) return;
-  //   const newCode = [...code];
-  //   const digits = value.slice(0, code.length - index);
-  //   digits.split("").forEach((digit, offset) => {
-  //     newCode[index + offset] = digit;
-  //   });
-  //   setCode(newCode);
-  //   setError("");
-  //   if (digits) {
-  //     const nextEmpty = newCode.findIndex((digit, i) => i > index && !digit);
-  //     inputRefs.current[nextEmpty === -1 ? Math.min(index + digits.length, 5) : nextEmpty]?.focus();
-  //   }
-  //   if (newCode.every(Boolean) && !autoSubmitRef.current) {
-  //     autoSubmitRef.current = true;
-  //     setTimeout(() => handleVerifyCode({ preventDefault: () => {} } as React.FormEvent, newCode.join("")), 0);
-  //   }
-  // };
+
 
   const handleCodeChange = (
       index: number,
@@ -562,14 +490,7 @@ export default function SignUpPageContent() {
       }
     };
 
-  // const handleCodeKeyDown = (index: number, e: React.KeyboardEvent) => {
-  //   if (e.key === "Backspace" && !code[index] && index > 0) {
-  //     inputRefs.current[index - 1]?.focus();
-  //   }
-  //   if (e.key === "Enter" && code.join("").length === 6 && !isLoading) {
-  //     handleVerifyCode(e as unknown as React.FormEvent);
-  //   }
-  // };
+
 
     const handleCodeKeyDown = (
         index: number,
@@ -597,23 +518,7 @@ export default function SignUpPageContent() {
       };
 
 
-  // const handleCodePaste = (e: React.ClipboardEvent) => {
-  //   e.preventDefault();
-  //   const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
-  //   if (!pasted) return;
-  //   const newCode = [...code];
-  //   for (let i = 0; i < 6; i++) {
-  //     newCode[i] = pasted[i] || "";
-  //   }
-  //   setCode(newCode);
-  //   setError("");
-  //   const nextEmpty = newCode.findIndex((d) => !d);
-  //   const focusIndex = nextEmpty === -1 ? 5 : nextEmpty;
-  //   inputRefs.current[focusIndex]?.focus();
-  //   if (newCode.every((d) => d) && newCode.join("").length === 6) {
-  //     setTimeout(() => handleVerifyCode({ preventDefault: () => {} } as React.FormEvent, newCode.join("")), 0);
-  //   }
-  // };
+
 
   const handleCodePaste = (
       e: React.ClipboardEvent
@@ -749,17 +654,17 @@ export default function SignUpPageContent() {
                   onSubmit={handleSendOTP}
                   className="space-y-5"
                 >
-                  <div className="flex gap-2">
-                    <PhoneCodeSwitcher value={countryCode} onChange={setCountryCode} />
-                    <input
-                      type="tel"
-                      placeholder="055 555 5555"
-                      value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(formatPhone(e.target.value))}
-                      autoFocus
-                      className="flex-1 h-14 px-4 bg-[#FBF6EF] dark:bg-[#0C0F14] border border-black/10 dark:border-white/10 rounded-2xl text-[#0C0F14] dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 text-[15px] font-medium focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53] focus:ring-2 focus:ring-[#0D4F3C]/10 dark:focus:ring-[#156B53]/10 transition-colors"
-                    />
-                  </div>
+                <div className="flex w-full min-w-0 gap-2">
+                  <PhoneCodeSwitcher value={countryCode} onChange={setCountryCode} />
+                  <input
+                    type="tel"
+                    placeholder="055 555 5555"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(formatPhone(e.target.value))}
+                    autoFocus
+                    className="min-w-0 flex-1 h-14 px-4 bg-[#FBF6EF] dark:bg-[#0C0F14] border border-black/10 dark:border-white/10 rounded-2xl text-[#0C0F14] dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 text-[15px] font-medium focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53] focus:ring-2 focus:ring-[#0D4F3C]/10 dark:focus:ring-[#156B53]/10 transition-colors"
+                  />
+                </div>
 
                   <div id="clerk-captcha" />
 
@@ -787,6 +692,13 @@ export default function SignUpPageContent() {
                       </span>
                     )}
                   </button>
+
+                    <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
+                      Already have an account?{" "}
+                      <Link href="/signin" className="text-[#0D4F3C] dark:text-[#156B53] font-semibold hover:underline">
+                        Sign in
+                      </Link>
+                    </p>
                 </motion.form>
               )}
 
@@ -891,54 +803,61 @@ export default function SignUpPageContent() {
                     <span className="text-sm font-medium text-emerald-800 dark:text-emerald-400">{phoneNumber} verified</span>
                   </div>
 
-                  <div className="space-y-3">
-                    <input
-                      type="text"
-                      placeholder="First name"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      autoFocus
-                      className="w-full h-14 px-4 bg-[#FBF6EF] dark:bg-[#0C0F14] border border-black/10 dark:border-white/10 rounded-2xl text-[#0C0F14] dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 text-[15px] font-medium focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53] focus:ring-2 focus:ring-[#0D4F3C]/10 dark:focus:ring-[#156B53]/10 transition-colors"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Last name"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      className="w-full h-14 px-4 bg-[#FBF6EF] dark:bg-[#0C0F14] border border-black/10 dark:border-white/10 rounded-2xl text-[#0C0F14] dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 text-[15px] font-medium focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53] focus:ring-2 focus:ring-[#0D4F3C]/10 dark:focus:ring-[#156B53]/10 transition-colors"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Username"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      className="w-full h-14 px-4 bg-[#FBF6EF] dark:bg-[#0C0F14] border border-black/10 dark:border-white/10 rounded-2xl text-[#0C0F14] dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 text-[15px] font-medium focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53] focus:ring-2 focus:ring-[#0D4F3C]/10 dark:focus:ring-[#156B53]/10 transition-colors"
-                    />
-                    <input
-                      type="email"
-                      placeholder="Email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full h-14 px-4 bg-[#FBF6EF] dark:bg-[#0C0F14] border border-black/10 dark:border-white/10 rounded-2xl text-[#0C0F14] dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 text-[15px] font-medium focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53] focus:ring-2 focus:ring-[#0D4F3C]/10 dark:focus:ring-[#156B53]/10 transition-colors"
-                    />
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-medium text-gray-500 dark:text-gray-400 px-1">Date of birth</label>
-                      <input
-                        type="date"
-                        value={dateOfBirth}
-                        onChange={(e) => setDateOfBirth(e.target.value)}
-                        className="w-full h-14 px-4 bg-[#FBF6EF] dark:bg-[#0C0F14] border border-black/10 dark:border-white/10 rounded-2xl text-[#0C0F14] dark:text-white text-[15px] font-medium focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53] focus:ring-2 focus:ring-[#0D4F3C]/10 dark:focus:ring-[#156B53]/10 transition-colors scheme-light dark:scheme-dark"
-                      />
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="Referral code (optional)"
-                      value={referralCode}
-                      onChange={(e) => setReferralCode(e.target.value)}
-                      autoCapitalize="characters"
-                      className="w-full h-14 px-4 bg-[#FBF6EF] dark:bg-[#0C0F14] border border-black/10 dark:border-white/10 rounded-2xl text-[#0C0F14] dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 text-[15px] font-medium focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53] focus:ring-2 focus:ring-[#0D4F3C]/10 dark:focus:ring-[#156B53]/10 transition-colors"
-                    />
-                  </div>
+                <div className="min-w-0 space-y-3">
+                <input
+                  type="text"
+                  placeholder="First name"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  autoFocus
+                  className="block box-border h-14 w-full min-w-0 max-w-full rounded-2xl border border-black/10 bg-[#FBF6EF] px-4 text-[15px] font-medium text-[#0C0F14] transition-colors placeholder:text-gray-400 focus:border-[#0D4F3C] focus:outline-none focus:ring-2 focus:ring-[#0D4F3C]/10 dark:border-white/10 dark:bg-[#0C0F14] dark:text-white dark:placeholder:text-gray-600 dark:focus:border-[#156B53] dark:focus:ring-[#156B53]/10"
+                />
+
+                <input
+                  type="text"
+                  placeholder="Last name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className="block box-border h-14 w-full min-w-0 max-w-full rounded-2xl border border-black/10 bg-[#FBF6EF] px-4 text-[15px] font-medium text-[#0C0F14] transition-colors placeholder:text-gray-400 focus:border-[#0D4F3C] focus:outline-none focus:ring-2 focus:ring-[#0D4F3C]/10 dark:border-white/10 dark:bg-[#0C0F14] dark:text-white dark:placeholder:text-gray-600 dark:focus:border-[#156B53] dark:focus:ring-[#156B53]/10"
+                />
+
+                <input
+                  type="text"
+                  placeholder="Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="block box-border h-14 w-full min-w-0 max-w-full rounded-2xl border border-black/10 bg-[#FBF6EF] px-4 text-[15px] font-medium text-[#0C0F14] transition-colors placeholder:text-gray-400 focus:border-[#0D4F3C] focus:outline-none focus:ring-2 focus:ring-[#0D4F3C]/10 dark:border-white/10 dark:bg-[#0C0F14] dark:text-white dark:placeholder:text-gray-600 dark:focus:border-[#156B53] dark:focus:ring-[#156B53]/10"
+                />
+
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="block box-border h-14 w-full min-w-0 max-w-full rounded-2xl border border-black/10 bg-[#FBF6EF] px-4 text-[15px] font-medium text-[#0C0F14] transition-colors placeholder:text-gray-400 focus:border-[#0D4F3C] focus:outline-none focus:ring-2 focus:ring-[#0D4F3C]/10 dark:border-white/10 dark:bg-[#0C0F14] dark:text-white dark:placeholder:text-gray-600 dark:focus:border-[#156B53] dark:focus:ring-[#156B53]/10"
+                />
+
+                <div className="min-w-0 space-y-1.5">
+                  <label className="px-1 text-xs font-medium text-gray-500 dark:text-gray-400">
+                    Date of birth
+                  </label>
+                  <input
+                    type="date"
+                    value={dateOfBirth}
+                    onChange={(e) => setDateOfBirth(e.target.value)}
+                    className="block box-border h-14 w-full min-w-0 max-w-full rounded-2xl border border-black/10 bg-[#FBF6EF] px-4 text-[15px] font-medium text-[#0C0F14] transition-colors focus:border-[#0D4F3C] focus:outline-none focus:ring-2 focus:ring-[#0D4F3C]/10 scheme-light dark:border-white/10 dark:bg-[#0C0F14] dark:text-white dark:focus:border-[#156B53] dark:focus:ring-[#156B53]/10 dark:scheme-dark"
+                  />
+                </div>
+
+                <input
+                  type="text"
+                  placeholder="Referral code (optional)"
+                  value={referralCode}
+                  onChange={(e) => setReferralCode(e.target.value)}
+                  autoCapitalize="characters"
+                  className="block box-border h-14 w-full min-w-0 max-w-full rounded-2xl border border-black/10 bg-[#FBF6EF] px-4 text-[15px] font-medium text-[#0C0F14] transition-colors placeholder:text-gray-400 focus:border-[#0D4F3C] focus:outline-none focus:ring-2 focus:ring-[#0D4F3C]/10 dark:border-white/10 dark:bg-[#0C0F14] dark:text-white dark:placeholder:text-gray-600 dark:focus:border-[#156B53] dark:focus:ring-[#156B53]/10"
+                />
+              </div>
 
                   {error && (
                     <motion.p
@@ -962,12 +881,12 @@ export default function SignUpPageContent() {
             </AnimatePresence>
           </div>
 
-          <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
+          {/* <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
             Already have an account?{" "}
             <Link href="/signin" className="text-[#0D4F3C] dark:text-[#156B53] font-semibold hover:underline">
               Sign in
             </Link>
-          </p>
+          </p> */}
         </motion.div>
       </main>
     </div>

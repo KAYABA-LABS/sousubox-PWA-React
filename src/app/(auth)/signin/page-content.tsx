@@ -314,17 +314,17 @@ export default function SignInPageContent() {
                   onSubmit={handleSendOTP}
                   className="space-y-5"
                 >
-                  <div className="flex gap-2">
-                    <PhoneCodeSwitcher value={countryCode} onChange={setCountryCode} />
-                    <input
-                      type="tel"
-                      placeholder="055 555 5555"
-                      value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(formatPhone(e.target.value))}
-                      autoFocus
-                      className="flex-1 h-14 px-4 bg-[#FBF6EF] dark:bg-[#0C0F14] border border-black/10 dark:border-white/10 rounded-2xl text-[#0C0F14] dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 text-[15px] font-medium focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53] focus:ring-2 focus:ring-[#0D4F3C]/10 dark:focus:ring-[#156B53]/10 transition-colors"
-                    />
-                  </div>
+                <div className="flex w-full min-w-0 gap-2">
+                  <PhoneCodeSwitcher value={countryCode} onChange={setCountryCode} />
+                  <input
+                    type="tel"
+                    placeholder="055 555 5555"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(formatPhone(e.target.value))}
+                    autoFocus
+                    className="min-w-0 flex-1 h-14 px-4 bg-[#FBF6EF] dark:bg-[#0C0F14] border border-black/10 dark:border-white/10 rounded-2xl text-[#0C0F14] dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 text-[15px] font-medium focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53] focus:ring-2 focus:ring-[#0D4F3C]/10 dark:focus:ring-[#156B53]/10 transition-colors"
+                  />
+                </div>
 
                   <div id="clerk-captcha" />
 
