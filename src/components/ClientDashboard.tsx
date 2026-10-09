@@ -83,8 +83,7 @@ export default function ClientDashboard() {
   const router = useRouter();
   const { userId, isLoaded } = useAuth();
   const { user } = useUser();
-  const databaseUserId =
-    typeof user?.unsafeMetadata?.userId === "string" ? user.unsafeMetadata.userId : null;
+  const databaseUserId =typeof user?.unsafeMetadata?.userId === "string" ? user.unsafeMetadata.userId : null;
   const searchParams = useSearchParams();
 
   const poolService = usePoolService();
@@ -107,7 +106,7 @@ export default function ClientDashboard() {
 
   useEffect(() => {
     if (!isLoaded) return;
-    if (!userId && !isDevMode()) {
+    if (!databaseUserId && !isDevMode()) {
       router.push("/signin");
       return;
     }

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Smartphone, Plus, Trash2, RefreshCw, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import { isDevMode } from "@/lib/dev";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -25,6 +25,8 @@ import {
 export default function LinkedAccounts() {
   const router = useRouter();
   const { userId, isLoaded } = useAuth();
+  const { user } = useUser();
+  const databaseUserId = typeof user?.unsafeMetadata?.userId === "string" ? user.unsafeMetadata.userId : null;
   const userService = useUserService();
 
   const [accounts, setAccounts] = useState<FundingSource[]>([]);
@@ -34,14 +36,14 @@ export default function LinkedAccounts() {
 
   useEffect(() => {
     if (!isLoaded) return;
-    if (!userId && !isDevMode()) {
+    if (!databaseUserId && !isDevMode()) {
       router.push("/signin");
       return;
     }
 
     const loadFundingSources = async () => {
       try {
-        const sources = await userService.getFundingSources(userId || "");
+        const sources = await userService.getFundingSources(databaseUserId || "");
         setAccounts(sources);
       } catch (err) {
         console.error("Failed to load funding sources:", err);

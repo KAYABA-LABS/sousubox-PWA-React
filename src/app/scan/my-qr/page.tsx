@@ -12,6 +12,7 @@ export default function MyQRPage() {
   const router = useRouter();
   const { userId, isLoaded } = useAuth();
   const { user } = useUser();
+  const databaseUserId = typeof user?.unsafeMetadata?.userId === "string" ? user.unsafeMetadata.userId : null;
   const [qrCodeUrl, setQrCodeUrl] = useState("");
   const [userName, setUserName] = useState("User");
   const [accountNumber, setAccountNumber] = useState("");
@@ -19,7 +20,7 @@ export default function MyQRPage() {
 
   useEffect(() => {
     if (!isLoaded) return;
-    if (!userId && !isDevMode()) {
+    if (!databaseUserId && !isDevMode()) {
       router.push("/signin");
       return;
     }
@@ -32,7 +33,7 @@ export default function MyQRPage() {
 
       const paymentData = {
         type: "vaulta_payment",
-        userId: userId,
+        userId: databaseUserId,
         accountNumber: "0000",
         name: name,
         timestamp: Date.now(),

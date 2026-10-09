@@ -12,6 +12,7 @@ export default function PersonalSettings() {
   const router = useRouter();
   const { userId, isLoaded } = useAuth();
   const { user } = useUser();
+  const databaseUserId = typeof user?.unsafeMetadata?.userId === "string" ? user.unsafeMetadata.userId : null;
   const userService = useUserService();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -21,7 +22,7 @@ export default function PersonalSettings() {
 
   useEffect(() => {
     if (!isLoaded) return;
-    if (!userId && !isDevMode()) {
+    if (!databaseUserId && !isDevMode()) {
       router.push("/signin");
       return;
     }
@@ -38,7 +39,7 @@ export default function PersonalSettings() {
   }, [userId, isLoaded, user, router]);
 
   const handleSave = async () => {
-    if (!userId && !isDevMode()) return;
+    if (!databaseUserId && !isDevMode()) return;
     setIsSaving(true);
 
     try {
@@ -46,7 +47,7 @@ export default function PersonalSettings() {
       const firstName = first || "";
       const lastName = last.join(" ") || "";
 
-      await userService.updateUserProfile(userId || "", {
+      await userService.updateUserProfile(databaseUserId || "", {
         firstName,
         lastName,
         phoneNumber: phone,

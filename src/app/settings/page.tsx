@@ -56,6 +56,7 @@ export default function Settings() {
   const router = useRouter();
   const { isLoaded, userId } = useAuth();
   const { user } = useUser();
+  const databaseUserId = typeof user?.unsafeMetadata?.userId === "string" ? user.unsafeMetadata.userId : null;
   const { signOut } = useClerk();
   const kycService = useKycService();
   const userService = useUserService();
@@ -97,7 +98,7 @@ export default function Settings() {
 
     const loadProfileData = async () => {
       try {
-        const profile = await userService.getUserProfile(userId || "").catch(() => null);
+        const profile = await userService.getUserProfile(databaseUserId || "").catch(() => null);
 
         console.log("Loaded profile in settings:", profile);
 
@@ -114,7 +115,7 @@ export default function Settings() {
 
         // Load actual KYC status from the backend
         try {
-          const kycRes = await kycService.getStatus(userId || "");
+          const kycRes = await kycService.getStatus(databaseUserId || "");
           setIsVerified(kycRes.status === "VERIFIED");
           setKycStatusStr(kycRes.status);
         } catch (err) {

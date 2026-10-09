@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useMemo, Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Clock, CheckCircle2, XCircle, ArrowRight, Info, Loader2 } from "lucide-react";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import { isDevMode } from "@/lib/dev";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,6 +25,8 @@ interface WithdrawalData {
 function WithdrawStatusContent() {
   const router = useRouter();
   const { userId, isLoaded } = useAuth();
+  const { user } = useUser();
+  const databaseUserId = typeof user?.unsafeMetadata?.userId === "string" ? user.unsafeMetadata.userId : null;
   const searchParams = useSearchParams();
 
   const withdrawalData = useMemo(() => {
@@ -34,10 +36,10 @@ function WithdrawStatusContent() {
 
   useEffect(() => {
     if (!isLoaded) return;
-    if (!userId && !isDevMode()) {
+    if (!databaseUserId && !isDevMode()) {
       router.push("/signin");
     }
-  }, [userId, isLoaded, router]);
+  }, [databaseUserId, isLoaded, router]);
 
   if (!withdrawalData) {
     return (

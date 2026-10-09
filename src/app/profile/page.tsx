@@ -93,6 +93,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const { userId, isLoaded } = useAuth();
   const { user } = useUser();
+  const databaseUserId =typeof user?.unsafeMetadata?.userId === "string" ? user.unsafeMetadata.userId : null;
   const profileService = useProfileService();
   const userService = useUserService();
   const kycService = useKycService();
@@ -106,13 +107,13 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
 
   const loadProfileData = async () => {
-    if (!userId && !isDevMode()) return;
+    if (!databaseUserId && !isDevMode()) return;
     try {
       const [userProfile, profileStats, kyc, userReferral] = await Promise.all([
-        userService.getUserProfile(userId || "").catch(() => null),
-        profileService.getUserStats(userId || ""),
-        kycService.getStatus(userId || "").catch(() => ({ status: "NOT_SUBMITTED" })),
-        profileService.getUserReferral(userId || ""),
+        userService.getUserProfile(databaseUserId || "").catch(() => null),
+        profileService.getUserStats(databaseUserId || ""),
+        kycService.getStatus(databaseUserId || "").catch(() => ({ status: "NOT_SUBMITTED" })),
+        profileService.getUserReferral(databaseUserId || ""),
       ]);
       setReferral(userReferral);
       setProfile(userProfile);

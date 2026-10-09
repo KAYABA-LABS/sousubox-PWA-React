@@ -20,6 +20,7 @@ function TransferConfirmContent() {
   const router = useRouter();
   const { userId, isLoaded } = useAuth();
   const { user } = useUser();
+  const databaseUserId = typeof user?.unsafeMetadata?.userId === "string" ? user.unsafeMetadata.userId : null;
   const searchParams = useSearchParams();
   const dataParam = searchParams.get("data");
 
@@ -39,11 +40,11 @@ function TransferConfirmContent() {
 
   useEffect(() => {
     if (!isLoaded) return;
-    if (!userId && !isDevMode()) {
+    if (!databaseUserId && !isDevMode()) {
       router.push("/signin");
       return;
     }
-  }, [userId, isLoaded, user, router]);
+  }, [databaseUserId, isLoaded, user, router]);
 
   const handleTransfer = async () => {
     // For demo/testing: always show blocked error when this button is pressed.

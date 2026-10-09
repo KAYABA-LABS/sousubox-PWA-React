@@ -13,13 +13,14 @@ export default function ManageSecurityPage() {
   const router = useRouter();
   const { userId, isLoaded } = useAuth();
   const { user } = useUser();
+  const databaseUserId = typeof user?.unsafeMetadata?.userId === "string" ? user.unsafeMetadata.userId : null;
   const [email, setEmail] = useState("");
   const [otpEnabled, setOtpEnabled] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (!isLoaded) return;
-    if (!userId && !isDevMode()) {
+    if (!databaseUserId && !isDevMode()) {
       router.push("/signin");
       return;
     }
@@ -28,7 +29,7 @@ export default function ManageSecurityPage() {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setEmail(user.emailAddresses?.[0]?.emailAddress || "");
     }
-  }, [userId, isLoaded, user, router]);
+  }, [databaseUserId, isLoaded, user, router]);
 
   const handleSave = async () => {
     setIsSaving(true);

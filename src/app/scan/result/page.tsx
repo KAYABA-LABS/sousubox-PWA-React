@@ -13,6 +13,7 @@ function ScanResultContent() {
   const router = useRouter();
   const { userId, isLoaded } = useAuth();
   const { user } = useUser();
+  const databaseUserId = typeof user?.unsafeMetadata?.userId === "string" ? user.unsafeMetadata.userId : null;
   const searchParams = useSearchParams();
   const dataParam = searchParams.get("data");
 
@@ -37,10 +38,10 @@ function ScanResultContent() {
 
   useEffect(() => {
     if (!isLoaded) return;
-    if (!userId && !isDevMode()) {
+    if (!databaseUserId && !isDevMode()) {
       router.push("/signin");
     }
-  }, [userId, isLoaded, user, router]);
+  }, [databaseUserId, isLoaded, user, router]);
 
   const handlePay = async () => {
     const paymentAmount = parseFloat(amount);

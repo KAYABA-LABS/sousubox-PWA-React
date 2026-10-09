@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Phone, ShieldAlert, Loader2 } from "lucide-react";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import { isDevMode } from "@/lib/dev";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
@@ -18,6 +18,8 @@ import { MOMO_PROVIDERS, GHANA_PHONE_REGEX, GHANA_PHONE_ERROR } from "@/lib/momo
 export default function AddMobileMoneyAccount() {
   const router = useRouter();
   const { userId, isLoaded } = useAuth();
+  const { user } = useUser();
+  const databaseUserId = typeof user?.unsafeMetadata?.userId === "string" ? user.unsafeMetadata.userId : null;
   const userService = useUserService();
 
   const [network, setNetwork] = useState<FundingSourceNetwork | "">("");
@@ -27,10 +29,10 @@ export default function AddMobileMoneyAccount() {
 
   useEffect(() => {
     if (!isLoaded) return;
-    if (!userId && !isDevMode()) {
+    if (!databaseUserId && !isDevMode()) {
       router.push("/signin");
     }
-  }, [isLoaded, userId, router]);
+  }, [isLoaded, databaseUserId, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,7 +51,7 @@ export default function AddMobileMoneyAccount() {
 
     setIsConnecting(true);
     try {
-      await userService.addFundingSource(userId || "", {
+      await userService.addFundingSource(databaseUserId || "", {
         networkId: network,
         phoneNumber: cleanPhone,
       });
