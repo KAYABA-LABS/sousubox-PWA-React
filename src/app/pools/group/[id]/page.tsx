@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { CalendarDays, CheckCircle2, Info, Settings2, Users } from "lucide-react";
 import { useDatabaseUserId } from "@/hooks/use-database-user-id";
 import { useRefetchOnFocus, useVisiblePolling } from "@/hooks/use-refetch";
@@ -14,8 +15,11 @@ import {
   type JoinedPoolDetails,
   type PoolDetailsResponse,
   type PoolTransparency,
+  type SwapRequest,
 } from "@/lib/api";
-import { formatDate, formatGhs } from "@/lib/pool-format";
+import { track } from "@/lib/analytics";
+import { needsMyResponse, swapSide } from "@/lib/groupPoolOrder";
+import { formatDate, formatGhs, memberName } from "@/lib/pool-format";
 import { resolveGroupPoolError } from "@/lib/groupPoolErrors";
 import { PoolCycleHeroCard } from "@/components/pools/PoolCycleHeroCard";
 import { ContributionStatusCard } from "@/components/pools/ContributionStatusCard";
@@ -30,6 +34,8 @@ import {
 import { GroupHealthCard, PausedBanner } from "@/components/group-pools/GroupHealthCard";
 import { RepayDrawer, type RepayTarget } from "@/components/group-pools/RepayDrawer";
 import { PoolStatusChip } from "@/components/group-pools/PoolStatusChip";
+import { SwapRequestCard } from "@/components/group-pools/SwapCards";
+import { AcceptOrderBanner } from "@/components/group-pools/AcceptOrderBanner";
 import {
   GPCard,
   GPChip,
@@ -44,7 +50,13 @@ type GroupPoolState =
   | { kind: "loading" }
   | { kind: "error"; message: string }
   | { kind: "forming"; joined: JoinedPoolDetails; details: PoolDetailsResponse | null }
-  | { kind: "running"; active: ActivePoolDetails; details: PoolDetailsResponse | null; transparency: PoolTransparency | null };
+  | {
+      kind: "running";
+      active: ActivePoolDetails;
+      details: PoolDetailsResponse | null;
+      transparency: PoolTransparency | null;
+      swaps: SwapRequest[];
+    };
 
 const NOT_ACTIVE_CODES = new Set(["POOL_NOT_ACTIVE_YET", "POOL_NOT_ACTIVE"]);
 
@@ -58,16 +70,20 @@ export default function GroupPoolPage() {
   const [state, setState] = useState<GroupPoolState>({ kind: "loading" });
   const [availableBalance, setAvailableBalance] = useState<number | null>(null);
   const [repayTarget, setRepayTarget] = useState<RepayTarget | null>(null);
+  const [swapBusy, setSwapBusy] = useState<{ id: string; action: "accept" | "decline" } | null>(null);
 
   const load = useCallback(async (): Promise<GroupPoolState> => {
     const details = await groupService.getPoolDetails(poolId).catch(() => null);
     try {
       const active = await poolService.getActivePoolDetails(userId, poolId);
-      const transparency = await groupService.getTransparency(userId, poolId).catch((err) => {
-        if (err instanceof ApiError && err.code === "NOT_A_MEMBER") throw err;
-        return null;
-      });
-      return { kind: "running", active, details, transparency };
+      const [transparency, swaps] = await Promise.all([
+        groupService.getTransparency(userId, poolId).catch((err) => {
+          if (err instanceof ApiError && err.code === "NOT_A_MEMBER") throw err;
+          return null;
+        }),
+        groupService.getSwaps(userId, poolId).catch(() => [] as SwapRequest[]),
+      ]);
+      return { kind: "running", active, details, transparency, swaps };
     } catch (err) {
       if (err instanceof ApiError && err.code && NOT_ACTIVE_CODES.has(err.code)) {
         const joined = await poolService.getJoinedPoolDetails(userId, poolId);
@@ -91,7 +107,33 @@ export default function GroupPoolPage() {
   }, [reload]);
   useRefetchOnFocus(reload, ready);
   const paused = state.kind === "running" && (state.active.status === "PAUSED" || state.transparency?.status === "PAUSED");
-  useVisiblePolling(reload, ready && paused);
+  const mySwaps = state.kind === "running" ? state.swaps.filter((swap) => needsMyResponse(swap, userId)) : [];
+  useVisiblePolling(reload, ready && (paused || mySwaps.length > 0));
+
+  const respondToSwap = async (swap: SwapRequest, accept: boolean) => {
+    setSwapBusy({ id: swap.id, action: accept ? "accept" : "decline" });
+    try {
+      if (accept) {
+        const result = await groupService.acceptSwap(userId, swap.id);
+        const side = swapSide(swap, userId);
+        const other = side === "A" ? swap.userB : swap.userA;
+        const newCycle = side === "A" ? swap.cycleB : swap.cycleA;
+        toast.success(
+          result.status === "ACCEPTED"
+            ? `Swapped. You're now paid in cycle ${newCycle}.`
+            : `Accepted. Waiting for ${memberName(other)} to accept too.`
+        );
+      } else {
+        await groupService.declineSwap(userId, swap.id);
+        toast.success("Swap declined. Your payout stays where it was.");
+      }
+      track("group_swap_responded", { poolId, accepted: accept });
+    } catch (err) {
+      toast.error(resolveGroupPoolError(err).message);
+    }
+    setSwapBusy(null);
+    reload();
+  };
 
   if (state.kind === "loading") return <GPFullPageLoader />;
   if (state.kind === "error") {
@@ -116,7 +158,17 @@ export default function GroupPoolPage() {
   ) : null;
 
   if (state.kind === "forming") {
-    return <FormingView joined={state.joined} details={state.details} right={manageButton} onBack={() => router.back()} />;
+    return (
+      <FormingView
+        joined={state.joined}
+        details={state.details}
+        right={manageButton}
+        onBack={() => router.back()}
+        orderBanner={
+          state.details?.payoutOrderType === "MANUAL" && !isModerator ? <AcceptOrderBanner poolId={poolId} userId={userId} /> : null
+        }
+      />
+    );
   }
 
   const { active, transparency } = state;
@@ -139,6 +191,17 @@ export default function GroupPoolPage() {
 
       <div className="flex-1 px-5 max-w-xl mx-auto w-full space-y-4">
         {paused && <PausedBanner pauseReason={pauseReason} />}
+
+        {mySwaps.map((swap) => (
+          <SwapRequestCard
+            key={swap.id}
+            swap={swap}
+            userId={userId}
+            busy={swapBusy?.id === swap.id ? swapBusy.action : null}
+            onAccept={() => respondToSwap(swap, true)}
+            onDecline={() => respondToSwap(swap, false)}
+          />
+        ))}
 
         <PoolCycleHeroCard
           badge="Group"
@@ -210,11 +273,13 @@ function FormingView({
   details,
   right,
   onBack,
+  orderBanner,
 }: {
   joined: JoinedPoolDetails;
   details: PoolDetailsResponse | null;
   right: React.ReactNode;
   onBack: () => void;
+  orderBanner: React.ReactNode;
 }) {
   const description = details?.description ?? joined.template.description;
   return (
@@ -232,6 +297,7 @@ function FormingView({
       />
 
       <div className="flex-1 px-5 max-w-xl mx-auto w-full space-y-4">
+        {orderBanner}
         <GPCard>
           <GPChip tone="primary" className="mb-2">
             Group

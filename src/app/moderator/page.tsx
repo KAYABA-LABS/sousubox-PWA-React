@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Clock, Plus, ShieldCheck, ShieldOff, XCircle } from "lucide-react";
+import { ChevronRight, Clock, Coins, Plus, ShieldCheck, ShieldOff, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useDatabaseUserId } from "@/hooks/use-database-user-id";
 import { useModeratorAreaStatus } from "@/hooks/use-moderator-ping";
@@ -209,6 +209,15 @@ function ModeratorDashboard({ maxPools }: { maxPools: number }) {
 
   return (
     <>
+      <button
+        onClick={() => router.push("/moderator/earnings")}
+        className="w-full flex items-center justify-between rounded-2xl bg-[#D4A843]/10 dark:bg-[#D4A843]/15 border border-[#D4A843]/25 px-4 py-3 text-left"
+      >
+        <span className="flex items-center gap-2 text-sm font-bold text-[#B58A28] dark:text-[#E2BB5C]">
+          <Coins className="w-4 h-4" /> Earnings
+        </span>
+        <ChevronRight className="w-4 h-4 text-[#B58A28] dark:text-[#E2BB5C]" />
+      </button>
       {maxPools > 0 && (
         <p className="text-xs text-gray-500 dark:text-gray-400 px-1">
           {openCount} of {maxPools} pools in use

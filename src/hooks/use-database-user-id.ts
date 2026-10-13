@@ -11,7 +11,10 @@ import { isDevMode } from "@/lib/dev";
 export function useDatabaseUserId() {
   const { isLoaded, isSignedIn } = useAuth();
   const { user } = useUser();
-  const userId = typeof user?.unsafeMetadata?.userId === "string" ? user.unsafeMetadata.userId : null;
+  const metadataId = typeof user?.unsafeMetadata?.userId === "string" ? user.unsafeMetadata.userId : null;
+  // Same fallback as AuthTokenProvider, so "is this me?" checks match the id the API calls use.
+  const userId =
+    metadataId ?? (process.env.NEXT_PUBLIC_DEV_BYPASS === "true" ? process.env.NEXT_PUBLIC_DEV_USERID ?? null : null);
   return {
     isLoaded,
     isSignedIn: !!isSignedIn,

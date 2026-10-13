@@ -16,21 +16,32 @@ import { OverviewTab } from "@/components/group-pools/manage/OverviewTab";
 import { RequestsTab } from "@/components/group-pools/manage/RequestsTab";
 import { MembersTab } from "@/components/group-pools/manage/MembersTab";
 import { BondTab } from "@/components/group-pools/manage/BondTab";
+import { OrderTab } from "@/components/group-pools/manage/OrderTab";
+import { SwapsTab } from "@/components/group-pools/manage/SwapsTab";
 import { GPCard, GPFullPageLoader, GPFullPageMessage, GPPageHeader } from "@/components/group-pools/ui";
 
-type ManageTab = "overview" | "requests" | "members" | "bond";
+type ManageTab = "overview" | "requests" | "members" | "order" | "bond" | "swaps";
 
-const TAB_LABELS: Record<ManageTab, string> = { overview: "Overview", requests: "Requests", members: "Members", bond: "Bond" };
+const TAB_LABELS: Record<ManageTab, string> = {
+  overview: "Overview",
+  requests: "Requests",
+  members: "Members",
+  order: "Order",
+  bond: "Bond",
+  swaps: "Swaps",
+};
 
-/** Requests only matter while forming; the bond can only be topped up while running. */
-function tabsFor(status: ModeratedPool["status"]): ManageTab[] {
-  if (status === "FORMING") return ["overview", "requests", "members"];
-  if (status === "ACTIVE" || status === "PAUSED") return ["overview", "members", "bond"];
+/** Requests and the manual order only matter while forming; bond and swaps only while running. */
+function tabsFor(pool: ModeratedPool): ManageTab[] {
+  if (pool.status === "FORMING") {
+    return pool.payoutOrderType === "MANUAL" ? ["overview", "requests", "members", "order"] : ["overview", "requests", "members"];
+  }
+  if (pool.status === "ACTIVE" || pool.status === "PAUSED") return ["overview", "members", "bond", "swaps"];
   return ["overview", "members"];
 }
 
 const TAB_CLASS =
-  "flex-1 rounded-full px-3 py-2 text-[11px] font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400 data-[state=active]:bg-[#0D4F3C] data-[state=active]:text-white data-[state=active]:shadow-none";
+  "flex-1 min-w-0 rounded-full px-1.5 min-[380px]:px-3 py-2 text-[10px] min-[380px]:text-[11px] font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400 data-[state=active]:bg-[#0D4F3C] data-[state=active]:text-white data-[state=active]:shadow-none";
 
 export default function ManagePoolPage() {
   return (
@@ -88,7 +99,7 @@ function ManagePoolContent() {
   }
 
   const forming = pool.status === "FORMING";
-  const tabs = tabsFor(pool.status);
+  const tabs = tabsFor(pool);
   const activeTab = tabs.includes(tab) ? tab : "overview";
 
   return (
@@ -133,7 +144,9 @@ function ManagePoolContent() {
         {activeTab === "overview" && <OverviewTab pool={pool} userId={userId} onChanged={reload} />}
         {activeTab === "requests" && <RequestsTab poolId={pool.id} userId={userId} canReview={forming} onChanged={reload} />}
         {activeTab === "members" && <MembersTab poolId={pool.id} userId={userId} canRemove={forming} onChanged={reload} />}
+        {activeTab === "order" && <OrderTab pool={pool} userId={userId} onChanged={reload} />}
         {activeTab === "bond" && <BondTab pool={pool} userId={userId} onChanged={reload} />}
+        {activeTab === "swaps" && <SwapsTab pool={pool} userId={userId} />}
       </div>
     </main>
   );

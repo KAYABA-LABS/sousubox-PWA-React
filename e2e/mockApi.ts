@@ -47,6 +47,7 @@ export async function mockApi(page: Page) {
     calls,
     get: (pattern: RegExp, handler: Handler | { status?: number; body: unknown }) => on("GET", pattern, handler),
     post: (pattern: RegExp, handler: Handler | { status?: number; body: unknown }) => on("POST", pattern, handler),
+    put: (pattern: RegExp, handler: Handler | { status?: number; body: unknown }) => on("PUT", pattern, handler),
   };
 }
 
