@@ -33,6 +33,7 @@ import { toast } from "sonner";
 import { Dock } from "@/components/dashboard/Dock";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { UserProfile, UserReferral, UserStats } from "@/lib/api";
+import { ModeratorProfileRow } from "@/components/group-pools/ModeratorProfileRow";
 
 const cardClass =
   "bg-[#FFFEFB] dark:bg-[#151A1F] rounded-2xl border border-[#E8E3D7] dark:border-white/10 shadow-[0_1px_0_rgba(26,35,50,0.02),0_1px_2px_rgba(26,35,50,0.04),0_4px_14px_rgba(26,35,50,0.04)] dark:shadow-black/20";
@@ -346,6 +347,11 @@ export default function ProfilePage() {
             </button> */}
           </motion.div>
         )}
+
+        {/* ── POOL MODERATOR ── */}
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+          <ModeratorProfileRow className={`${cardClass} mt-4`} />
+        </motion.div>
       </main>
 
       <Dock activeItem="profile" onItemClick={(href) => router.push(href)} />

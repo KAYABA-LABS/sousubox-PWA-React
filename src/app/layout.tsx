@@ -6,6 +6,8 @@ import { AuthTokenProvider } from "@/components/AuthTokenProvider";
 import { SWRegistration } from "@/components/SWRegistration";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { Toaster } from "@/components/ui/sonner";
+import { ModeratorPing } from "@/hooks/use-moderator-ping";
+import { groupPoolsEnabled } from "@/lib/featureFlags";
 import "./Index.css";
 
 const ubuntu = Ubuntu({
@@ -61,6 +63,7 @@ export default function RootLayout({
             {children}
           </div>
           <Toaster position="top-center" />
+          {groupPoolsEnabled && <ModeratorPing />}
           <SWRegistration />
           <SpeedInsights />
         </body>

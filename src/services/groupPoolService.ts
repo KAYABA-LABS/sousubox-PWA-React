@@ -9,6 +9,7 @@ import {
   type GroupPoolConfigInput,
   type JoinRequestStatus,
 } from "@/lib/api";
+import { normalizeMember, type GroupPoolMember } from "@/lib/groupPoolMembers";
 
 /** Unwraps `data`, throwing an `ApiError` when the envelope reports failure. */
 async function unwrap<T>(request: Promise<GroupEnvelope<T>>, fallback: string): Promise<T> {
@@ -109,6 +110,19 @@ export function useGroupPoolService() {
 
     cancelSwap: (userId: string, swapId: string) =>
       unwrap(api.cancelSwap(userId, swapId), "Failed to cancel swap"),
+
+    getPoolDetails: async (poolId: string) => {
+      const result = await api.getPoolDetails(poolId);
+      if (!result.success || !result.data) {
+        throw new ApiError(result.message || result.error || "Failed to load pool", result.error);
+      }
+      return result.data;
+    },
+
+    getPoolMembers: async (poolId: string): Promise<GroupPoolMember[]> => {
+      const result = await api.getPoolMembers(poolId);
+      return (result.data ?? []).map(normalizeMember).filter((m): m is GroupPoolMember => m !== null);
+    },
 
     getEarnings: (userId: string) =>
       unwrap(api.getModeratorEarnings(userId), "Failed to load earnings"),

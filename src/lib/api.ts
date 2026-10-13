@@ -644,6 +644,27 @@ export interface ModeratorEarnings {
   }[];
 }
 
+/** `GET /:poolId/details` — the fields group pools added (spec §3.2); other fields vary. */
+export interface PoolDetailsResponse {
+  id: string;
+  status: string;
+  origin?: PoolOrigin;
+  name?: string;
+  description?: string | null;
+  rulesText?: string | null;
+  moderatorId?: string | null;
+  contributionAmount?: number;
+  joinAmount?: number;
+  securityReserve?: number;
+  joiningFee?: number;
+  managementFeePercent?: number;
+  latePenaltyRate?: number;
+  contributionLifelines?: number;
+  pausedAt?: string | null;
+  pauseReason?: string | null;
+  [key: string]: unknown;
+}
+
 export interface GroupEnvelope<T> {
   success: boolean;
   data?: T;
@@ -809,7 +830,11 @@ export const api = {
     apiFetch<BackendEnvelope<UserPoolMembership[]>>(`/getUserPools/${resolveUserId(userId)}`),
 
   getPoolDetails: (poolId: string) =>
-    apiFetch<BackendEnvelope<Record<string, unknown>>>(`/${poolId}/details`),
+    apiFetch<BackendEnvelope<PoolDetailsResponse>>(`/${poolId}/details`),
+
+  /** Existing endpoint; members with `role`. Shape isn't documented, so callers normalise it. */
+  getPoolMembers: (poolId: string) =>
+    apiFetch<BackendEnvelope<Record<string, unknown>[]>>(`/${poolId}/members`),
 
   getActivePools: (userId: string) =>
     apiFetch<BackendEnvelope<ActivePoolListItem[]>>(`/getUserActivePoolList/${resolveUserId(userId)}`),
