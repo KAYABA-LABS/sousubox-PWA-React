@@ -6,17 +6,19 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { memberName } from "@/lib/pool-format";
 import { MemberAvatar } from "./MemberAvatar";
 import { contributionRingStatus, type CompletedCycleGroup } from "./activePoolDerivations";
-import type { ActivePoolPayoutEntry } from "@/lib/api";
+import type { ActivePoolPayoutEntry, PayoutStatus } from "@/lib/api";
 
 interface PoolActivityTabsProps {
   completedCycles: CompletedCycleGroup[];
   payouts: ActivePoolPayoutEntry[];
+  /** Group pools only: HOLD/FAILED per cycle (see `payoutStatusMap`). */
+  payoutStatuses?: Map<number, PayoutStatus>;
 }
 
 const TAB_TRIGGER_CLASS =
   "flex-1 rounded-full px-3 py-2 text-[11px] font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400 data-[state=active]:bg-[#0D4F3C] data-[state=active]:text-white data-[state=active]:shadow-none";
 
-export function PoolActivityTabs({ completedCycles, payouts }: PoolActivityTabsProps) {
+export function PoolActivityTabs({ completedCycles, payouts, payoutStatuses }: PoolActivityTabsProps) {
   return (
     <div className="bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 rounded-[24px] p-5 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20">
       <Tabs defaultValue="contributions">
@@ -32,7 +34,7 @@ export function PoolActivityTabs({ completedCycles, payouts }: PoolActivityTabsP
           <ContributionTimelineTab groups={completedCycles} />
         </TabsContent>
         <TabsContent value="payouts" className="mt-4">
-          <PayoutTimelineTab payouts={payouts} />
+          <PayoutTimelineTab payouts={payouts} statuses={payoutStatuses} />
         </TabsContent>
       </Tabs>
     </div>
@@ -48,7 +50,8 @@ function ContributionTimelineTab({ groups }: { groups: CompletedCycleGroup[] }) 
     <Accordion type="single" collapsible defaultValue={mostRecentCycle}>
       {groups.map((g) => {
         const paidCount = g.entries.filter((e) => e.completed).length;
-        const missedCount = g.entries.length - paidCount;
+        const uncoveredCount = g.entries.filter((e) => contributionRingStatus(e) === "uncovered").length;
+        const missedCount = g.entries.length - paidCount - uncoveredCount;
         return (
           <AccordionItem
             key={g.cycleNumber}
@@ -62,6 +65,12 @@ function ContributionTimelineTab({ groups }: { groups: CompletedCycleGroup[] }) 
                   <span className="text-emerald-600 dark:text-emerald-400">{paidCount} paid</span>
                   <span className="text-gray-300 dark:text-gray-600 mx-1.5">·</span>
                   <span className="text-red-600 dark:text-red-400">{missedCount} missed</span>
+                  {uncoveredCount > 0 && (
+                    <>
+                      <span className="text-gray-300 dark:text-gray-600 mx-1.5">·</span>
+                      <span className="text-amber-600 dark:text-amber-400">{uncoveredCount} not yet covered</span>
+                    </>
+                  )}
                 </span>
               </div>
             </AccordionTrigger>
@@ -79,7 +88,7 @@ function ContributionTimelineTab({ groups }: { groups: CompletedCycleGroup[] }) 
   );
 }
 
-function PayoutTimelineTab({ payouts }: { payouts: ActivePoolPayoutEntry[] }) {
+function PayoutTimelineTab({ payouts, statuses }: { payouts: ActivePoolPayoutEntry[]; statuses?: Map<number, PayoutStatus> }) {
   if (payouts.length === 0) {
     return <p className="text-xs text-gray-500 dark:text-gray-400 py-4 text-center">No payout schedule available yet.</p>;
   }
@@ -95,11 +104,25 @@ function PayoutTimelineTab({ payouts }: { payouts: ActivePoolPayoutEntry[] }) {
             <MemberAvatar user={entry.user} size="sm" muted={entry.projected} />
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-[#0C0F14] dark:text-white truncate">{name}</p>
-              {entry.projected && <p className="text-[10px] text-gray-500 dark:text-gray-400">Projected</p>}
+              {statuses?.get(entry.cycleNumber) === "HOLD" ? (
+                <p className="text-[10px] text-amber-700 dark:text-amber-400">Held, will be paid when the pool resumes</p>
+              ) : (
+                entry.projected && <p className="text-[10px] text-gray-500 dark:text-gray-400">Projected</p>
+              )}
             </div>
             <span className="text-sm font-bold text-[#0C0F14] dark:text-white shrink-0">GHS {entry.amount}</span>
-            {entry.completed ? (
+            {entry.completed || statuses?.get(entry.cycleNumber) === "COMPLETED" ? (
               <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            ) : statuses?.get(entry.cycleNumber) === "HOLD" ? (
+              <span
+                className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wide bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400 shrink-0"
+              >
+                Held
+              </span>
+            ) : statuses?.get(entry.cycleNumber) === "FAILED" ? (
+              <span className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wide bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-400 shrink-0">
+                Not paid
+              </span>
             ) : (
               <span className="text-[10px] text-gray-400 dark:text-gray-500 shrink-0">Upcoming</span>
             )}

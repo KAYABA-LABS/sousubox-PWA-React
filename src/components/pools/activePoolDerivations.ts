@@ -1,6 +1,7 @@
-import type { ActivePoolContributionEntry, ActivePoolDetails, ActivePoolPayoutEntry } from "@/lib/api";
+import type { ActivePoolContributionEntry, ActivePoolDetails, ActivePoolPayoutEntry, PayoutStatus, PoolTransparency } from "@/lib/api";
 
-export type ContributionRingStatus = "paid" | "pending" | "overdue";
+/** "uncovered": a defaulted member's day the group pool's guarantee couldn't cover yet. */
+export type ContributionRingStatus = "paid" | "pending" | "overdue" | "uncovered";
 
 /**
  * Defensive status→ring-color mapping. Exact `cycleStatus` enum values from
@@ -14,6 +15,7 @@ export function contributionRingStatus(
 ): ContributionRingStatus {
   if (entry.completed) return "paid";
   const status = (entry.cycleStatus || "").toUpperCase();
+  if (status === "UNCOVERED") return "uncovered";
   if (status.includes("OVERDUE") || status.includes("LATE") || status.includes("DEFAULT")) return "overdue";
   return "pending";
 }
@@ -49,6 +51,14 @@ export function groupCompletedCycles(details: ActivePoolDetails): CompletedCycle
       cycleNumber,
       entries: [...entries.filter((e) => e.completed), ...entries.filter((e) => !e.completed)],
     }));
+}
+
+/**
+ * Per-cycle payout status for group pools. `payoutTimeline[].completed` is
+ * false for held payouts, so HOLD/FAILED come from the transparency timeline.
+ */
+export function payoutStatusMap(transparency: Pick<PoolTransparency, "payoutTimeline"> | null | undefined) {
+  return new Map<number, PayoutStatus>((transparency?.payoutTimeline ?? []).map((p) => [p.cycleNumber, p.status]));
 }
 
 /** Sorted passthrough of payoutTimeline — kept as its own function so callers have one import surface. */

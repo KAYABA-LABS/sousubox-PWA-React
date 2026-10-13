@@ -21,6 +21,7 @@ import {
   KeyRound
 } from "lucide-react";
 import { groupPoolsEnabled } from "@/lib/featureFlags";
+import { poolHref } from "@/lib/pool-format";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { Dock } from "@/components/dashboard/Dock";
 import { usePoolService } from "@/services/poolService";
@@ -102,6 +103,7 @@ export default function ClientDashboard() {
   const [savings, setSavings] = useState<SavingsGoal[]>([]);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [checkingAccount, setCheckingAccount] = useState<UserCheckingAccount | null>(null);
+  const [groupDebtTotal, setGroupDebtTotal] = useState(0);
   const [kycStatus, setKycStatus] = useState<KycStatus["status"]>("NOT_SUBMITTED");
   const isKycVerified = kycStatus === "VERIFIED";
   const [showWelcome, setShowWelcome] = useState(false);
@@ -155,6 +157,13 @@ export default function ClientDashboard() {
     };
 
     fetchBackendData();
+
+    if (groupPoolsEnabled) {
+      api
+        .getMyGroupDebts(databaseUserId || "")
+        .then((res) => setGroupDebtTotal(res.data?.totalOutstanding ?? 0))
+        .catch(() => {});
+    }
 
     // Welcome alerts from verification success redirect
     const wasVerified =
@@ -316,6 +325,15 @@ export default function ClientDashboard() {
                 <p className="text-sm font-bold text-white">
                   GHS {amountOwedBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                 </p>
+                {groupDebtTotal > 0 && (
+                  <button
+                    onClick={() => router.push("/pools/debts")}
+                    className="flex items-center gap-0.5 text-[10px] font-semibold text-[#D4A843] hover:underline"
+                  >
+                    Group debt GHS {groupDebtTotal.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                    <ChevronRight className="w-3 h-3" />
+                  </button>
+                )}
               </div>
             </div>
 
@@ -396,7 +414,7 @@ export default function ClientDashboard() {
                     <PoolCardCompact
                       key={pool.id}
                       pool={pool}
-                      onClick={() => router.push(`/pools/${pool.id}?type=active`)}
+                      onClick={() => router.push(poolHref(pool.id, pool.template, "active"))}
                     />
                   ))}
                   <button

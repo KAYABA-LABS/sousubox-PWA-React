@@ -5,7 +5,8 @@ import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { usePoolService } from "@/services/poolService";
-import { ApiError } from "@/lib/api";
+import { api, ApiError } from "@/lib/api";
+import { groupPoolsEnabled } from "@/lib/featureFlags";
 import type { ActivePoolDetails, JoinedPoolDetails } from "@/lib/api";
 import { isDevMode } from "@/lib/dev";
 import { ArrowLeft, Users, Calendar, Loader2, Landmark, Info, CheckCircle2 } from "lucide-react";
@@ -15,7 +16,7 @@ import { ContributionStatusCard } from "@/components/pools/ContributionStatusCar
 import { MyContributionStatusCard } from "@/components/pools/MyContributionStatusCard";
 import { PoolActivityTabs } from "@/components/pools/PoolActivityTabs";
 import { currentCycleMemberStatuses, groupCompletedCycles, payoutRows } from "@/components/pools/activePoolDerivations";
-import { poolBadge } from "@/lib/pool-format";
+import { isGroupPool, poolBadge } from "@/lib/pool-format";
 
 function formatLongDate(value: string | null) {
   if (!value) return null;
@@ -53,6 +54,21 @@ function PoolDetailContent() {
   const [joinedDetails, setJoinedDetails] = useState<JoinedPoolDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+
+  // Group pools have their own page; links that don't know the origin land here first.
+  useEffect(() => {
+    if (!groupPoolsEnabled || !poolId) return;
+    let cancelled = false;
+    api
+      .getPoolDetails(poolId)
+      .then((res) => {
+        if (!cancelled && isGroupPool(res.data)) router.replace(`/pools/group/${poolId}`);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [poolId, router]);
 
   useEffect(() => {
     if (!isLoaded || (!databaseUserId && !isDevMode()) || !poolId) return;

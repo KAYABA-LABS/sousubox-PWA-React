@@ -13,7 +13,7 @@ import { Dock } from "@/components/dashboard/Dock";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { isDevMode } from "@/lib/dev";
 import { groupPoolsEnabled } from "@/lib/featureFlags";
-import { isGroupPool, poolBadge } from "@/lib/pool-format";
+import { isGroupPool, poolBadge, poolHref } from "@/lib/pool-format";
 import { resolveGroupPoolError, type ResolvedGroupPoolError } from "@/lib/groupPoolErrors";
 import { track } from "@/lib/analytics";
 import { GateSheet } from "@/components/group-pools/GateSheet";
@@ -277,7 +277,7 @@ function PoolsHubContent() {
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
-                      onClick={() => router.push(`/pools/${pool.id}?type=active`)}
+                      onClick={() => router.push(poolHref(pool.id, pool.template, "active"))}
                       className="bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 rounded-[24px] p-5 cursor-pointer hover:border-[#0D4F3C]/30 dark:hover:border-[#156B53]/30 transition-all active:scale-[0.99] shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20"
                     >
                       <div className="flex items-start justify-between">
@@ -351,7 +351,7 @@ function PoolsHubContent() {
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    onClick={() => router.push(`/pools/${pool.id}?type=joined`)}
+                    onClick={() => router.push(poolHref(pool.id, pool.template, "joined"))}
                     className="bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 rounded-[24px] p-5 cursor-pointer hover:border-[#0D4F3C]/30 dark:hover:border-[#156B53]/30 transition-all active:scale-[0.99] shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20"
                   >
                     <div className="flex items-start justify-between">

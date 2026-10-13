@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import {
   api,
   ApiError,
@@ -14,7 +15,7 @@ import {
 } from "@/lib/api";
 
 export function usePoolService() {
-  return {
+  return useMemo(() => ({
     getDiscoverPools: async (userId: string): Promise<DiscoverPool[]> => {
       const result = await api.discoverPools(userId);
       return result.data || [];
@@ -67,5 +68,5 @@ export function usePoolService() {
       }
       return result.data;
     },
-  };
+  }), []);
 }

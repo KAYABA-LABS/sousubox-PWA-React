@@ -19,7 +19,9 @@ import {
 import { toast } from "sonner";
 
 interface PoolData {
-  template: { name: string };
+  /** Group pools carry `name` directly and may have no template. */
+  name?: string;
+  template?: { name: string };
   contributionAmount: number;
 }
 
@@ -99,7 +101,7 @@ export default function PoolContributePage() {
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground mb-2">Contribution Successful!</h1>
           <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
-            GH₵ {parseFloat(amount || "0").toFixed(2)} has been successfully contributed to <span className="text-foreground font-semibold">{pool?.template?.name || "the pool"}</span>.
+            GH₵ {parseFloat(amount || "0").toFixed(2)} has been successfully contributed to <span className="text-foreground font-semibold">{pool?.name || pool?.template?.name || "the pool"}</span>.
           </p>
           <Button
             onClick={() => router.push(`/pools/${poolId}`)}
@@ -157,7 +159,7 @@ export default function PoolContributePage() {
             <CardContent className="p-5 flex items-center justify-between">
               <div>
                 <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Target Pool</p>
-                <p className="text-lg font-bold text-foreground mt-0.5">{pool?.template?.name || "Savings Pool"}</p>
+                <p className="text-lg font-bold text-foreground mt-0.5">{pool?.name || pool?.template?.name || "Savings Pool"}</p>
               </div>
               <div className="text-right">
                 <p className="text-[10px] font-bold text-primary uppercase tracking-wider">Required Contribution</p>

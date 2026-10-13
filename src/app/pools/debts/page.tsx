@@ -8,23 +8,11 @@ import { useDatabaseUserId } from "@/hooks/use-database-user-id";
 import { useRefetchOnFocus } from "@/hooks/use-refetch";
 import { useGroupPoolService } from "@/services/groupPoolService";
 import { api, type GroupDebt, type MyGroupDebts } from "@/lib/api";
-import { track } from "@/lib/analytics";
 import { formatGhs } from "@/lib/pool-format";
-import { depositHref } from "@/lib/safeRedirect";
 import { resolveGroupPoolError } from "@/lib/groupPoolErrors";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
-import {
-  GP_DRAWER_CLASS,
-  GPCard,
-  GPChip,
-  GPPageHeader,
-  GPPrimaryButton,
-  GPSecondaryButton,
-} from "@/components/group-pools/ui";
-
-/** `poolId` undefined = repay all, oldest first. */
-type RepayTarget = { poolId?: string; label: string; outstanding: number };
+import { GPCard, GPChip, GPPageHeader, GPPrimaryButton } from "@/components/group-pools/ui";
+import { RepayDrawer, type RepayTarget } from "@/components/group-pools/RepayDrawer";
 
 export default function MyGroupDebtsPage() {
   const router = useRouter();
@@ -34,7 +22,6 @@ export default function MyGroupDebtsPage() {
   const [debts, setDebts] = useState<MyGroupDebts | null>(null);
   const [availableBalance, setAvailableBalance] = useState<number | null>(null);
   const [target, setTarget] = useState<RepayTarget | null>(null);
-  const [repaying, setRepaying] = useState(false);
 
   const reload = useCallback(() => {
     if (!ready) return;
@@ -54,31 +41,6 @@ export default function MyGroupDebtsPage() {
     reload();
   }, [reload]);
   useRefetchOnFocus(reload, ready);
-
-  const repay = async () => {
-    if (!target) return;
-    setRepaying(true);
-    try {
-      const result = await service.repayDebt(userId, target.poolId);
-      track("group_debt_repaid", { poolId: target.poolId ?? "all" });
-      toast.success(
-        result.remainingOutstanding > 0
-          ? `Repaid ${formatGhs(result.repaid)}. ${formatGhs(result.remainingOutstanding)} still to repay.`
-          : `Repaid ${formatGhs(result.repaid)}. You're all clear.`
-      );
-      setTarget(null);
-    } catch (err) {
-      const error = resolveGroupPoolError(err);
-      if (error.code === "INSUFFICIENT_FUNDS") {
-        setTarget(null);
-        router.push(depositHref(target.outstanding, "/pools/debts"));
-      } else {
-        toast.error(error.message);
-      }
-    }
-    setRepaying(false);
-    reload();
-  };
 
   const active = (debts?.debts ?? []).filter((d) => d.outstanding > 0);
   const total = debts?.totalOutstanding ?? 0;
@@ -134,36 +96,13 @@ export default function MyGroupDebtsPage() {
         )}
       </div>
 
-      <Drawer open={!!target} onOpenChange={(open) => !open && setTarget(null)}>
-        <DrawerContent className={GP_DRAWER_CLASS}>
-          {target && (
-            <div className="px-5 pb-8">
-              <DrawerHeader className="px-0 text-left">
-                <DrawerTitle className="text-[#0C0F14] dark:text-white">Repay {target.label}</DrawerTitle>
-                <DrawerDescription className="text-gray-500 dark:text-gray-400">
-                  {availableBalance !== null && availableBalance < target.outstanding
-                    ? `We'll use your available balance (${formatGhs(availableBalance)}) towards the ${formatGhs(target.outstanding)} you owe.`
-                    : `We'll pay ${formatGhs(target.outstanding)} from your available balance.`}
-                </DrawerDescription>
-              </DrawerHeader>
-              <div className="space-y-2 pt-2">
-                {availableBalance !== null && availableBalance <= 0 ? (
-                  <GPPrimaryButton onClick={() => router.push(depositHref(target.outstanding, "/pools/debts"))}>
-                    Add funds
-                  </GPPrimaryButton>
-                ) : (
-                  <GPPrimaryButton loading={repaying} onClick={repay}>
-                    Repay now
-                  </GPPrimaryButton>
-                )}
-                <GPSecondaryButton disabled={repaying} onClick={() => setTarget(null)}>
-                  Cancel
-                </GPSecondaryButton>
-              </div>
-            </div>
-          )}
-        </DrawerContent>
-      </Drawer>
+      <RepayDrawer
+        target={target}
+        availableBalance={availableBalance}
+        returnTo="/pools/debts"
+        onClose={() => setTarget(null)}
+        onRepaid={reload}
+      />
     </main>
   );
 }

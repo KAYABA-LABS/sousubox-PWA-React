@@ -16,6 +16,7 @@ const RING_CLASSES: Record<ContributionRingStatus, string> = {
   paid: "ring-2 ring-emerald-500 dark:ring-emerald-400",
   pending: "ring-2 ring-amber-500 dark:ring-amber-400",
   overdue: "ring-2 ring-red-500 dark:ring-red-400",
+  uncovered: "outline-2 outline-dashed outline-offset-2 outline-amber-500 dark:outline-amber-400",
 };
 
 interface MemberAvatarProps {

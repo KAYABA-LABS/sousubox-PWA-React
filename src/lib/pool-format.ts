@@ -53,3 +53,12 @@ export function formatRate(value: number | null | undefined) {
   const percent = Math.abs(value) <= 1 ? value * 100 : value;
   return `${Number(percent.toFixed(2))}%`;
 }
+
+/** Group pools have their own page; template pools keep `/pools/[id]?type=`. */
+export function poolHref(
+  poolId: string,
+  template: { origin?: PoolOrigin | string | null } | null | undefined,
+  type: "active" | "joined"
+) {
+  return isGroupPool(template) ? `/pools/group/${poolId}` : `/pools/${poolId}?type=${type}`;
+}
