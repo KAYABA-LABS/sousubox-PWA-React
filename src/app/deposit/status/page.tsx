@@ -7,6 +7,7 @@ import { Clock, CheckCircle2, XCircle, ShieldAlert, ArrowRight, Info, Loader2 } 
 import { useAuth, useUser } from "@clerk/nextjs";
 import { isDevMode } from "@/lib/dev";
 import { api, getApiUserId } from "@/lib/api";
+import { isSafeRelativePath } from "@/lib/safeRedirect";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -36,6 +37,7 @@ function DepositStatusContent() {
   const [refreshedBalance, setRefreshedBalance] = useState<number | null>(null);
   const [isRefreshingBalance, setIsRefreshingBalance] = useState(false);
   const databaseUserId = getApiUserId(userId);
+  const returnTo = searchParams.get("returnTo");
 
   const depositData = useMemo(() => {
     const dataParam = searchParams.get("data");
@@ -361,9 +363,24 @@ function DepositStatusContent() {
           transition={{ delay: 0.4 }}
           className="w-full mt-8 space-y-3"
         >
+          {isSuccess && isSafeRelativePath(returnTo) && (
+            <Button
+              onClick={() => router.push(returnTo)}
+              className="w-full bg-[#0D4F3C] hover:bg-[#156B53] text-white font-semibold py-6 rounded-xl transition-all duration-300 shadow-lg shadow-[#0D4F3C]/10 flex items-center justify-center gap-2"
+            >
+              Continue
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          )}
+
           <Button
             onClick={() => router.push("/dashboard")}
-            className="w-full bg-[#0D4F3C] hover:bg-[#156B53] text-white font-semibold py-6 rounded-xl transition-all duration-300 shadow-lg shadow-[#0D4F3C]/10 flex items-center justify-center gap-2"
+            variant={isSuccess && isSafeRelativePath(returnTo) ? "outline" : "default"}
+            className={
+              isSuccess && isSafeRelativePath(returnTo)
+                ? "w-full bg-transparent border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 py-6 rounded-xl"
+                : "w-full bg-[#0D4F3C] hover:bg-[#156B53] text-white font-semibold py-6 rounded-xl transition-all duration-300 shadow-lg shadow-[#0D4F3C]/10 flex items-center justify-center gap-2"
+            }
           >
             Return to Dashboard
             <ArrowRight className="w-4 h-4" />

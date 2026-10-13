@@ -17,8 +17,10 @@ import {
   ShieldCheck,
   CheckCircle2,
   Plus,
-  BanknoteX
+  BanknoteX,
+  KeyRound
 } from "lucide-react";
+import { groupPoolsEnabled } from "@/lib/featureFlags";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { Dock } from "@/components/dashboard/Dock";
 import { usePoolService } from "@/services/poolService";
@@ -318,11 +320,15 @@ export default function ClientDashboard() {
             </div>
 
             {/* Quick Action Row */}
-            <div className="grid grid-cols-4 gap-2 pt-2">
+            <div className={`grid ${groupPoolsEnabled ? "grid-cols-5 gap-1.5" : "grid-cols-4 gap-2"} pt-2`}>
               <QuickActionButton icon={ArrowDown} label="Deposit" onClick={handleDeposit} enabled={isKycVerified} />
               <QuickActionButton icon={ArrowUp} label="Withdraw" onClick={handleWithdraw} enabled={isKycVerified} />
               <QuickActionButton icon={ArrowRightLeft} label="Transfer" onClick={handleTransfer} enabled={isKycVerified} />
               <QuickActionButton icon={CreditCard} label="Pay" onClick={handlePay} enabled={isKycVerified} />
+              {groupPoolsEnabled && (
+                // Not KYC-gated: the invite preview is open to everyone; the join step checks KYC.
+                <QuickActionButton icon={KeyRound} label="Join pool" onClick={() => router.push("/pools/join")} enabled />
+              )}
             </div>
           </div>
         </div>
@@ -475,16 +481,16 @@ function QuickActionButton({ icon: Icon, label, onClick, enabled }: QuickActionB
     <button
       onClick={onClick}
       disabled={!enabled}
-      className={`flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl transition-all ${
+      className={`min-w-0 flex flex-col items-center justify-center gap-1.5 px-1 py-2.5 min-[380px]:p-3 rounded-2xl transition-all ${
         enabled
           ? "bg-white/10 hover:bg-white/15 active:scale-95 cursor-pointer"
           : "bg-white/5 opacity-40 cursor-not-allowed"
       }`}
     >
-      <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+      <div className="w-9 h-9 min-[380px]:w-10 min-[380px]:h-10 rounded-full bg-white/10 flex items-center justify-center">
         <Icon className="w-5 h-5 text-white" strokeWidth={1.75} />
       </div>
-      <span className="text-[10px] text-white/70 font-semibold">{label}</span>
+      <span className="text-[10px] text-white/70 font-semibold whitespace-nowrap">{label}</span>
     </button>
   );
 }

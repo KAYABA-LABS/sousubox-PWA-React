@@ -14,6 +14,8 @@ import {
   parseCameraError,
 } from "@/lib/camera";
 import jsQR from "jsqr";
+import { extractInviteCode } from "@/lib/inviteCode";
+import { groupPoolsEnabled } from "@/lib/featureFlags";
 
 type CameraState =
   | "loading"
@@ -53,6 +55,14 @@ export default function ScanPage() {
       // Stop scanning immediately
       if (scanLoopRef.current) {
         scanLoopRef.current.stop();
+      }
+
+      // Group pool invite: a /pools/join?code= link or a bare code
+      const inviteCode = groupPoolsEnabled ? extractInviteCode(data) : null;
+      if (inviteCode) {
+        cleanup();
+        router.push(`/pools/join?code=${inviteCode}`);
+        return;
       }
 
       try {

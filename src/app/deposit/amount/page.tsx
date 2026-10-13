@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { api, getApiUserId, type FundingSource, type FundingSourceNetwork, type MomoChargeResult, type MomoChargeStatus } from "@/lib/api";
 import { isDevMode } from "@/lib/dev";
+import { isSafeRelativePath } from "@/lib/safeRedirect";
 import { getNetworkLabel, maskLast4, extractLast4 } from "@/lib/momo";
 import { useUserService } from "@/services/userService";
 import { Button } from "@/components/ui/button";
@@ -66,7 +67,13 @@ function DepositAmountContent() {
   const isMomo = methodId === "momo";
 
   const [step, setStep] = useState<"amount" | "instructions">("amount");
-  const [amount, setAmount] = useState("");
+  // Digits in pesewas, e.g. "35000" = 350.00; prefilled from ?amount= when topping up for a pool.
+  const [amount, setAmount] = useState(() => {
+    const prefill = Number(searchParams.get("amount"));
+    return Number.isFinite(prefill) && prefill > 0 ? String(Math.round(prefill * 100)).slice(0, 8) : "";
+  });
+  const returnTo = searchParams.get("returnTo");
+  const returnToQuery = isSafeRelativePath(returnTo) ? `&returnTo=${encodeURIComponent(returnTo)}` : "";
   const [fundingSource, setFundingSource] = useState<FundingSource | null>(null);
   const [isLoadingFundingSource, setIsLoadingFundingSource] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -135,7 +142,7 @@ function DepositAmountContent() {
       methodName: method.name,
       amount: displayAmount,
       referenceCode,
-    }))}&force_blocked=1`);
+    }))}&force_blocked=1${returnToQuery}`);
   };
 
   const goToStatus = (status: MomoChargeStatus, displayText: string, reference: string) => {
@@ -149,7 +156,7 @@ function DepositAmountContent() {
       displayText,
       phone: fundingSource.phoneNumber,
       providerName: getNetworkLabel(fundingSource.networkId),
-    }))}`);
+    }))}${returnToQuery}`);
   };
 
   const handleChargeResult = (result: Pick<MomoChargeResult, "reference" | "status" | "display_text" | "message">) => {

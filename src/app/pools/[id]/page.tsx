@@ -15,6 +15,7 @@ import { ContributionStatusCard } from "@/components/pools/ContributionStatusCar
 import { MyContributionStatusCard } from "@/components/pools/MyContributionStatusCard";
 import { PoolActivityTabs } from "@/components/pools/PoolActivityTabs";
 import { currentCycleMemberStatuses, groupCompletedCycles, payoutRows } from "@/components/pools/activePoolDerivations";
+import { poolBadge } from "@/lib/pool-format";
 
 function formatLongDate(value: string | null) {
   if (!value) return null;
@@ -192,7 +193,7 @@ function ActiveView({
 
       <div className="flex-1 px-5 max-w-xl mx-auto w-full space-y-4">
         <PoolCycleHeroCard
-          tier={details.tier}
+          badge={poolBadge({ tier: details.tier })}
           cyclePot={details.cyclePot}
           contributionAmount={details.myContribution?.amount ?? null}
           currentCycle={details.currentCycle}
@@ -239,6 +240,7 @@ function ActiveView({
 
 function JoinedView({ details, onBack }: { details: JoinedPoolDetails; onBack: () => void }) {
   const startLabel = formatLongDate(details.startDate);
+  const badge = poolBadge(details.template);
 
   return (
     <main id="main-content" role="main" className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col pb-16 font-sans">
@@ -246,7 +248,9 @@ function JoinedView({ details, onBack }: { details: JoinedPoolDetails; onBack: (
 
       <div className="flex-1 px-5 max-w-xl mx-auto w-full space-y-4">
         <div className="bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 rounded-[24px] p-5 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20">
-          <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold mb-1">{details.template.tier} Tier</p>
+          {badge && (
+            <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold mb-1">{badge}</p>
+          )}
           {details.template.description && (
             <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-4">{details.template.description}</p>
           )}

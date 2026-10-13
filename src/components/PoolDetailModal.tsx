@@ -28,6 +28,7 @@ import {
   CalendarDays,
 } from "lucide-react";
 import type { DiscoverPool, AvailablePoolDetails } from "@/lib/api";
+import { poolBadge } from "@/lib/pool-format";
 
 interface PoolDetailModalProps {
   listItem: DiscoverPool;
@@ -77,7 +78,7 @@ export function PoolDetailModal({
             <div>
               <DialogTitle className="text-lg font-bold text-gray-900 dark:text-white">{listItem.template.name}</DialogTitle>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                {listItem.template.tier} • {getFrequencyLabel(listItem.frequency)}
+                {[poolBadge(listItem.template), getFrequencyLabel(listItem.frequency)].filter(Boolean).join(" • ")}
               </p>
             </div>
             <Badge className="bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">{spotsRemaining} spots left</Badge>

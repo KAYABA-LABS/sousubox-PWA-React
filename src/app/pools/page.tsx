@@ -2,15 +2,21 @@
 
 import React, { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { usePoolService } from "@/services/poolService";
 import { PoolDetailModal } from "@/components/PoolDetailModal";
-import { Users, Search, ChevronRight, Loader2, Sparkles } from "lucide-react";
+import { Users, Search, ChevronRight, Loader2, Sparkles, KeyRound } from "lucide-react";
 import { toast } from "sonner";
 import { Dock } from "@/components/dashboard/Dock";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { isDevMode } from "@/lib/dev";
+import { groupPoolsEnabled } from "@/lib/featureFlags";
+import { isGroupPool, poolBadge } from "@/lib/pool-format";
+import { resolveGroupPoolError, type ResolvedGroupPoolError } from "@/lib/groupPoolErrors";
+import { track } from "@/lib/analytics";
+import { GateSheet } from "@/components/group-pools/GateSheet";
 import type {
   ActivePoolListItem,
   JoinedPoolListItem,
@@ -67,6 +73,7 @@ function PoolsHubContent() {
   const [isLoadingModalDetails, setIsLoadingModalDetails] = useState(false);
   const [modalDetailsError, setModalDetailsError] = useState<string | null>(null);
   const [joiningPoolId, setJoiningPoolId] = useState<string | null>(null);
+  const [joinGate, setJoinGate] = useState<ResolvedGroupPoolError | null>(null);
 
   const loadActive = async () => {
     if (!databaseUserId && !isDevMode()) return;
@@ -147,7 +154,16 @@ function PoolsHubContent() {
       setActiveTab("joined");
       loadJoined();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to join pool");
+      const error = resolveGroupPoolError(err);
+      if (error.sheet) {
+        track("group_join_blocked", { code: error.code });
+        setModalListItem(null);
+        setModalDetails(null);
+        setJoinGate(error);
+      } else {
+        toast.error(error.message);
+        if (error.refetch) loadDiscover();
+      }
     }
     setJoiningPoolId(null);
   };
@@ -186,9 +202,19 @@ function PoolsHubContent() {
         animate={{ opacity: 1, y: 0 }}
         className="px-5 pt-6 pb-4 max-w-xl mx-auto w-full"
       >
-        <div className="mb-5">
-          <p className="text-[10px] text-gray-500 dark:text-gray-400 tracking-widest uppercase font-semibold">Your Group</p>
-          <h1 className="text-2xl font-bold text-[#0C0F14] dark:text-white tracking-tight">Pools</h1>
+        <div className="mb-5 flex items-end justify-between gap-3">
+          <div>
+            <p className="text-[10px] text-gray-500 dark:text-gray-400 tracking-widest uppercase font-semibold">Your Group</p>
+            <h1 className="text-2xl font-bold text-[#0C0F14] dark:text-white tracking-tight">Pools</h1>
+          </div>
+          {groupPoolsEnabled && (
+            <button
+              onClick={() => router.push("/pools/join")}
+              className="h-10 px-4 inline-flex items-center gap-1.5 rounded-full bg-white dark:bg-[#151A1F] border border-black/10 dark:border-white/10 text-xs font-bold text-[#0D4F3C] dark:text-emerald-300 hover:border-[#0D4F3C]/30 transition-colors"
+            >
+              <KeyRound className="w-4 h-4" /> Join with code
+            </button>
+          )}
         </div>
 
         {/* <div className="relative mb-4">
@@ -244,6 +270,7 @@ function PoolsHubContent() {
                 {filteredActive.map((pool, index) => {
                   const percent = Math.min(Math.round((pool.currentCycle / pool.totalCycles) * 100), 100);
                   const isPaid = pool.contributionStatus?.toUpperCase().startsWith("COMPLETED");
+                  const isPaused = pool.status?.toUpperCase() === "PAUSED";
                   return (
                     <motion.div
                       key={pool.id}
@@ -258,9 +285,7 @@ function PoolsHubContent() {
                           <h3 className="text-sm font-bold text-[#0C0F14] dark:text-white mb-1 truncate">
                             {pool.template.name}
                           </h3>
-                          <p className="text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-wider font-semibold mb-3">
-                            {pool.template.tier} Tier
-                          </p>
+                          <PoolKindLabel template={pool.template} className="mb-3" />
                           <div className="flex items-center gap-2.5 text-[11px] text-gray-500 dark:text-gray-400 flex-wrap">
                             <span className="font-bold text-[#0C0F14] dark:text-white">GHS {pool.contributionAmount}</span>
                             <span className="text-gray-300 dark:text-gray-600">&bull;</span>
@@ -268,6 +293,11 @@ function PoolsHubContent() {
                           </div>
                         </div>
                         <div className="flex flex-col items-end gap-2 shrink-0 pl-2">
+                          {isPaused && (
+                            <span className="px-2.5 py-0.5 rounded-full text-[9px] font-bold tracking-wide uppercase bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400">
+                              Paused
+                            </span>
+                          )}
                           <span
                             className={`px-2.5 py-0.5 rounded-full text-[9px] font-bold tracking-wide uppercase ${
                               isPaid
@@ -329,9 +359,7 @@ function PoolsHubContent() {
                         <h3 className="text-sm font-bold text-[#0C0F14] dark:text-white mb-1 truncate">
                           {pool.template.name}
                         </h3>
-                        <p className="text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-wider font-semibold mb-3">
-                          {pool.template.tier} Tier &middot; {pool.frequency}
-                        </p>
+                        <PoolKindLabel template={pool.template} suffix={pool.frequency} className="mb-3" />
                         <div className="flex items-center gap-2.5 text-[11px] text-gray-500 dark:text-gray-400 flex-wrap">
                           <span className="font-bold text-[#0C0F14] dark:text-white">GHS {pool.contributionAmount}</span>
                           <span className="text-gray-300 dark:text-gray-600">&bull;</span>
@@ -395,9 +423,11 @@ function PoolsHubContent() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap mb-1">
                           <h3 className="text-sm font-bold text-[#0C0F14] dark:text-white truncate">{pool.template.name}</h3>
-                          <span className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wide bg-black/5 dark:bg-white/10 text-gray-500 dark:text-gray-400 border border-black/10 dark:border-white/10">
-                            {pool.template.tier}
-                          </span>
+                          {pool.template.tier && (
+                            <span className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wide bg-black/5 dark:bg-white/10 text-gray-500 dark:text-gray-400 border border-black/10 dark:border-white/10">
+                              {pool.template.tier}
+                            </span>
+                          )}
                         </div>
                         {pool.template.description && (
                           <p className="text-[11px] text-gray-500 dark:text-gray-400 line-clamp-2 leading-relaxed">
@@ -459,6 +489,8 @@ function PoolsHubContent() {
         />
       )}
 
+      <GateSheet error={joinGate} onClose={() => setJoinGate(null)} returnTo="/pools?tab=discover" />
+
       <Dock activeItem="pools" onItemClick={(href) => router.push(href)} />
     </main>
   );
@@ -480,12 +512,47 @@ function EmptyState({
       </div>
       <h2 className="text-base font-bold text-[#0C0F14] dark:text-white mb-1">{message}</h2>
       <p className="text-xs text-gray-500 dark:text-gray-400 mb-6 max-w-[220px] leading-relaxed">{description}</p>
-      <button
-        onClick={onCta}
-        className="px-6 py-2.5 bg-[#0D4F3C] hover:bg-[#156B53] active:scale-95 text-white font-bold text-xs rounded-full transition-all"
-      >
-        Find a pool
-      </button>
+      <div className="flex flex-col items-center gap-2">
+        <button
+          onClick={onCta}
+          className="px-6 py-2.5 bg-[#0D4F3C] hover:bg-[#156B53] active:scale-95 text-white font-bold text-xs rounded-full transition-all"
+        >
+          Find a pool
+        </button>
+        {groupPoolsEnabled && (
+          <Link href="/pools/join" className="text-xs font-bold text-[#0D4F3C] dark:text-emerald-300 py-1">
+            or join with an invite code
+          </Link>
+        )}
+      </div>
     </div>
+  );
+}
+
+/** "Gold Tier · Daily" for template pools; a "Group" chip for group pools. */
+function PoolKindLabel({
+  template,
+  suffix,
+  className = "",
+}: {
+  template: { tier: string | null; origin?: string };
+  suffix?: string;
+  className?: string;
+}) {
+  const label = poolBadge(template);
+  if (isGroupPool(template)) {
+    return (
+      <div className={`flex items-center gap-1.5 ${className}`}>
+        <span className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wide bg-[#0D4F3C]/10 text-[#0D4F3C] dark:bg-[#156B53]/15 dark:text-emerald-300">
+          Group
+        </span>
+        {suffix && <span className="text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-wider font-semibold">{suffix}</span>}
+      </div>
+    );
+  }
+  const text = [label, suffix].filter(Boolean).join(" · ");
+  if (!text) return null;
+  return (
+    <p className={`text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-wider font-semibold ${className}`}>{text}</p>
   );
 }

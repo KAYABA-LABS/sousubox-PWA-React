@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useSignUp, useUser } from "@clerk/nextjs";
 import { PhoneCodeSwitcher } from "@/components/ui/phone-code-switcher";
 import { api } from "@/lib/api";
+import { postAuthDestination } from "@/lib/postAuthRedirect";
 import { useCountdown, formatCountdown } from "@/hooks/use-countdown";
 import { Loader2, ArrowRight, ShieldCheck, PhoneCall, Check, UserRound } from "lucide-react";
 import Link from "next/link";
@@ -392,7 +393,7 @@ export default function SignUpPageContent() {
     /*
      * Navigate to application.
      */
-    router.push("/dashboard");
+    router.push(postAuthDestination());
   } catch (err: unknown) {
     console.error(
       "COMPLETE PROFILE ERROR:",

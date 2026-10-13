@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { api } from "@/lib/api";
+import { isSafeRelativePath } from "@/lib/safeRedirect";
 
 const depositMethods = [
   {
@@ -74,7 +75,14 @@ export default function DepositPage() {
   }, [userId, isLoaded, user, router]);
 
   const handleMethodSelect = (methodId: string) => {
-    router.push(`/deposit/amount?method=${methodId}`);
+    // Carry a prefilled amount and return path (e.g. from a group-pool top-up) through the flow.
+    const incoming = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams({ method: methodId });
+    const amount = incoming.get("amount");
+    const returnTo = incoming.get("returnTo");
+    if (amount) params.set("amount", amount);
+    if (isSafeRelativePath(returnTo)) params.set("returnTo", returnTo);
+    router.push(`/deposit/amount?${params.toString()}`);
   };
 
   return (

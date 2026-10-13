@@ -13,7 +13,12 @@ const isPublicRoute = createRouteMatcher([
   "/splash",
   "/onboarding",
   "/dev/bypass",
+  // Invite links: the page itself sends signed-out visitors to sign in with the code kept.
+  "/pools/join",
 ]);
+
+// Public routes a signed-in user may still open (not bounced to /dashboard).
+const isSharedRoute = createRouteMatcher(["/pools/join"]);
 
 export default clerkMiddleware(async (auth, request) => {
   // Skip auth if dev bypass enabled
@@ -48,7 +53,7 @@ export default clerkMiddleware(async (auth, request) => {
   const isSignUpRoute = request.nextUrl.pathname === "/signup";
 
   // Redirect authenticated users away from public auth pages
-  if (userId && isPublicRoute(request) && !isSignUpRoute) {
+  if (userId && isPublicRoute(request) && !isSignUpRoute && !isSharedRoute(request)) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
     return NextResponse.redirect(url);

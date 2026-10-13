@@ -49,3 +49,8 @@ next-env.d.ts
 /supabase/functions/**
 # clerk configuration (can include secrets)
 /.clerk/
+
+# playwright
+/test-results/
+/playwright-report/
+/blob-report/

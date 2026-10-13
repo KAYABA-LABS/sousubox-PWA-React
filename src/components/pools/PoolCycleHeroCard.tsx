@@ -4,7 +4,8 @@ import { motion } from "framer-motion";
 import { ProgressRing } from "@/components/ui/progress-ring";
 
 interface PoolCycleHeroCardProps {
-  tier: string;
+  /** Chip text such as "Gold Tier" or "Group"; hidden when null. */
+  badge?: string | null;
   cyclePot: { currency: string; amount: number };
   contributionAmount: number | null;
   currentCycle: number;
@@ -13,7 +14,7 @@ interface PoolCycleHeroCardProps {
 }
 
 export function PoolCycleHeroCard({
-  tier,
+  badge,
   cyclePot,
   contributionAmount,
   currentCycle,
@@ -35,9 +36,11 @@ export function PoolCycleHeroCard({
         <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" strokeWidth="0.7" />
       </svg>
       <div className="relative z-10 p-6 flex flex-col gap-5">
-        <span className="self-start inline-flex items-center px-3 py-1 rounded-full bg-white/10 border border-white/15 text-[10px] font-bold uppercase tracking-widest text-white">
-          {tier} Tier
-        </span>
+        {badge && (
+          <span className="self-start inline-flex items-center px-3 py-1 rounded-full bg-white/10 border border-white/15 text-[10px] font-bold uppercase tracking-widest text-white">
+            {badge}
+          </span>
+        )}
 
         <div className="flex items-center justify-between gap-4">
           <div className="flex-1 min-w-0">
