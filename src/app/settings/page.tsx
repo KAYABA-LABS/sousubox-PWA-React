@@ -51,6 +51,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useKycService } from "@/services/kycService";
 import { useUserService } from "@/services/userService";
+import { clearAllModeratorDrafts } from "@/lib/moderatorDraft";
 
 export default function Settings() {
   const router = useRouter();
@@ -138,6 +139,7 @@ export default function Settings() {
   }, [isLoaded, userId, user, kycService, userService]);
 
   const handleLogout = async () => {
+    await clearAllModeratorDrafts();
     await signOut();
     if (!isDevMode()) {
       router.push("/signin");

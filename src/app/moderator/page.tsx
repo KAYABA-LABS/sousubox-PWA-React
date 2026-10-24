@@ -7,6 +7,8 @@ import { toast } from "sonner";
 import { useDatabaseUserId } from "@/hooks/use-database-user-id";
 import { useModeratorAreaStatus } from "@/hooks/use-moderator-ping";
 import { useRefetchOnFocus } from "@/hooks/use-refetch";
+import { deleteDraft } from "@/lib/moderatorDraft";
+import { moderatorApplicationCopy } from "@/lib/copy/moderatorApplication";
 import { useGroupPoolService } from "@/services/groupPoolService";
 import { track } from "@/lib/analytics";
 import { formatDate } from "@/lib/pool-format";
@@ -15,6 +17,7 @@ import type { ModeratedPool, ModeratorStatusResponse } from "@/lib/api";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EligibilityChecklist } from "@/components/group-pools/EligibilityChecklist";
 import { ModeratedPoolCard } from "@/components/group-pools/ModeratedPoolCard";
+import { SubmittedDocumentsList } from "@/components/group-pools/SubmittedDocumentsList";
 import {
   GPCard,
   GPFullPageLoader,
@@ -27,11 +30,19 @@ import {
 
 export default function ModeratorHomePage() {
   const router = useRouter();
+  const { userId, ready } = useDatabaseUserId();
   const { details, loaded, refresh } = useModeratorAreaStatus();
+  useRefetchOnFocus(refresh, loaded);
 
   useEffect(() => {
     if (details) track("moderator_status_viewed", { status: details.status });
   }, [details]);
+
+  // A saved application draft is only useful while the user can still apply.
+  const status = details?.status;
+  useEffect(() => {
+    if (ready && status && status !== "NONE" && status !== "REJECTED") void deleteDraft(userId);
+  }, [ready, status, userId]);
 
   if (!loaded) return <GPFullPageLoader />;
   if (!details) {
@@ -64,7 +75,7 @@ export default function ModeratorHomePage() {
       />
       <div className="flex-1 px-5 max-w-xl mx-auto w-full space-y-4">
         {details.status === "APPROVED" ? (
-          <ModeratorDashboard maxPools={details.maxConcurrentModeratedPools} />
+          <ModeratorDashboard maxPools={details.maxConcurrentModeratedPools ?? 0} />
         ) : (
           <ModeratorStatusView details={details} onApply={() => router.push("/moderator/apply")} />
         )}
@@ -84,7 +95,7 @@ function ModeratorStatusView({ details, onApply }: { details: ModeratorStatusRes
         return {
           icon: <Clock className="w-6 h-6" />,
           title: "Application under review",
-          text: `You applied on ${formatDate(details.appliedAt)}. We'll let you know once it's decided.`,
+          text: moderatorApplicationCopy.pendingText(formatDate(details.appliedAt)),
         };
       case "REJECTED":
         return {
@@ -127,6 +138,20 @@ function ModeratorStatusView({ details, onApply }: { details: ModeratorStatusRes
           <p className="text-[11px] text-gray-400 mt-2">Decided {formatDate(details.decidedAt)}</p>
         )}
       </GPCard>
+
+      {details.status === "PENDING" && (
+        <GPCard>
+          <GPSectionTitle>{moderatorApplicationCopy.sentTitle}</GPSectionTitle>
+          {details.documents && details.documents.length > 0 && (
+            <SubmittedDocumentsList documents={details.documents} requiredDocuments={details.requiredDocuments} />
+          )}
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 leading-relaxed">{moderatorApplicationCopy.pendingNext}</p>
+        </GPCard>
+      )}
+
+      {details.status === "REJECTED" && details.applicationsOpen && (
+        <p className="text-xs text-gray-500 dark:text-gray-400 px-1">{moderatorApplicationCopy.reapplyNote}</p>
+      )}
 
       {showChecklist && details.eligibility && (
         <GPCard>

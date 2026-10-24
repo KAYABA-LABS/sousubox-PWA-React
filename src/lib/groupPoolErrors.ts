@@ -1,4 +1,4 @@
-import { ApiError } from "@/lib/api";
+import { ApiError, NETWORK_ERROR, PAYLOAD_TOO_LARGE, UPLOAD_ABORTED } from "@/lib/api";
 
 export type ErrorTreatment = "inline" | "toast" | "sheet" | "page";
 
@@ -65,7 +65,11 @@ const RULES: Record<string, ErrorRule> = {
   GROUP_POOL_REQUIRES_REQUEST: rule("toast", "This pool joins by invite."),
   MODERATOR_CANNOT_LEAVE: rule("toast", "Moderators can't leave their pool. Cancel the pool instead."),
 
-  APPLICATIONS_CLOSED: rule("inline", "Moderator applications aren't open yet."),
+  APPLICATIONS_CLOSED: rule("toast", "Moderator applications aren't open yet.", { refetch: true }),
+  INVALID_DOCUMENTS: rule("inline", "Some documents need fixing."),
+  [NETWORK_ERROR]: rule("inline", "Couldn't reach SousuBoxx. Check your connection and try again."),
+  [PAYLOAD_TOO_LARGE]: rule("inline", "Your files are too large to send together. Try smaller scans or PDFs."),
+  [UPLOAD_ABORTED]: rule("inline", "Sending was cancelled."),
   GROUP_POOLS_CLOSED: rule("inline", "Group pools aren't open yet."),
   NOT_ELIGIBLE: rule("inline", "You don't meet the requirements yet."),
   ALREADY_PENDING: rule("toast", "Your application is already being reviewed.", { refetch: true }),

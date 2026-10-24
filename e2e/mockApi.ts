@@ -15,7 +15,7 @@ interface Route {
  */
 export async function mockApi(page: Page) {
   const routes: Route[] = [];
-  const calls: { method: string; path: string; body: unknown }[] = [];
+  const calls: { method: string; path: string; body: unknown; raw: Buffer | null; contentType: string | null }[] = [];
 
   await page.route("**/api/backend/**", async (route) => {
     const req = route.request();
@@ -27,7 +27,13 @@ export async function mockApi(page: Page) {
     } catch {
       body = req.postData();
     }
-    calls.push({ method: req.method(), path: `${path}${url.search}`, body });
+    calls.push({
+      method: req.method(),
+      path: `${path}${url.search}`,
+      body,
+      raw: req.postDataBuffer(),
+      contentType: req.headers()["content-type"] ?? null,
+    });
 
     for (const r of routes) {
       if (r.method !== req.method() || !r.pattern.test(path)) continue;
@@ -52,7 +58,7 @@ export async function mockApi(page: Page) {
 }
 
 export const ok = (data: unknown) => ({ body: { success: true, data } });
-export const fail = (status: number, error: string, message = error, data?: unknown) => ({
+export const fail = (status: number, error: string, message = error, data?: unknown, details?: string[]) => ({
   status,
-  body: { success: false, error, message, data },
+  body: { success: false, error, message, data, details },
 });

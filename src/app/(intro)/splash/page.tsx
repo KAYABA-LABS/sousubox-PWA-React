@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { motion } from "framer-motion";
 
 export default function SplashPage() {
@@ -26,9 +27,9 @@ export default function SplashPage() {
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.2 }}
-        className="w-24 h-24 rounded-3xl bg-[#0D4F3C] flex items-center justify-center mb-6"
+        className="w-24 h-24 mb-6"
       >
-        <span className="text-white text-4xl font-extrabold">S</span>
+        <Image src="/logo.png" alt="SousuBox logo" width={96} height={96} className="w-24 h-24" priority />
       </motion.div>
 
       {/* App Name */}

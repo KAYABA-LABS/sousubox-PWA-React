@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, AlertTriangle, Loader2 } from "lucide-react";
 import { useClerk } from "@clerk/nextjs";
+import { clearAllModeratorDrafts } from "@/lib/moderatorDraft";
 
 export default function CloseAccount() {
   const router = useRouter();
@@ -20,6 +21,7 @@ export default function CloseAccount() {
     setIsClosing(true);
     // In production, this would trigger account closure workflow
     await new Promise((resolve) => setTimeout(resolve, 2000));
+    await clearAllModeratorDrafts();
     await signOut();
     router.push("/");
   };

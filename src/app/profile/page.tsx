@@ -189,12 +189,12 @@ export default function ProfilePage() {
     : "Not started";
 
   const statCards = [
-    { label: "Reputation", value: stats?.reputationScore ?? "—", icon: Sparkles, color: "text-amber-500 dark:text-amber-400" },
-    { label: "Contribution streak", value: stats ? `${stats.currentStreak} wks` : "—", icon: Flame, color: "text-orange-500 dark:text-orange-400" },
-    { label: "Trust Score", value: stats ? `${stats.trustScore.toLocaleString()}` : "—", icon: Coins, color: "text-[#0D4F3C] dark:text-[#1F8C6C]" },
-    { label: "Contribution Score", value: stats?.contributionScore ?? "—", icon: Flag, color: "text-violet-600 dark:text-violet-400" },
-    { label: "Missed Contributions", value: stats ? `${stats.missedContributions.toLocaleString()}` : "—", icon: PiggyBank, color: "text-pink-500 dark:text-pink-400" },
-    { label: "Pools completed", value: stats?.poolsCompleted ?? "—", icon: Users, color: "text-blue-600 dark:text-blue-400" },
+    { label: "Reputation", value: stats?.reputationScore ?? "—", icon: Sparkles, gradient: "linear-gradient(to bottom right, #B45309, #F59E0B)" },
+    { label: "Contribution streak", value: stats ? `${stats.currentStreak} wks` : "—", icon: Flame, gradient: "linear-gradient(to bottom right, #C2410C, #F97316)" },
+    { label: "Trust Score", value: stats ? `${stats.trustScore.toLocaleString()}` : "—", icon: Coins, gradient: "linear-gradient(to bottom right, #0D4F3C, #156B53)" },
+    { label: "Contribution Score", value: stats?.contributionScore ?? "—", icon: Flag, gradient: "linear-gradient(to bottom right, #5B21B6, #7C3AED)" },
+    { label: "Missed Contributions", value: stats ? `${stats.missedContributions.toLocaleString()}` : "—", icon: PiggyBank, gradient: "linear-gradient(to bottom right, #BE185D, #EC4899)" },
+    { label: "Pools completed", value: stats?.poolsCompleted ?? "—", icon: Users, gradient: "linear-gradient(to bottom right, #1E40AF, #2563EB)" },
   ];
 
 
@@ -260,7 +260,7 @@ export default function ProfilePage() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
-          className={`${cardClass} mt-4 px-4 pt-[18px] pb-4 flex flex-col items-center`}
+          className="mt-4 px-4 pt-[18px] pb-4 flex flex-col items-center"
         >
           <Gauge value={reputation / 100}>
             <div className="text-[40px] leading-none font-extrabold tabular-nums">{stats ? reputation : "—"}</div>
@@ -284,11 +284,24 @@ export default function ProfilePage() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 + index * 0.04 }}
-                className={`${cardClass} px-3 py-[18px] min-w-0`}
+                className="relative min-w-0 aspect-[5/8] rounded-2xl overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.12),0_16px_40px_rgba(0,0,0,0.10)] dark:shadow-black/40"
               >
-                <Icon className={`w-[17px] h-[17px] ${stat.color}`} strokeWidth={1.6} />
-                <p className="mt-2 text-[15px] font-bold tracking-tight tabular-nums truncate">{stat.value}</p>
-                <p className="mt-0.5 text-[10.5px] leading-tight text-[#6E788A] dark:text-gray-400">{stat.label}</p>
+                <div className="absolute inset-0 opacity-80" style={{ backgroundImage: stat.gradient }} />
+
+                {/* Decorative rings, matching the dashboard balance card; centred on the top edge so only the bottom half shows */}
+                <div className="absolute right-0 top-[-42px] w-[84px] h-[84px] rounded-full bg-white/15" />
+                <svg className="absolute right-[-13px] top-[-55px] w-[110px] h-[110px] opacity-[0.12] text-white" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" strokeWidth="1" />
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" strokeWidth="0.7" />
+                </svg>
+
+                <div className="relative h-full px-3 py-[18px] flex flex-col justify-between">
+                  <Icon className="w-[30px] h-[30px] text-white" strokeWidth={2.6} />
+                  <div className="min-w-0">
+                    <p className="text-[20px] font-bold tracking-tight tabular-nums truncate text-white">{stat.value}</p>
+                    <p className="mt-0.5 text-[15.5px] leading-tight text-white/70">{stat.label}</p>
+                  </div>
+                </div>
               </motion.div>
             );
           })}
@@ -303,8 +316,8 @@ export default function ProfilePage() {
             className={`${cardClass} mt-4 p-4`}
           >
             <div className="flex items-center gap-2.5">
-              <span className="w-9 h-9 rounded-full bg-[#E6EEEC] dark:bg-[#156B53]/20 flex items-center justify-center">
-                <Gift className="w-[17px] h-[17px] text-[#0D4F3C] dark:text-[#1F8C6C]" strokeWidth={1.6} />
+              <span className="w-9 h-9 rounded-full bg-[#D4A843]/20 flex items-center justify-center">
+                <Gift className="w-[17px] h-[17px] text-[#B58A28] dark:text-[#D4A843]" strokeWidth={1.6} />
               </span>
               <div className="min-w-0">
                 <h3 className="text-[15px] font-bold tracking-tight">Invite friends</h3>

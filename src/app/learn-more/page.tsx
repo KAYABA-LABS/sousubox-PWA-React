@@ -102,7 +102,7 @@ export default function LearnMorePage() {
               <span className="text-gradient-green">Reimagined</span>
             </h1>
             <p className="text-sm md:text-base text-white/60 mb-8">
-              Vaulta combines bank-level security with exceptional design to
+              Vault combines bank-level security with exceptional design to
               give you complete control over your finances. No hidden fees, no
               complexity—just a premium digital account built for the modern
               world.

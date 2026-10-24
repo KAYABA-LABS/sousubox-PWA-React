@@ -76,6 +76,83 @@ async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> 
   return res.json();
 }
 
+/** Client-made codes for upload failures that never reach the backend's error envelope. */
+export const NETWORK_ERROR = "NETWORK";
+export const UPLOAD_ABORTED = "ABORTED";
+export const PAYLOAD_TOO_LARGE = "PAYLOAD_TOO_LARGE";
+
+export interface UploadOptions {
+  /** Called with 0–1 as the request body is sent. */
+  onProgress?: (fraction: number) => void;
+  signal?: AbortSignal;
+}
+
+/**
+ * Multipart POST with upload progress. Uses XHR because fetch can't report
+ * upload progress. Errors are thrown as `ApiError`, like `apiFetch`.
+ */
+export async function apiUpload<T>(path: string, form: FormData, opts: UploadOptions = {}): Promise<T> {
+  const token = authTokenGetter ? await authTokenGetter() : null;
+
+  return new Promise<T>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", `${API_BASE}${path}`);
+    // No Content-Type: the browser adds the multipart boundary.
+    if (token) xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable && event.total > 0) opts.onProgress?.(event.loaded / event.total);
+    };
+
+    const onAbort = () => xhr.abort();
+    opts.signal?.addEventListener("abort", onAbort, { once: true });
+    const done = () => opts.signal?.removeEventListener("abort", onAbort);
+
+    xhr.onload = () => {
+      done();
+      let body: Record<string, unknown> | null = null;
+      try {
+        body = JSON.parse(xhr.responseText);
+      } catch {
+        body = null;
+      }
+      if (xhr.status >= 200 && xhr.status < 300 && body) {
+        resolve(body as T);
+        return;
+      }
+      if (!body) {
+        // Proxies answer oversize bodies with HTML, not the backend envelope.
+        const code = xhr.status === 413 ? PAYLOAD_TOO_LARGE : undefined;
+        reject(new ApiError(`API error ${xhr.status}`, code, { status: xhr.status }));
+        return;
+      }
+      const message = (body.message as string) || (body.error as string) || `API error ${xhr.status}`;
+      reject(
+        new ApiError(message, body.error as string | undefined, {
+          status: xhr.status,
+          details: normalizeDetails(body.details ?? body.errors),
+          data: body.data,
+        })
+      );
+    };
+    xhr.onerror = () => {
+      done();
+      reject(new ApiError("Network error", NETWORK_ERROR, { status: 0 }));
+    };
+    xhr.onabort = () => {
+      done();
+      reject(new ApiError("Upload cancelled", UPLOAD_ABORTED, { status: 0 }));
+    };
+
+    if (opts.signal?.aborted) {
+      done();
+      reject(new ApiError("Upload cancelled", UPLOAD_ABORTED, { status: 0 }));
+      return;
+    }
+    xhr.send(form);
+  });
+}
+
 export interface BackendEnvelope<T> {
   success: boolean;
   data: T;
@@ -437,15 +514,53 @@ export interface EligibilityFailure {
   message: string;
 }
 
+export type ModeratorDocumentKind = "BUSINESS_REGISTRATION" | "PROOF_OF_ADDRESS" | "REFERENCE_LETTER";
+export type ModeratorDocumentField = "businessRegistration" | "proofOfAddress" | "referenceLetter";
+
+/** What the applicant last submitted. The backend never returns a URL. */
+export interface ModeratorDocumentSummary {
+  kind: ModeratorDocumentKind;
+  originalName: string;
+  mimeType: string;
+  bytes: number;
+  uploadedAt: string;
+}
+
+export interface RequiredModeratorDocument {
+  kind: ModeratorDocumentKind;
+  /** The multipart field name to send the file under. */
+  field: ModeratorDocumentField;
+  label: string;
+}
+
+// A `type` (not an `interface`) so it stays assignable to `Record<string, unknown>`.
+export type ModeratorEligibilitySnapshot = {
+  kycStatus: string;
+  amountOwedBalance: number;
+  groupDebtOutstanding: number;
+  reputationScore: number;
+  accountAgeDays: number;
+  completedPools: number;
+  required: { minReputation: number; minAccountAgeDays: number; minCompletedPools: number };
+};
+
 export interface ModeratorStatusResponse {
   status: ModeratorStatus;
   appliedAt: string | null;
   decidedAt: string | null;
   decisionReason: string | null;
-  maxConcurrentModeratedPools: number;
+  documents?: ModeratorDocumentSummary[];
+  requiredDocuments?: RequiredModeratorDocument[];
+  /** Only set when APPROVED. */
+  maxConcurrentModeratedPools?: number;
   applicationsOpen: boolean;
   canApply: boolean;
-  eligibility: { eligible: boolean; failures: EligibilityFailure[]; snapshot: Record<string, unknown> } | null;
+  eligibility: { eligible: boolean; failures: EligibilityFailure[]; snapshot: ModeratorEligibilitySnapshot } | null;
+}
+
+export interface ModeratorApplication {
+  motivation?: string;
+  files: Record<ModeratorDocumentField, File>;
 }
 
 export interface GroupPoolModerator extends PoolMemberRef {
@@ -914,11 +1029,8 @@ export const api = {
   getModeratorStatus: (userId: string) =>
     apiFetch<GroupEnvelope<ModeratorStatusResponse>>(`/moderator/status/${resolveUserId(userId)}`),
 
-  applyForModerator: (userId: string, motivation?: string) =>
-    apiFetch<GroupEnvelope<unknown>>(`/moderator/apply/${resolveUserId(userId)}`, {
-      method: "POST",
-      body: JSON.stringify(motivation ? { motivation } : {}),
-    }),
+  applyForModerator: (userId: string, form: FormData, opts?: UploadOptions) =>
+    apiUpload<GroupEnvelope<Partial<ModeratorStatusResponse>>>(`/moderator/apply/${resolveUserId(userId)}`, form, opts),
 
   getModeratedPools: (userId: string) =>
     apiFetch<GroupEnvelope<ModeratedPool[]>>(`/groupPools/moderated/${resolveUserId(userId)}`),

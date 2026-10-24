@@ -25,8 +25,8 @@ export function ModeratorProfileRow({ className }: { className?: string }) {
 
   return (
     <button onClick={() => router.push("/moderator")} className={`w-full flex items-center gap-2.5 p-4 text-left ${className ?? ""}`}>
-      <span className="w-9 h-9 rounded-full bg-[#E6EEEC] dark:bg-[#156B53]/20 flex items-center justify-center shrink-0">
-        <ShieldCheck className="w-[17px] h-[17px] text-[#0D4F3C] dark:text-[#1F8C6C]" strokeWidth={1.6} />
+      <span className="w-9 h-9 rounded-full bg-[#D4A843]/20 flex items-center justify-center shrink-0">
+        <ShieldCheck className="w-[17px] h-[17px] text-[#B58A28] dark:text-[#D4A843]" strokeWidth={1.6} />
       </span>
       <span className="flex-1 min-w-0">
         <span className="block text-[15px] font-bold tracking-tight">Pool Moderator</span>

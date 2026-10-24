@@ -8,7 +8,10 @@ import {
   type CreateJoinRequestBody,
   type GroupPoolConfigInput,
   type JoinRequestStatus,
+  type ModeratorApplication,
+  type UploadOptions,
 } from "@/lib/api";
+import { buildModeratorApplicationForm } from "@/lib/moderatorDocuments";
 import { normalizeMember, type GroupPoolMember } from "@/lib/groupPoolMembers";
 
 /** Unwraps `data`, throwing an `ApiError` when the envelope reports failure. */
@@ -66,8 +69,8 @@ export function useGroupPoolService() {
     getModeratorStatus: (userId: string) =>
       unwrap(api.getModeratorStatus(userId), "Failed to load moderator status"),
 
-    applyForModerator: (userId: string, motivation?: string) =>
-      unwrap(api.applyForModerator(userId, motivation), "Failed to apply"),
+    applyForModerator: (userId: string, application: ModeratorApplication, opts?: UploadOptions) =>
+      unwrap(api.applyForModerator(userId, buildModeratorApplicationForm(application), opts), "Failed to apply"),
 
     getModeratedPools: async (userId: string) =>
       (await unwrap(api.getModeratedPools(userId), "Failed to load pools")) ?? [],

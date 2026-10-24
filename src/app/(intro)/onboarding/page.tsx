@@ -3,30 +3,31 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Users, TrendingUp, Shield, Wallet } from "lucide-react";
+import Image from "next/image";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const SLIDES = [
   {
-    icon: Wallet,
+    image: "/onboarding/save.png",
     title: "Save & Grow",
     description: "Start saving with as little as GH₵20. Watch your money grow with competitive interest rates.",
     color: "#0D4F3C",
   },
   {
-    icon: Users,
+    image: "/onboarding/people.png",
     title: "Susu Pools",
     description: "Join savings pools with friends and community. Contribute together, take turns receiving the payout.",
     color: "#4A80F0",
   },
   {
-    icon: TrendingUp,
+    image: "/onboarding/piggy-save.png",
     title: "Invest Smart",
     description: "Choose from Flex Save, Fixed Savings, Goal Booster, or Auto Save plans that fit your lifestyle.",
     color: "#F59E0B",
   },
   {
-    icon: Shield,
+    image: "/onboarding/vault.png",
     title: "Secure & Verified",
     description: "Your identity is verified with bank-level security. Your money is safe with us.",
     color: "#7C3AED",
@@ -52,7 +53,6 @@ export default function OnboardingPage() {
   };
 
   const slide = SLIDES[currentSlide];
-  const Icon = slide.icon;
 
   return (
     <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col">
@@ -79,12 +79,16 @@ export default function OnboardingPage() {
             transition={{ duration: 0.3 }}
             className="text-center"
           >
-            {/* Icon */}
-            <div
-              className="w-24 h-24 rounded-3xl mx-auto mb-8 flex items-center justify-center"
-              style={{ backgroundColor: `${slide.color}20` }}
-            >
-              <Icon className="w-12 h-12" style={{ color: slide.color }} />
+            {/* Illustration */}
+            <div className="relative w-56 h-56 mx-auto mb-8">
+              <Image
+                src={slide.image}
+                alt={slide.title}
+                fill
+                sizes="224px"
+                priority
+                className="object-contain"
+              />
             </div>
 
             {/* Text */}
@@ -119,7 +123,7 @@ export default function OnboardingPage() {
           variant="hero"
           size="xl"
           onClick={handleNext}
-          className="w-full text-white font-bold"
+          className="w-full text-white font-bold rounded-full"
           style={{ backgroundColor: slide.color }}
         >
           {currentSlide === SLIDES.length - 1 ? "Get Started" : "Next"}

@@ -54,4 +54,16 @@ describe("errorDataNumber", () => {
     expect(errorDataNumber(error, "note")).toBeNull();
     expect(errorDataNumber(error, "missing")).toBeNull();
   });
+
+  it("handles moderator application upload errors inline", () => {
+    for (const code of ["INVALID_DOCUMENTS", "NETWORK", "PAYLOAD_TOO_LARGE"]) {
+      expect(resolveGroupPoolError(new ApiError("x", code, { status: 400 })).treatment).toBe("inline");
+    }
+    const invalid = resolveGroupPoolError(new ApiError("x", "INVALID_DOCUMENTS", { status: 400, details: ["proofOfAddress: empty"] }));
+    expect(invalid.details).toEqual(["proofOfAddress: empty"]);
+  });
+
+  it("refetches when applications are closed", () => {
+    expect(resolveGroupPoolError(new ApiError("x", "APPLICATIONS_CLOSED", { status: 503 }))).toMatchObject({ refetch: true });
+  });
 });

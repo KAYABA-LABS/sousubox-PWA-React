@@ -10,9 +10,35 @@ const status = (overrides: Partial<ModeratorStatusResponse>): ModeratorStatusRes
   maxConcurrentModeratedPools: 3,
   applicationsOpen: true,
   canApply: true,
-  eligibility: { eligible: true, failures: [], snapshot: { reputationScore: 820, required: { reputationScore: 700 } } },
+  documents: [],
+  requiredDocuments: [
+    { kind: "BUSINESS_REGISTRATION", field: "businessRegistration", label: "Certificate of incorporation" },
+    { kind: "PROOF_OF_ADDRESS", field: "proofOfAddress", label: "Proof of address" },
+    { kind: "REFERENCE_LETTER", field: "referenceLetter", label: "Reference letter" },
+  ],
+  eligibility: {
+    eligible: true,
+    failures: [],
+    snapshot: {
+      kycStatus: "VERIFIED",
+      amountOwedBalance: 0,
+      groupDebtOutstanding: 0,
+      reputationScore: 820,
+      accountAgeDays: 200,
+      completedPools: 3,
+      required: { minReputation: 700, minAccountAgeDays: 90, minCompletedPools: 1 },
+    },
+  },
   ...overrides,
 });
+
+const pdf = (name: string) => ({ name, mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4 test") });
+
+async function pickDocuments(page: Page) {
+  await page.getByTestId("file-businessRegistration").setInputFiles(pdf("cert.pdf"));
+  await page.getByTestId("file-proofOfAddress").setInputFiles(pdf("ecg-bill.pdf"));
+  await page.getByTestId("file-referenceLetter").setInputFiles(pdf("letter.pdf"));
+}
 
 const createdPool: ModeratedPool = {
   id: "pool-9",
@@ -58,12 +84,18 @@ test.describe("Pool moderator", () => {
     await page.goto("/moderator");
     await expect(page.getByText("Run a pool for your group")).toBeVisible();
     await page.getByRole("button", { name: "Apply to become a moderator" }).click();
+    await pickDocuments(page);
     await page.getByLabel(/Why do you want to moderate/).fill("I run a market women's group.");
     await page.getByRole("button", { name: "Send application" }).click();
     await expect(page.getByText("Application under review")).toBeVisible();
-    expect(api.calls.find((c) => c.path.startsWith("/moderator/apply/"))?.body).toEqual({
-      motivation: "I run a market women's group.",
-    });
+    const applyCall = api.calls.find((c) => c.path.startsWith("/moderator/apply/"));
+    expect(applyCall?.contentType).toMatch(/^multipart\/form-data; boundary=/);
+    const raw = applyCall?.raw?.toString("latin1") ?? "";
+    for (const field of ["businessRegistration", "proofOfAddress", "referenceLetter", "motivation"]) {
+      expect(raw).toContain(`name="${field}"`);
+    }
+    expect(raw).toContain('filename="ecg-bill.pdf"');
+    expect(raw).toContain("I run a market women's group.");
 
     // An admin approves the application.
     current = status({ status: "APPROVED", canApply: false });
@@ -166,5 +198,70 @@ test.describe("Pool moderator", () => {
     await page.goto("/moderator/create");
     await expect(page).toHaveURL(/\/moderator$/);
     await expect(page.getByText("Application under review")).toBeVisible();
+  });
+
+  test("INVALID_DOCUMENTS lands on its slot and keeps the other files", async ({ page }) => {
+    const api = await mockApi(page);
+    api.get(/^\/moderator\/status\//, () => ok(status({})));
+    api.post(/^\/moderator\/apply\//, () =>
+      fail(400, "INVALID_DOCUMENTS", "Invalid documents", undefined, ["proofOfAddress: must be 10 MB or smaller"])
+    );
+
+    await page.goto("/moderator/apply");
+    await pickDocuments(page);
+    await page.getByRole("button", { name: "Send application" }).click();
+
+    await expect(page.getByRole("group", { name: "Proof of address" })).toContainText("must be 10 MB or smaller");
+    await expect(page.getByText("cert.pdf")).toBeVisible();
+    await expect(page.getByText("letter.pdf")).toBeVisible();
+  });
+
+  test("picked files survive a reload", async ({ page }) => {
+    const api = await mockApi(page);
+    api.get(/^\/moderator\/status\//, () => ok(status({})));
+
+    await page.goto("/moderator/apply");
+    await page.getByTestId("file-proofOfAddress").setInputFiles(pdf("ecg-bill.pdf"));
+    await page.getByLabel(/Why do you want to moderate/).fill("Draft text");
+    await expect(page.getByText("ecg-bill.pdf")).toBeVisible();
+    // Let the debounced motivation save land.
+    await page.waitForTimeout(700);
+
+    await page.reload();
+    await expect(page.getByText("We kept the files you picked earlier.")).toBeVisible();
+    await expect(page.getByText("ecg-bill.pdf")).toBeVisible();
+    await expect(page.getByLabel(/Why do you want to moderate/)).toHaveValue("Draft text");
+  });
+
+  test("closed applications show the not-open state", async ({ page }) => {
+    const api = await mockApi(page);
+    api.get(/^\/moderator\/status\//, () => ok(status({ applicationsOpen: false, canApply: false })));
+
+    await page.goto("/moderator");
+    await expect(page.getByText("Applications aren't open yet.")).toBeVisible();
+    await page.goto("/moderator/apply");
+    await expect(page).toHaveURL(/\/moderator$/);
+  });
+
+  test("rejected users re-apply with empty slots", async ({ page }) => {
+    const api = await mockApi(page);
+    api.get(/^\/moderator\/status\//, () =>
+      ok(
+        status({
+          status: "REJECTED",
+          decisionReason: "The utility bill was older than 3 months.",
+          documents: [
+            { kind: "PROOF_OF_ADDRESS", originalName: "old-bill.pdf", mimeType: "application/pdf", bytes: 1000, uploadedAt: "2026-09-01T00:00:00.000Z" },
+          ],
+        })
+      )
+    );
+
+    await page.goto("/moderator");
+    await expect(page.getByText("The utility bill was older than 3 months.")).toBeVisible();
+    await expect(page.getByText(/upload all three documents again/)).toBeVisible();
+    await page.getByRole("button", { name: "Apply again" }).click();
+    await expect(page.getByRole("button", { name: "Upload file: Proof of address" })).toBeVisible();
+    await expect(page.getByText("old-bill.pdf")).toHaveCount(0);
   });
 });

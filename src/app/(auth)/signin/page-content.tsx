@@ -8,7 +8,7 @@ import { PhoneCodeSwitcher } from "@/components/ui/phone-code-switcher";
 import { api } from "@/lib/api";
 import { postAuthDestination } from "@/lib/postAuthRedirect";
 import { useCountdown, formatCountdown } from "@/hooks/use-countdown";
-import { Loader2, ArrowRight, ShieldCheck, PhoneCall } from "lucide-react";
+import { Loader2, ArrowRight, ShieldCheck, ShieldUser } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -286,12 +286,12 @@ export default function SignInPageContent() {
         >
           <div className="bg-white dark:bg-[#151A1F] rounded-[28px] p-8 sm:p-10 shadow-[0_2px_8px_rgba(0,0,0,0.06),0_16px_40px_rgba(0,0,0,0.08)] dark:shadow-black/20 border border-black/[0.04] dark:border-white/10">
             {/* Header */}
-            <div className="mb-8">
-              <div className="w-11 h-11 rounded-full bg-[#0D4F3C]/10 dark:bg-[#156B53]/10 flex items-center justify-center mb-5">
+            <div className={`mb-8 ${step === "phone" ? "text-center" : ""}`}>
+              <div className="w-11 h-11 rounded-full bg-[#D4A843]/15 flex items-center justify-center mb-5">
                 {step === "phone" ? (
-                  <PhoneCall className="w-5 h-5 text-[#0D4F3C] dark:text-[#156B53]" strokeWidth={2} />
+                  <ShieldUser className="w-5 h-5 text-[#D4A843]" strokeWidth={2} />
                 ) : (
-                  <ShieldCheck className="w-5 h-5 text-[#0D4F3C] dark:text-[#156B53]" strokeWidth={2} />
+                  <ShieldCheck className="w-5 h-5 text-[#D4A843]" strokeWidth={2} />
                 )}
               </div>
               <h1 className="text-[26px] leading-tight font-bold text-[#0C0F14] dark:text-white tracking-tight">
@@ -299,7 +299,7 @@ export default function SignInPageContent() {
               </h1>
               <p className="text-[15px] text-gray-500 dark:text-gray-400 mt-2 leading-relaxed">
                 {step === "phone"
-                  ? "Sign in with the phone number on your account."
+                  ? "Sign in with the phone number to access your account."
                   : `We sent a 6-digit code to ${phoneNumber}`}
               </p>
             </div>
@@ -315,6 +315,16 @@ export default function SignInPageContent() {
                   onSubmit={handleSendOTP}
                   className="space-y-5"
                 >
+                <div className="flex justify-center">
+                  <Image
+                    src="/onboarding/verified-user.png"
+                    alt=""
+                    width={160}
+                    height={160}
+                    priority
+                    className="h-40 w-40 object-contain"
+                  />
+                </div>
                 <div className="flex w-full min-w-0 gap-2">
                   <PhoneCodeSwitcher value={countryCode} onChange={setCountryCode} />
                   <input
@@ -345,7 +355,7 @@ export default function SignInPageContent() {
                   <button
                     type="submit"
                     disabled={!phoneNumber.trim() || isLoading}
-                    className="w-full h-14 bg-[#0D4F3C] hover:bg-[#156B53] active:scale-[0.98] text-white font-semibold rounded-2xl transition-all disabled:opacity-40 disabled:active:scale-100 shadow-[0_4px_14px_rgba(13,79,60,0.25)]"
+                    className="w-full h-14 bg-[#0D4F3C] hover:bg-[#156B53] active:scale-[0.98] text-white font-semibold rounded-full transition-all disabled:opacity-40 disabled:active:scale-100 shadow-[0_4px_14px_rgba(13,79,60,0.25)]"
                   >
                     {isLoading ? (
                       <Loader2 className="w-5 h-5 animate-spin mx-auto" />
@@ -405,7 +415,7 @@ export default function SignInPageContent() {
                     <button
                       type="submit"
                       disabled={code.join("").length < 6 || isLoading}
-                      className="w-full h-14 bg-[#0D4F3C] hover:bg-[#156B53] active:scale-[0.98] text-white font-semibold rounded-2xl transition-all disabled:opacity-40 disabled:active:scale-100 shadow-[0_4px_14px_rgba(13,79,60,0.25)]"
+                      className="w-full h-14 bg-[#0D4F3C] hover:bg-[#156B53] active:scale-[0.98] text-white font-semibold rounded-full transition-all disabled:opacity-40 disabled:active:scale-100 shadow-[0_4px_14px_rgba(13,79,60,0.25)]"
                     >
                       {isLoading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "Sign in"}
                     </button>
