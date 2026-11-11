@@ -414,9 +414,9 @@ export default function SignUpPageContent() {
   const stepIndex = STEPS.indexOf(step);
 
   const stepIcons: Record<Step, React.ReactNode> = {
-    phone: <PhoneCall className="w-5 h-5 text-[#0D4F3C] dark:text-[#156B53]" strokeWidth={2} />,
-    verify: <ShieldCheck className="w-5 h-5 text-[#0D4F3C] dark:text-[#156B53]" strokeWidth={2} />,
-    details: <UserRound className="w-5 h-5 text-[#0D4F3C] dark:text-[#156B53]" strokeWidth={2} />,
+    phone: <PhoneCall className="w-5 h-5 text-sb-brand-600" strokeWidth={2} />,
+    verify: <ShieldCheck className="w-5 h-5 text-sb-brand-600" strokeWidth={2} />,
+    details: <UserRound className="w-5 h-5 text-sb-brand-600" strokeWidth={2} />,
   };
 
 
@@ -586,12 +586,12 @@ export default function SignUpPageContent() {
     };
 
   return (
-    <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col font-sans">
+    <div className="min-h-screen bg-sb-canvas flex flex-col font-sans">
       {/* Header */}
       <header className="flex items-center justify-between px-6 py-6">
         <Link href="/" className="flex items-center gap-2.5">
           <Image src="/logo.png" alt="SousuBox logo" width={36} height={36} className="w-9 h-9" priority />
-          <span className="font-bold text-lg text-[#0C0F14] dark:text-white tracking-tight">Sousubox</span>
+          <span className="font-bold text-lg text-sb-ink tracking-tight">Sousubox</span>
         </Link>
 
         {/* Step indicator */}
@@ -601,16 +601,16 @@ export default function SignUpPageContent() {
               <div
                 className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold transition-colors ${
                   i < stepIndex
-                    ? "bg-[#0D4F3C] text-white"
+                    ? "bg-sb-brand-800 text-white"
                     : i === stepIndex
                     ? "bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 ring-2 ring-amber-200 dark:ring-amber-500/20"
-                    : "bg-black/5 dark:bg-white/10 text-gray-400 dark:text-gray-600"
+                    : "bg-black/5 dark:bg-white/10 text-sb-ink-3"
                 }`}
               >
                 {i < stepIndex ? <Check className="w-3 h-3" strokeWidth={3} /> : i + 1}
               </div>
               {i < STEPS.length - 1 && (
-                <div className={`w-4 h-0.5 rounded-full ${i < stepIndex ? "bg-[#0D4F3C]" : "bg-black/10 dark:bg-white/10"}`} />
+                <div className={`w-4 h-0.5 rounded-full ${i < stepIndex ? "bg-sb-brand-800" : "bg-black/10 dark:bg-white/10"}`} />
               )}
             </div>
           ))}
@@ -625,18 +625,18 @@ export default function SignUpPageContent() {
           transition={{ duration: 0.4 }}
           className="w-full max-w-md"
         >
-          <div className="bg-white dark:bg-[#151A1F] rounded-[28px] p-8 sm:p-10 shadow-[0_2px_8px_rgba(0,0,0,0.06),0_16px_40px_rgba(0,0,0,0.08)] dark:shadow-black/20 border border-black/[0.04] dark:border-white/10">
+          <div className="bg-sb-surface rounded-[28px] p-8 sm:p-10 shadow-[0_2px_8px_rgba(0,0,0,0.06),0_16px_40px_rgba(0,0,0,0.08)] dark:shadow-black/20 border border-sb-line">
             {/* Header */}
             <div className="mb-8">
-              <div className="w-11 h-11 rounded-full bg-[#0D4F3C]/10 dark:bg-[#156B53]/10 flex items-center justify-center mb-5">
+              <div className="w-11 h-11 rounded-full bg-sb-brand-800/10 dark:bg-sb-brand-700/10 flex items-center justify-center mb-5">
                 {stepIcons[step]}
               </div>
-              <h1 className="text-[26px] leading-tight font-bold text-[#0C0F14] dark:text-white tracking-tight">
+              <h1 className="text-[26px] leading-tight font-bold text-sb-ink tracking-tight">
                 {step === "phone" && "Create your account"}
                 {step === "verify" && "Check your phone"}
                 {step === "details" && "Almost there"}
               </h1>
-              <p className="text-[15px] text-gray-500 dark:text-gray-400 mt-2 leading-relaxed">
+              <p className="text-[15px] text-sb-ink-2 mt-2 leading-relaxed">
                 {step === "phone" && "Start saving together with your phone number."}
                 {step === "verify" && `We sent a 6-digit code to ${phoneNumber}`}
                 {step === "details" && "Tell us a little about yourself."}
@@ -662,7 +662,7 @@ export default function SignUpPageContent() {
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(formatPhone(e.target.value))}
                     autoFocus
-                    className="min-w-0 flex-1 h-14 px-4 bg-[#FBF6EF] dark:bg-[#0C0F14] border border-black/10 dark:border-white/10 rounded-2xl text-[#0C0F14] dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 text-[15px] font-medium focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53] focus:ring-2 focus:ring-[#0D4F3C]/10 dark:focus:ring-[#156B53]/10 transition-colors"
+                    className="min-w-0 flex-1 h-14 px-4 bg-sb-canvas border border-sb-line rounded-2xl text-sb-ink placeholder:text-gray-400 dark:placeholder:text-gray-600 text-[15px] font-medium focus:outline-none focus:border-sb-brand-600 focus:ring-2 focus:ring-sb-brand-600/10 transition-colors"
                   />
                 </div>
 
@@ -681,7 +681,7 @@ export default function SignUpPageContent() {
                   <button
                     type="submit"
                     disabled={!phoneNumber.trim() || isLoading}
-                    className="w-full h-14 bg-[#0D4F3C] hover:bg-[#156B53] active:scale-[0.98] text-white font-semibold rounded-2xl transition-all disabled:opacity-40 disabled:active:scale-100 shadow-[0_4px_14px_rgba(13,79,60,0.25)]"
+                    className="w-full h-14 bg-sb-brand-800 hover:bg-sb-brand-700 active:scale-[0.98] text-white font-semibold rounded-2xl transition-all disabled:opacity-40 disabled:active:scale-100 shadow-[0_4px_14px_rgba(13,79,60,0.25)]"
                   >
                     {isLoading ? (
                       <Loader2 className="w-5 h-5 animate-spin mx-auto" />
@@ -693,9 +693,9 @@ export default function SignUpPageContent() {
                     )}
                   </button>
 
-                    <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
+                    <p className="text-center text-sm text-sb-ink-2 mt-6">
                       Already have an account?{" "}
-                      <Link href="/signin" className="text-[#0D4F3C] dark:text-[#156B53] font-semibold hover:underline">
+                      <Link href="/signin" className="text-sb-brand-600 font-semibold hover:underline">
                         Sign in
                       </Link>
                     </p>
@@ -727,7 +727,7 @@ export default function SignUpPageContent() {
                         onKeyDown={(e) => handleCodeKeyDown(i, e)}
                         onPaste={handleCodePaste}
                         autoComplete="one-time-code"
-                        className="w-12 h-14 text-center text-xl font-bold text-[#0C0F14] dark:text-white bg-[#FBF6EF] dark:bg-[#0C0F14] border-2 border-black/10 dark:border-white/10 rounded-2xl focus:outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53] transition-colors"
+                        className="w-12 h-14 text-center text-xl font-bold text-sb-ink bg-sb-canvas border-2 border-sb-line rounded-2xl focus:outline-none focus:border-sb-brand-600 transition-colors"
                       />
                     ))}
                   </div>
@@ -746,26 +746,26 @@ export default function SignUpPageContent() {
                     <button
                       type="submit"
                       disabled={code.join("").length < 6 || isLoading}
-                      className="w-full h-14 bg-[#0D4F3C] hover:bg-[#156B53] active:scale-[0.98] text-white font-semibold rounded-2xl transition-all disabled:opacity-40 disabled:active:scale-100 shadow-[0_4px_14px_rgba(13,79,60,0.25)]"
+                      className="w-full h-14 bg-sb-brand-800 hover:bg-sb-brand-700 active:scale-[0.98] text-white font-semibold rounded-2xl transition-all disabled:opacity-40 disabled:active:scale-100 shadow-[0_4px_14px_rgba(13,79,60,0.25)]"
                     >
                       {isLoading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "Continue"}
                     </button>
 
                     {secondsLeft > 0 ? (
-                      <p className="text-center text-sm text-gray-500 dark:text-gray-400 py-1">
+                      <p className="text-center text-sm text-sb-ink-2 py-1">
                         Resend code in{" "}
-                        <span className="font-semibold tabular-nums text-[#0C0F14] dark:text-white">
+                        <span className="font-semibold tabular-nums text-sb-ink">
                           {formatCountdown(secondsLeft)}
                         </span>
                       </p>
                     ) : (
-                      <p className="text-center text-sm text-gray-500 dark:text-gray-400 py-1">
+                      <p className="text-center text-sm text-sb-ink-2 py-1">
                         Didn&apos;t get a code?{" "}
                         <button
                           type="button"
                           onClick={handleResendCode}
                           disabled={isResending}
-                          className="inline-flex items-center gap-1.5 font-semibold text-[#0D4F3C] dark:text-[#156B53] hover:underline disabled:opacity-50 disabled:no-underline"
+                          className="inline-flex items-center gap-1.5 font-semibold text-sb-brand-600 hover:underline disabled:opacity-50 disabled:no-underline"
                         >
                           {isResending && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                           Resend code
@@ -780,7 +780,7 @@ export default function SignUpPageContent() {
                         setCode(["", "", "", "", "", ""]);
                         setError("");
                       }}
-                      className="w-full text-center text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-[#0D4F3C] dark:hover:text-[#156B53] transition-colors py-1"
+                      className="w-full text-center text-sm font-medium text-sb-ink-2 hover:text-sb-brand-600 transition-colors py-1"
                     >
                       Use a different number
                     </button>
@@ -798,9 +798,9 @@ export default function SignUpPageContent() {
                   onSubmit={handleCompleteProfile}
                   className="space-y-5"
                 >
-                  <div className="flex items-center gap-2.5 px-4 py-3 bg-emerald-50 dark:bg-emerald-500/10 rounded-2xl">
-                    <Check className="w-4 h-4 text-emerald-700 dark:text-emerald-400 shrink-0" strokeWidth={2.5} />
-                    <span className="text-sm font-medium text-emerald-800 dark:text-emerald-400">{phoneNumber} verified</span>
+                  <div className="flex items-center gap-2.5 px-4 py-3 bg-sb-tint dark:bg-sb-brand-500/10 rounded-2xl">
+                    <Check className="w-4 h-4 text-sb-brand-700 dark:text-sb-brand-400 shrink-0" strokeWidth={2.5} />
+                    <span className="text-sm font-medium text-sb-brand-800 dark:text-sb-brand-400">{phoneNumber} verified</span>
                   </div>
 
                 <div className="min-w-0 space-y-3">
@@ -810,7 +810,7 @@ export default function SignUpPageContent() {
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   autoFocus
-                  className="block box-border h-14 w-full min-w-0 max-w-full rounded-2xl border border-black/10 bg-[#FBF6EF] px-4 text-[15px] font-medium text-[#0C0F14] transition-colors placeholder:text-gray-400 focus:border-[#0D4F3C] focus:outline-none focus:ring-2 focus:ring-[#0D4F3C]/10 dark:border-white/10 dark:bg-[#0C0F14] dark:text-white dark:placeholder:text-gray-600 dark:focus:border-[#156B53] dark:focus:ring-[#156B53]/10"
+                  className="block box-border h-14 w-full min-w-0 max-w-full rounded-2xl border border-black/10 bg-sb-canvas px-4 text-[15px] font-medium text-sb-ink transition-colors placeholder:text-gray-400 focus:border-sb-brand-600 focus:outline-none focus:ring-2 focus:ring-sb-brand-600/10 dark:border-white/10 dark:bg-sb-canvas dark:text-white dark:placeholder:text-gray-600 dark:focus:border-sb-brand-600 dark:focus:ring-sb-brand-600/10"
                 />
 
                 <input
@@ -818,7 +818,7 @@ export default function SignUpPageContent() {
                   placeholder="Last name"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  className="block box-border h-14 w-full min-w-0 max-w-full rounded-2xl border border-black/10 bg-[#FBF6EF] px-4 text-[15px] font-medium text-[#0C0F14] transition-colors placeholder:text-gray-400 focus:border-[#0D4F3C] focus:outline-none focus:ring-2 focus:ring-[#0D4F3C]/10 dark:border-white/10 dark:bg-[#0C0F14] dark:text-white dark:placeholder:text-gray-600 dark:focus:border-[#156B53] dark:focus:ring-[#156B53]/10"
+                  className="block box-border h-14 w-full min-w-0 max-w-full rounded-2xl border border-black/10 bg-sb-canvas px-4 text-[15px] font-medium text-sb-ink transition-colors placeholder:text-gray-400 focus:border-sb-brand-600 focus:outline-none focus:ring-2 focus:ring-sb-brand-600/10 dark:border-white/10 dark:bg-sb-canvas dark:text-white dark:placeholder:text-gray-600 dark:focus:border-sb-brand-600 dark:focus:ring-sb-brand-600/10"
                 />
 
                 <input
@@ -826,7 +826,7 @@ export default function SignUpPageContent() {
                   placeholder="Username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="block box-border h-14 w-full min-w-0 max-w-full rounded-2xl border border-black/10 bg-[#FBF6EF] px-4 text-[15px] font-medium text-[#0C0F14] transition-colors placeholder:text-gray-400 focus:border-[#0D4F3C] focus:outline-none focus:ring-2 focus:ring-[#0D4F3C]/10 dark:border-white/10 dark:bg-[#0C0F14] dark:text-white dark:placeholder:text-gray-600 dark:focus:border-[#156B53] dark:focus:ring-[#156B53]/10"
+                  className="block box-border h-14 w-full min-w-0 max-w-full rounded-2xl border border-black/10 bg-sb-canvas px-4 text-[15px] font-medium text-sb-ink transition-colors placeholder:text-gray-400 focus:border-sb-brand-600 focus:outline-none focus:ring-2 focus:ring-sb-brand-600/10 dark:border-white/10 dark:bg-sb-canvas dark:text-white dark:placeholder:text-gray-600 dark:focus:border-sb-brand-600 dark:focus:ring-sb-brand-600/10"
                 />
 
                 <input
@@ -834,18 +834,18 @@ export default function SignUpPageContent() {
                   placeholder="Email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="block box-border h-14 w-full min-w-0 max-w-full rounded-2xl border border-black/10 bg-[#FBF6EF] px-4 text-[15px] font-medium text-[#0C0F14] transition-colors placeholder:text-gray-400 focus:border-[#0D4F3C] focus:outline-none focus:ring-2 focus:ring-[#0D4F3C]/10 dark:border-white/10 dark:bg-[#0C0F14] dark:text-white dark:placeholder:text-gray-600 dark:focus:border-[#156B53] dark:focus:ring-[#156B53]/10"
+                  className="block box-border h-14 w-full min-w-0 max-w-full rounded-2xl border border-black/10 bg-sb-canvas px-4 text-[15px] font-medium text-sb-ink transition-colors placeholder:text-gray-400 focus:border-sb-brand-600 focus:outline-none focus:ring-2 focus:ring-sb-brand-600/10 dark:border-white/10 dark:bg-sb-canvas dark:text-white dark:placeholder:text-gray-600 dark:focus:border-sb-brand-600 dark:focus:ring-sb-brand-600/10"
                 />
 
                 <div className="min-w-0 space-y-1.5">
-                  <label className="px-1 text-xs font-medium text-gray-500 dark:text-gray-400">
+                  <label className="px-1 text-xs font-medium text-sb-ink-2">
                     Date of birth
                   </label>
                   <input
                     type="date"
                     value={dateOfBirth}
                     onChange={(e) => setDateOfBirth(e.target.value)}
-                    className="block box-border h-14 w-full min-w-0 max-w-full rounded-2xl border border-black/10 bg-[#FBF6EF] px-4 text-[15px] font-medium text-[#0C0F14] transition-colors focus:border-[#0D4F3C] focus:outline-none focus:ring-2 focus:ring-[#0D4F3C]/10 scheme-light dark:border-white/10 dark:bg-[#0C0F14] dark:text-white dark:focus:border-[#156B53] dark:focus:ring-[#156B53]/10 dark:scheme-dark"
+                    className="block box-border h-14 w-full min-w-0 max-w-full rounded-2xl border border-black/10 bg-sb-canvas px-4 text-[15px] font-medium text-sb-ink transition-colors focus:border-sb-brand-600 focus:outline-none focus:ring-2 focus:ring-sb-brand-600/10 scheme-light dark:border-white/10 dark:bg-sb-canvas dark:text-white dark:focus:border-sb-brand-600 dark:focus:ring-sb-brand-600/10 dark:scheme-dark"
                   />
                 </div>
 
@@ -855,7 +855,7 @@ export default function SignUpPageContent() {
                   value={referralCode}
                   onChange={(e) => setReferralCode(e.target.value)}
                   autoCapitalize="characters"
-                  className="block box-border h-14 w-full min-w-0 max-w-full rounded-2xl border border-black/10 bg-[#FBF6EF] px-4 text-[15px] font-medium text-[#0C0F14] transition-colors placeholder:text-gray-400 focus:border-[#0D4F3C] focus:outline-none focus:ring-2 focus:ring-[#0D4F3C]/10 dark:border-white/10 dark:bg-[#0C0F14] dark:text-white dark:placeholder:text-gray-600 dark:focus:border-[#156B53] dark:focus:ring-[#156B53]/10"
+                  className="block box-border h-14 w-full min-w-0 max-w-full rounded-2xl border border-black/10 bg-sb-canvas px-4 text-[15px] font-medium text-sb-ink transition-colors placeholder:text-gray-400 focus:border-sb-brand-600 focus:outline-none focus:ring-2 focus:ring-sb-brand-600/10 dark:border-white/10 dark:bg-sb-canvas dark:text-white dark:placeholder:text-gray-600 dark:focus:border-sb-brand-600 dark:focus:ring-sb-brand-600/10"
                 />
               </div>
 
@@ -872,7 +872,7 @@ export default function SignUpPageContent() {
                   <button
                     type="submit"
                     disabled={!firstName.trim() || !lastName.trim() || !username.trim() || !email.trim() || !dateOfBirth || isLoading}
-                    className="w-full h-14 bg-[#0D4F3C] hover:bg-[#156B53] active:scale-[0.98] text-white font-semibold rounded-2xl transition-all disabled:opacity-40 disabled:active:scale-100 shadow-[0_4px_14px_rgba(13,79,60,0.25)]"
+                    className="w-full h-14 bg-sb-brand-800 hover:bg-sb-brand-700 active:scale-[0.98] text-white font-semibold rounded-2xl transition-all disabled:opacity-40 disabled:active:scale-100 shadow-[0_4px_14px_rgba(13,79,60,0.25)]"
                   >
                     {isLoading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "Get started"}
                   </button>
@@ -881,9 +881,9 @@ export default function SignUpPageContent() {
             </AnimatePresence>
           </div>
 
-          {/* <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
+          {/* <p className="text-center text-sm text-sb-ink-2 mt-6">
             Already have an account?{" "}
-            <Link href="/signin" className="text-[#0D4F3C] dark:text-[#156B53] font-semibold hover:underline">
+            <Link href="/signin" className="text-sb-brand-600 font-semibold hover:underline">
               Sign in
             </Link>
           </p> */}
