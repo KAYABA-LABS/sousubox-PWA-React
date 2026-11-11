@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Ubuntu } from "next/font/google";
+import { Inter } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { AuthTokenProvider } from "@/components/AuthTokenProvider";
@@ -8,11 +8,9 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { Toaster } from "@/components/ui/sonner";
 import "./Index.css";
 
-const ubuntu = Ubuntu({
-  variable: "--font-ubuntu",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "700"],
-  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -33,7 +31,10 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#FAFAFA",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#F7F8F6" },
+    { media: "(prefers-color-scheme: dark)", color: "#0A0F0C" },
+  ],
 };
 
 const devBypass = process.env.NEXT_PUBLIC_DEV_BYPASS === "true";
@@ -52,7 +53,7 @@ export default function RootLayout({
     <ThemeProvider>
       <html lang="en" suppressHydrationWarning>
         <body
-          className={`${ubuntu.variable} antialiased`}
+          className={`${inter.variable} antialiased`}
         >
           <a href="#main-content" className="skip-link">
             Skip to main content
