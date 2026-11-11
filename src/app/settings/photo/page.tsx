@@ -147,8 +147,8 @@ export default function ProfilePhotoSettings() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-[#0D4F3C] dark:border-[#156B53] border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-sb-canvas flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-sb-brand-600 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -156,13 +156,13 @@ export default function ProfilePhotoSettings() {
   const displayUrl = previewUrl || currentPhotoUrl;
 
   return (
-    <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] text-[#0C0F14] dark:text-white p-6 pb-32 relative overflow-hidden">
+    <div className="min-h-screen bg-sb-canvas text-sb-ink p-6 pb-32 relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(13,79,60,0.06),transparent_60%)] pointer-events-none" />
 
       <div className="max-w-xl mx-auto z-10 relative">
         <button
           onClick={() => router.push("/settings")}
-          className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400 hover:text-[#0C0F14] dark:hover:text-white mb-8 transition-colors group cursor-pointer"
+          className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400 hover:text-sb-ink dark:hover:text-white mb-8 transition-colors group cursor-pointer"
         >
           <ArrowLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" />
           <span className="text-sm font-semibold">Settings</span>
@@ -173,10 +173,10 @@ export default function ProfilePhotoSettings() {
           <p className="text-zinc-400 dark:text-zinc-500 text-sm">Choose a new photo for your account.</p>
         </div>
 
-        <div className="bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 rounded-[24px] p-6 flex flex-col items-center gap-6 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20">
+        <div className="bg-sb-surface border border-sb-line rounded-[24px] p-6 flex flex-col items-center gap-6 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20">
           <Avatar className="w-32 h-32">
             {displayUrl && <AvatarImage key={displayUrl} src={displayUrl} alt="Profile photo" className="object-cover" />}
-            <AvatarFallback className="bg-[#0D4F3C] text-4xl font-bold text-white select-none">
+            <AvatarFallback className="bg-sb-brand-800 text-4xl font-bold text-white select-none">
               {initials}
             </AvatarFallback>
           </Avatar>
@@ -205,7 +205,7 @@ export default function ProfilePhotoSettings() {
               type="button"
               onClick={handleSave}
               disabled={!selectedFile || isUploading}
-              className="w-full h-11 rounded-full bg-[#0D4F3C] hover:bg-[#0D4F3C]/90 dark:bg-[#156B53] dark:hover:bg-[#156B53]/90 text-white font-bold flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full h-11 rounded-full bg-sb-brand-800 hover:bg-sb-brand-800/90 dark:bg-sb-brand-700 dark:hover:bg-sb-brand-700/90 text-white font-bold flex items-center justify-center gap-2 cursor-pointer"
             >
               {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
               {isUploading ? "Uploading..." : "Save Photo"}
