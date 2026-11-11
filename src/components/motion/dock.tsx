@@ -115,7 +115,7 @@ export function DockItem({
       {active && (
         <motion.div
           layoutId="active-pill"
-          className="absolute -bottom-1.5 w-1.5 h-1.5 bg-emerald-400 rounded-full"
+          className="absolute -bottom-1.5 w-1.5 h-1.5 bg-sb-brand-400 rounded-full"
           transition={{
             type: "spring",
             stiffness: 300,

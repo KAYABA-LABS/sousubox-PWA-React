@@ -32,7 +32,7 @@ export function BalanceCard({
               maximumFractionDigits: 2,
             })}
           </motion.h1>
-          <span className="text-sm font-medium text-[#0D4F3C] dark:text-[#156B53]">+2145%</span>
+          <span className="text-sm font-medium text-sb-brand-600">+2145%</span>
         </div>
       </div>
 
@@ -87,7 +87,7 @@ function ActionButton({
         "flex flex-col items-center justify-center gap-2 h-auto",
         "rounded-2xl p-4 transition-all duration-200",
         variant === "primary"
-          ? "bg-[#0F1419] text-white hover:bg-[#1A1F25]"
+          ? "bg-[#0F1419] text-white hover:bg-sb-surface-2"
           : "bg-[#0F1419]/40 hover:bg-[#0F1419]/60"
       )}
     >
