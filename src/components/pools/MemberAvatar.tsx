@@ -13,7 +13,7 @@ const SIZE_CLASSES = {
 } as const;
 
 const RING_CLASSES: Record<ContributionRingStatus, string> = {
-  paid: "ring-2 ring-emerald-500 dark:ring-emerald-400",
+  paid: "ring-2 ring-sb-brand-500 dark:ring-sb-brand-400",
   pending: "ring-2 ring-amber-500 dark:ring-amber-400",
   overdue: "ring-2 ring-red-500 dark:ring-red-400",
 };
@@ -34,14 +34,14 @@ export function MemberAvatar({ user, status, size = "sm", muted, className }: Me
       aria-label={name}
       className={cn(
         SIZE_CLASSES[size],
-        "ring-offset-2 ring-offset-white dark:ring-offset-[#151A1F]",
+        "ring-offset-2 ring-offset-white dark:ring-offset-sb-surface",
         status && RING_CLASSES[status],
         muted && "opacity-50 grayscale",
         className
       )}
     >
       {user.photoUrl && <AvatarImage src={user.photoUrl} alt={name} />}
-      <AvatarFallback className="bg-[#0D4F3C]/10 dark:bg-[#156B53]/15 text-[#0D4F3C] dark:text-[#156B53] font-bold">
+      <AvatarFallback className="bg-sb-brand-800/10 dark:bg-sb-brand-700/15 text-sb-brand-600 font-bold">
         {memberInitials(user)}
       </AvatarFallback>
     </Avatar>
