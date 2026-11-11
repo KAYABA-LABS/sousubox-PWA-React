@@ -23,19 +23,19 @@ export default function ManageLimitsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col">
+    <div className="min-h-screen bg-sb-canvas flex flex-col">
       {/* Header */}
-      <header className="bg-[#FBF6EF] dark:bg-[#0C0F14] px-5 pt-6 pb-4 border-b border-black/5 dark:border-white/5">
+      <header className="bg-sb-canvas px-5 pt-6 pb-4 border-b border-sb-line">
         <div className="flex items-center gap-4 mb-2">
           <button
             onClick={() => router.back()}
-            className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 flex items-center justify-center transition-colors"
+            className="w-10 h-10 rounded-full bg-sb-surface-2 hover:bg-black/10 dark:hover:bg-white/10 flex items-center justify-center transition-colors"
           >
-            <ArrowLeft className="w-5 h-5 text-[#0C0F14] dark:text-white" strokeWidth={2} />
+            <ArrowLeft className="w-5 h-5 text-sb-ink" strokeWidth={2} />
           </button>
           <div>
-            <h1 className="text-xl font-semibold text-[#0C0F14] dark:text-white">Limits</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Manage transaction limits</p>
+            <h1 className="text-xl font-semibold text-sb-ink">Limits</h1>
+            <p className="text-sm text-sb-ink-2">Manage transaction limits</p>
           </div>
         </div>
       </header>
@@ -48,20 +48,20 @@ export default function ManageLimitsPage() {
         >
           {/* Transaction Limits */}
           <div>
-            <h2 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">
+            <h2 className="text-sm font-medium text-sb-ink-2 mb-3">
               Transaction limits
             </h2>
             <div className="space-y-4">
               {/* Daily Transaction */}
-              <div className="bg-white dark:bg-[#151A1F] rounded-xl p-4">
+              <div className="bg-sb-surface rounded-xl p-4">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <p className="text-[#0C0F14] dark:text-white font-medium">
+                    <p className="text-sb-ink font-medium">
                       Daily transaction limit
                     </p>
-                    <p className="text-xs text-gray-400 dark:text-gray-500">Maximum per day</p>
+                    <p className="text-xs text-sb-ink-3">Maximum per day</p>
                   </div>
-                  <p className="text-2xl font-bold text-[#0C0F14] dark:text-white">
+                  <p className="text-2xl font-bold text-sb-ink">
                     ${limits.dailyTransaction.toLocaleString()}
                   </p>
                 </div>
@@ -77,24 +77,24 @@ export default function ManageLimitsPage() {
                       dailyTransaction: parseInt(e.target.value),
                     })
                   }
-                  className="w-full accent-[#0D4F3C] dark:accent-[#156B53]"
+                  className="w-full accent-sb-brand-600"
                 />
-                <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500 mt-2">
+                <div className="flex justify-between text-xs text-sb-ink-3 mt-2">
                   <span>$1,000</span>
                   <span>$10,000</span>
                 </div>
               </div>
 
               {/* Monthly Transaction */}
-              <div className="bg-white dark:bg-[#151A1F] rounded-xl p-4">
+              <div className="bg-sb-surface rounded-xl p-4">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <p className="text-[#0C0F14] dark:text-white font-medium">
+                    <p className="text-sb-ink font-medium">
                       Monthly transaction limit
                     </p>
-                    <p className="text-xs text-gray-400 dark:text-gray-500">Maximum per month</p>
+                    <p className="text-xs text-sb-ink-3">Maximum per month</p>
                   </div>
-                  <p className="text-2xl font-bold text-[#0C0F14] dark:text-white">
+                  <p className="text-2xl font-bold text-sb-ink">
                     ${limits.monthlyTransaction.toLocaleString()}
                   </p>
                 </div>
@@ -110,9 +110,9 @@ export default function ManageLimitsPage() {
                       monthlyTransaction: parseInt(e.target.value),
                     })
                   }
-                  className="w-full accent-[#0D4F3C] dark:accent-[#156B53]"
+                  className="w-full accent-sb-brand-600"
                 />
-                <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500 mt-2">
+                <div className="flex justify-between text-xs text-sb-ink-3 mt-2">
                   <span>$10,000</span>
                   <span>$100,000</span>
                 </div>
@@ -122,20 +122,20 @@ export default function ManageLimitsPage() {
 
           {/* Withdrawal Limits */}
           <div>
-            <h2 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">
+            <h2 className="text-sm font-medium text-sb-ink-2 mb-3">
               Withdrawal limits
             </h2>
             <div className="space-y-4">
               {/* Daily Withdrawal */}
-              <div className="bg-white dark:bg-[#151A1F] rounded-xl p-4">
+              <div className="bg-sb-surface rounded-xl p-4">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <p className="text-[#0C0F14] dark:text-white font-medium">
+                    <p className="text-sb-ink font-medium">
                       Daily withdrawal limit
                     </p>
-                    <p className="text-xs text-gray-400 dark:text-gray-500">ATM and transfers</p>
+                    <p className="text-xs text-sb-ink-3">ATM and transfers</p>
                   </div>
-                  <p className="text-2xl font-bold text-[#0C0F14] dark:text-white">
+                  <p className="text-2xl font-bold text-sb-ink">
                     ${limits.dailyWithdrawal.toLocaleString()}
                   </p>
                 </div>
@@ -151,24 +151,24 @@ export default function ManageLimitsPage() {
                       dailyWithdrawal: parseInt(e.target.value),
                     })
                   }
-                  className="w-full accent-[#0D4F3C] dark:accent-[#156B53]"
+                  className="w-full accent-sb-brand-600"
                 />
-                <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500 mt-2">
+                <div className="flex justify-between text-xs text-sb-ink-3 mt-2">
                   <span>$500</span>
                   <span>$5,000</span>
                 </div>
               </div>
 
               {/* Monthly Withdrawal */}
-              <div className="bg-white dark:bg-[#151A1F] rounded-xl p-4">
+              <div className="bg-sb-surface rounded-xl p-4">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <p className="text-[#0C0F14] dark:text-white font-medium">
+                    <p className="text-sb-ink font-medium">
                       Monthly withdrawal limit
                     </p>
-                    <p className="text-xs text-gray-400 dark:text-gray-500">All withdrawals</p>
+                    <p className="text-xs text-sb-ink-3">All withdrawals</p>
                   </div>
-                  <p className="text-2xl font-bold text-[#0C0F14] dark:text-white">
+                  <p className="text-2xl font-bold text-sb-ink">
                     ${limits.monthlyWithdrawal.toLocaleString()}
                   </p>
                 </div>
@@ -184,9 +184,9 @@ export default function ManageLimitsPage() {
                       monthlyWithdrawal: parseInt(e.target.value),
                     })
                   }
-                  className="w-full accent-[#0D4F3C] dark:accent-[#156B53]"
+                  className="w-full accent-sb-brand-600"
                 />
-                <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500 mt-2">
+                <div className="flex justify-between text-xs text-sb-ink-3 mt-2">
                   <span>$5,000</span>
                   <span>$50,000</span>
                 </div>
@@ -215,7 +215,7 @@ export default function ManageLimitsPage() {
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="w-full bg-[#0D4F3C] hover:bg-[#156B53] disabled:bg-black/10 dark:disabled:bg-white/10 disabled:text-gray-400 dark:disabled:text-gray-500 text-white font-semibold py-4 rounded-xl transition-colors disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="w-full bg-sb-brand-800 hover:bg-sb-brand-700 disabled:bg-black/10 dark:disabled:bg-white/10 disabled:text-gray-400 dark:disabled:text-gray-500 text-white font-semibold py-4 rounded-xl transition-colors disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           {isSaving ? (
             <>

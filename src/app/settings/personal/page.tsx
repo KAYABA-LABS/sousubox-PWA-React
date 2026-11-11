@@ -66,45 +66,45 @@ export default function PersonalSettings() {
 
   if (isLoading)
     return (
-      <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-[#0D4F3C] dark:border-[#156B53] border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-sb-canvas flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-sb-brand-600 border-t-transparent rounded-full animate-spin" />
       </div>
     );
 
   return (
-    <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] p-6">
+    <div className="min-h-screen bg-sb-canvas p-6">
       <div className="max-w-xl mx-auto space-y-6">
-        <h1 className="text-2xl font-semibold text-[#0C0F14] dark:text-white">
+        <h1 className="text-2xl font-semibold text-sb-ink">
           Personal Information
         </h1>
 
-        <div className="bg-white dark:bg-[#151A1F] p-6 rounded-2xl space-y-4">
-          <label className="text-sm text-gray-500 dark:text-gray-400">Full name</label>
+        <div className="bg-sb-surface p-6 rounded-2xl space-y-4">
+          <label className="text-sm text-sb-ink-2">Full name</label>
           <input
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
-            className="w-full bg-gray-50 dark:bg-[#0C0F14] rounded-xl p-3 text-[#0C0F14] dark:text-white"
+            className="w-full bg-gray-50 dark:bg-sb-canvas rounded-xl p-3 text-sb-ink"
           />
 
-          <label className="text-sm text-gray-500 dark:text-gray-400">Email</label>
+          <label className="text-sm text-sb-ink-2">Email</label>
           <input
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full bg-gray-50 dark:bg-[#0C0F14] rounded-xl p-3 text-[#0C0F14] dark:text-white"
+            className="w-full bg-gray-50 dark:bg-sb-canvas rounded-xl p-3 text-sb-ink"
           />
 
-          <label className="text-sm text-gray-500 dark:text-gray-400">Phone (optional)</label>
+          <label className="text-sm text-sb-ink-2">Phone (optional)</label>
           <input
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            className="w-full bg-gray-50 dark:bg-[#0C0F14] rounded-xl p-3 text-[#0C0F14] dark:text-white"
+            className="w-full bg-gray-50 dark:bg-sb-canvas rounded-xl p-3 text-sb-ink"
           />
 
           <div className="flex gap-3">
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="bg-[#0D4F3C] text-white px-4 py-2 rounded-xl"
+              className="bg-sb-brand-800 text-white px-4 py-2 rounded-xl"
             >
               {isSaving ? (
                 <>
@@ -119,7 +119,7 @@ export default function PersonalSettings() {
             </button>
             <button
               onClick={() => router.push("/settings")}
-              className="bg-transparent border border-black/10 dark:border-white/10 px-4 py-2 rounded-xl"
+              className="bg-transparent border border-sb-line px-4 py-2 rounded-xl"
             >
               Cancel
             </button>

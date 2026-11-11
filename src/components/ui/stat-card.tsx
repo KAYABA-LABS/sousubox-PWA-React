@@ -6,7 +6,7 @@ const statCard = tv({
   base: "bg-white border border-gray-200 rounded-2xl p-4",
   variants: {
     interactive: {
-      true: "cursor-pointer hover:border-emerald-200 transition-colors",
+      true: "cursor-pointer hover:border-sb-tint-2 transition-colors",
     },
   },
 });
@@ -21,7 +21,7 @@ interface StatCardProps {
   className?: string;
 }
 
-export function StatCard({ icon, label, value, color = "#0D4F3C", interactive, onClick }: StatCardProps) {
+export function StatCard({ icon, label, value, color = "var(--sb-brand-800)", interactive, onClick }: StatCardProps) {
   return (
     <div className={statCard({ interactive })} onClick={onClick}>
       <div

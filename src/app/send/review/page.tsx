@@ -53,8 +53,8 @@ function SendReviewContent() {
 
   if (!transferData) {
     return (
-      <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center">
-        <p className="text-gray-500 dark:text-gray-400">Loading...</p>
+      <div className="min-h-screen bg-sb-canvas flex items-center justify-center">
+        <p className="text-sb-ink-2">Loading...</p>
       </div>
     );
   }
@@ -63,20 +63,20 @@ function SendReviewContent() {
   const totalAmount = parseFloat(transferData.amount ?? "0");
 
   return (
-    <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col">
+    <div className="min-h-screen bg-sb-canvas flex flex-col">
       {/* Header */}
-      <header className="bg-[#FBF6EF] dark:bg-[#0C0F14] px-5 pt-6 pb-4 border-b border-black/5 dark:border-white/5">
+      <header className="bg-sb-canvas px-5 pt-6 pb-4 border-b border-sb-line">
         <div className="flex items-center gap-4 mb-2">
           <button
             onClick={() => router.back()}
             disabled={isProcessing}
-            className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 disabled:opacity-50 flex items-center justify-center transition-colors"
+            className="w-10 h-10 rounded-full bg-sb-surface-2 hover:bg-black/10 dark:hover:bg-white/10 disabled:opacity-50 flex items-center justify-center transition-colors"
           >
-            <ArrowLeft className="w-5 h-5 text-[#0C0F14] dark:text-white" strokeWidth={2} />
+            <ArrowLeft className="w-5 h-5 text-sb-ink" strokeWidth={2} />
           </button>
           <div>
-            <h1 className="text-xl font-semibold text-[#0C0F14] dark:text-white">Review</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Confirm transfer details</p>
+            <h1 className="text-xl font-semibold text-sb-ink">Review</h1>
+            <p className="text-sm text-sb-ink-2">Confirm transfer details</p>
           </div>
         </div>
       </header>
@@ -88,29 +88,29 @@ function SendReviewContent() {
           className="space-y-4"
         >
           {/* Amount Summary */}
-          <div className="bg-white dark:bg-[#151A1F] rounded-xl p-6 text-center">
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">You&apos;re sending</p>
-            <p className="text-5xl font-bold text-[#0C0F14] dark:text-white mb-1">
+          <div className="bg-sb-surface rounded-xl p-6 text-center">
+            <p className="text-sm text-sb-ink-2 mb-2">You&apos;re sending</p>
+            <p className="text-5xl font-bold text-sb-ink mb-1">
               ${totalAmount.toFixed(2)}
             </p>
           </div>
 
           {/* Transfer Details */}
-          <div className="bg-white dark:bg-[#151A1F] rounded-xl divide-y divide-black/5 dark:divide-white/5">
+          <div className="bg-sb-surface rounded-xl divide-y divide-black/5 dark:divide-white/5">
             {/* To */}
             <div className="p-4">
-              <p className="text-xs text-gray-400 dark:text-gray-500 mb-2">To</p>
+              <p className="text-xs text-sb-ink-3 mb-2">To</p>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#0D4F3C] flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-full bg-sb-brand-800 flex items-center justify-center shrink-0">
                   <span className="text-sm font-bold text-white">
                     {transferData.recipient?.avatar ?? ""}
                   </span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[#0C0F14] dark:text-white font-medium">
+                  <p className="text-sb-ink font-medium">
                     {transferData.recipient?.name ?? ""}
                   </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                  <p className="text-sm text-sb-ink-2 truncate">
                     {transferData.recipient?.email ?? ""}
                   </p>
                 </div>
@@ -119,17 +119,17 @@ function SendReviewContent() {
 
             {/* From */}
             <div className="p-4">
-              <p className="text-xs text-gray-400 dark:text-gray-500 mb-2">From</p>
+              <p className="text-xs text-sb-ink-3 mb-2">From</p>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-[#0C0F14] dark:text-white font-medium">
+                  <p className="text-sb-ink font-medium">
                     {transferData.fromAccount?.name ?? ""}
                   </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-sm text-sb-ink-2">
                     {transferData.fromAccount?.account ?? ""}
                   </p>
                 </div>
-                <p className="text-[#0C0F14] dark:text-white font-medium">
+                <p className="text-sb-ink font-medium">
                   ${(transferData.fromAccount?.balance ?? 0).toFixed(2)}
                 </p>
               </div>
@@ -137,21 +137,21 @@ function SendReviewContent() {
 
             {/* Fee */}
             <div className="p-4 flex items-center justify-between">
-              <p className="text-sm text-gray-500 dark:text-gray-400">Transfer fee</p>
-              <p className="text-[#0C0F14] dark:text-white font-medium">${fee.toFixed(2)}</p>
+              <p className="text-sm text-sb-ink-2">Transfer fee</p>
+              <p className="text-sb-ink font-medium">${fee.toFixed(2)}</p>
             </div>
 
             {/* Estimated Delivery */}
             <div className="p-4 flex items-center justify-between">
-              <p className="text-sm text-gray-500 dark:text-gray-400">Estimated delivery</p>
-              <p className="text-[#0C0F14] dark:text-white font-medium">Instant</p>
+              <p className="text-sm text-sb-ink-2">Estimated delivery</p>
+              <p className="text-sb-ink font-medium">Instant</p>
             </div>
 
             {/* Note */}
             {transferData.note && (
               <div className="p-4">
-                <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">Note</p>
-                <p className="text-[#0C0F14] dark:text-white">{transferData.note}</p>
+                <p className="text-xs text-sb-ink-3 mb-1">Note</p>
+                <p className="text-sb-ink">{transferData.note}</p>
               </div>
             )}
           </div>
@@ -178,7 +178,7 @@ function SendReviewContent() {
           <button
             onClick={() => router.back()}
             disabled={isProcessing}
-            className="w-full bg-transparent border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 disabled:opacity-50 text-[#0C0F14] dark:text-white font-medium py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
+            className="w-full bg-transparent border border-sb-line hover:bg-black/5 dark:hover:bg-white/5 disabled:opacity-50 text-sb-ink font-medium py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
           >
             <span>Edit transfer</span>
             <ChevronRight className="w-4 h-4" />
@@ -191,7 +191,7 @@ function SendReviewContent() {
         <button
           onClick={handleSend}
           disabled={isProcessing}
-          className="w-full bg-[#0D4F3C] hover:bg-[#156B53] disabled:bg-black/10 dark:disabled:bg-white/10 disabled:text-gray-400 dark:disabled:text-gray-500 text-white font-semibold py-4 rounded-xl transition-colors disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="w-full bg-sb-brand-800 hover:bg-sb-brand-700 disabled:bg-black/10 dark:disabled:bg-white/10 disabled:text-gray-400 dark:disabled:text-gray-500 text-white font-semibold py-4 rounded-xl transition-colors disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           {isProcessing ? (
             <>
@@ -211,8 +211,8 @@ export default function SendReviewPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center">
-          <div className="w-8 h-8 border-2 border-[#0D4F3C] dark:border-[#156B53] border-t-transparent rounded-full animate-spin" />
+        <div className="min-h-screen bg-sb-canvas flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-sb-brand-600 border-t-transparent rounded-full animate-spin" />
         </div>
       }
     >

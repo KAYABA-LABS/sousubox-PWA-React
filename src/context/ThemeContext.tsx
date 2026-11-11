@@ -13,11 +13,11 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [mode, setModeState] = useState<ThemeMode>("dark");
+  const [mode, setModeState] = useState<ThemeMode>("light");
 
   useEffect(() => {
     const saved = localStorage.getItem("Sousubox-theme") as ThemeMode | null;
-    const initial = saved ?? "dark";
+    const initial = saved ?? "light";
     setModeState(initial);
     document.documentElement.classList.toggle("dark", initial === "dark");
   }, []);

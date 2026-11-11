@@ -1,0 +1,156 @@
+/*
+ * Sousubox design system tokens.
+ * Source of truth: designs/exports (Home, Plans, Invest, Pools, Profile, Settings).
+ * Raw values live in CSS variables; `@theme inline` exposes them to Tailwind as
+ * `sb-*` utilities (e.g. bg-sb-canvas, text-sb-ink-2, rounded-sb-card).
+ */
+
+:root {
+  /* Surfaces */
+  --sb-canvas: #f7f8f6;
+  --sb-surface: #ffffff;
+  --sb-surface-2: #f3f6f3;
+  --sb-line: #eceeec;
+  --sb-line-strong: #dfe3df;
+
+  /* Text */
+  --sb-ink: #101814;
+  --sb-ink-2: #59625d;
+  --sb-ink-3: #8a928d;
+  --sb-ink-inverse: #ffffff;
+
+  /* Brand greens */
+  --sb-brand-950: #08291f;
+  --sb-brand-900: #0b3a2b;
+  --sb-brand-800: #0d4a37;
+  --sb-brand-700: #0f6145;
+  --sb-brand-600: #12805a;
+  --sb-brand-500: #1f9d63;
+  --sb-brand-400: #34c47a;
+  --sb-brand-300: #7ad9a5;
+  --sb-tint: #e8f4ec;
+  --sb-tint-2: #d9ede1;
+
+  /* Accents */
+  --sb-gold: #d4a52b;
+  --sb-gold-tint: #fdf5e1;
+  --sb-amber: #b7791f;
+  --sb-amber-tint: #fff3dc;
+  --sb-blue: #3d6fd6;
+  --sb-blue-tint: #ebf1fd;
+  --sb-danger: #c2343a;
+  --sb-danger-tint: #fdeced;
+
+  /* Hero card gradient (dark green feature cards) */
+  --sb-hero: linear-gradient(150deg, #0e4a37 0%, #0b3a2b 55%, #082c21 100%);
+  /* Soft green wash used behind light feature cards */
+  --sb-wash: linear-gradient(120deg, #ffffff 0%, #ffffff 45%, #e6f3ea 100%);
+  /* Warm wash used by Pro Tip cards */
+  --sb-wash-warm: linear-gradient(135deg, #fdfbf1 0%, #f1f8f1 60%, #e3f2e7 100%);
+
+  /* Elevation */
+  --sb-shadow-card: 0 1px 2px rgb(16 24 20 / 0.04), 0 12px 32px -18px rgb(16 24 20 / 0.12);
+  --sb-shadow-pop: 0 2px 6px rgb(16 24 20 / 0.06), 0 24px 48px -24px rgb(16 24 20 / 0.22);
+
+  color-scheme: light;
+}
+
+.dark {
+  --sb-canvas: #0a0f0c;
+  --sb-surface: #111915;
+  --sb-surface-2: #16211b;
+  --sb-line: #1f2b25;
+  --sb-line-strong: #2a3a31;
+
+  --sb-ink: #edf3ef;
+  --sb-ink-2: #a3aea7;
+  --sb-ink-3: #75817a;
+
+  --sb-brand-600: #34b27a;
+  --sb-brand-500: #3fc485;
+  --sb-tint: #15291f;
+  --sb-tint-2: #1b3427;
+
+  --sb-gold-tint: #2a2412;
+  --sb-amber: #e0a845;
+  --sb-amber-tint: #2b2213;
+  --sb-blue: #7da2f0;
+  --sb-blue-tint: #172238;
+  --sb-danger: #f07278;
+  --sb-danger-tint: #2e1517;
+
+  --sb-hero: linear-gradient(150deg, #11573f 0%, #0d4232 55%, #0a3326 100%);
+  --sb-wash: linear-gradient(120deg, #111915 0%, #111915 45%, #15301f 100%);
+  --sb-wash-warm: linear-gradient(135deg, #17190f 0%, #142019 60%, #15301f 100%);
+
+  --sb-shadow-card: 0 1px 2px rgb(0 0 0 / 0.3), 0 12px 32px -18px rgb(0 0 0 / 0.6);
+  --sb-shadow-pop: 0 2px 6px rgb(0 0 0 / 0.35), 0 24px 48px -24px rgb(0 0 0 / 0.7);
+
+  color-scheme: dark;
+}
+
+@theme inline {
+
+  --color-sb-canvas: var(--sb-canvas);
+  --color-sb-surface: var(--sb-surface);
+  --color-sb-surface-2: var(--sb-surface-2);
+  --color-sb-line: var(--sb-line);
+  --color-sb-line-strong: var(--sb-line-strong);
+  --color-sb-ink: var(--sb-ink);
+  --color-sb-ink-2: var(--sb-ink-2);
+  --color-sb-ink-3: var(--sb-ink-3);
+  --color-sb-brand-950: var(--sb-brand-950);
+  --color-sb-brand-900: var(--sb-brand-900);
+  --color-sb-brand-800: var(--sb-brand-800);
+  --color-sb-brand-700: var(--sb-brand-700);
+  --color-sb-brand-600: var(--sb-brand-600);
+  --color-sb-brand-500: var(--sb-brand-500);
+  --color-sb-brand-400: var(--sb-brand-400);
+  --color-sb-brand-300: var(--sb-brand-300);
+  --color-sb-tint: var(--sb-tint);
+  --color-sb-tint-2: var(--sb-tint-2);
+  --color-sb-gold: var(--sb-gold);
+  --color-sb-gold-tint: var(--sb-gold-tint);
+  --color-sb-amber: var(--sb-amber);
+  --color-sb-amber-tint: var(--sb-amber-tint);
+  --color-sb-blue: var(--sb-blue);
+  --color-sb-blue-tint: var(--sb-blue-tint);
+  --color-sb-danger: var(--sb-danger);
+  --color-sb-danger-tint: var(--sb-danger-tint);
+
+  --radius-sb-tile: 14px;
+  --radius-sb-card: 20px;
+  --radius-sb-hero: 24px;
+
+  --shadow-sb-card: var(--sb-shadow-card);
+  --shadow-sb-pop: var(--sb-shadow-pop);
+
+  /* Type scale */
+  --text-sb-display: 2.75rem;
+  --text-sb-display--line-height: 1.05;
+  --text-sb-display--letter-spacing: -0.035em;
+  --text-sb-title: 2.5rem;
+  --text-sb-title--line-height: 1.1;
+  --text-sb-title--letter-spacing: -0.03em;
+  --text-sb-amount: 2.25rem;
+  --text-sb-amount--line-height: 1.1;
+  --text-sb-amount--letter-spacing: -0.02em;
+  --text-sb-section: 1.125rem;
+  --text-sb-section--line-height: 1.4;
+  --text-sb-section--letter-spacing: -0.01em;
+}
+
+@layer utilities {
+  .bg-sb-hero {
+    background: var(--sb-hero);
+  }
+  .bg-sb-wash {
+    background: var(--sb-wash);
+  }
+  .bg-sb-wash-warm {
+    background: var(--sb-wash-warm);
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}

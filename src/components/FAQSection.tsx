@@ -65,7 +65,7 @@ export const FAQSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center max-w-2xl mx-auto mb-16"
         >
-          <span className="inline-block text-xs font-medium text-primary mb-4 uppercase tracking-wider border-emerald-600 border px-3.5 py-1 rounded-full bg-emerald-500">
+          <span className="inline-block text-xs font-medium text-primary mb-4 uppercase tracking-wider border-sb-brand-600 border px-3.5 py-1 rounded-full bg-sb-brand-500">
             FAQ
           </span>
           <h2 className="text-3xl sm:text-5xl text-foreground mb-4">Questions? Answered.</h2>
@@ -88,8 +88,8 @@ export const FAQSection = () => {
                 value={`item-${index}`}
                 className="border-0 p-0"
               >
-                <Card className="bg-card/80 border border-border rounded-xl px-6 data-[state=open]:border-emerald-200 data-[state=open]:shadow-lg data-[state=open]:shadow-[#0D4F3C]/10 transition-all">
-                  <AccordionTrigger className="text-left text-foreground cursor-pointer hover:text-emerald-600 hover:no-underline py-5">
+                <Card className="bg-card/80 border border-border rounded-xl px-6 data-[state=open]:border-sb-tint-2 data-[state=open]:shadow-lg data-[state=open]:shadow-sb-brand-800/10 transition-all">
+                  <AccordionTrigger className="text-left text-foreground cursor-pointer hover:text-sb-brand-600 hover:no-underline py-5">
                     {faq.question}
                   </AccordionTrigger>
                   <AccordionContent className="text-gray-900/60 pb-5">

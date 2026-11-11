@@ -65,28 +65,28 @@ export default function AddMobileMoneyAccount() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] p-6 pb-32">
+    <div className="min-h-screen bg-sb-canvas p-6 pb-32">
       <div className="max-w-2xl mx-auto">
         <button
           onClick={() => router.push("/settings/linked-accounts")}
-          className="flex items-center gap-2 text-gray-500 dark:text-gray-400 hover:text-[#0C0F14] dark:hover:text-white mb-6 transition-colors"
+          className="flex items-center gap-2 text-sb-ink-2 hover:text-sb-ink dark:hover:text-white mb-6 transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
           <span>Linked Accounts</span>
         </button>
 
-        <h1 className="text-2xl font-bold text-[#0C0F14] dark:text-white mb-2">Add Mobile Money Number</h1>
-        <p className="text-gray-500 dark:text-gray-400 mb-6">
+        <h1 className="text-2xl font-bold text-sb-ink mb-2">Add Mobile Money Number</h1>
+        <p className="text-sb-ink-2 mb-6">
           Link a mobile money number to send and receive payments
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Card className="bg-white dark:bg-[#151A1F] border-black/10 dark:border-white/10">
+          <Card className="bg-sb-surface border-sb-line">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold text-[#0C0F14] dark:text-white">
+              <CardTitle className="text-lg font-semibold text-sb-ink">
                 Number Details
               </CardTitle>
-              <CardDescription className="text-xs text-gray-500 dark:text-gray-400">
+              <CardDescription className="text-xs text-sb-ink-2">
                 Select your network and enter the phone number linked to it.
               </CardDescription>
             </CardHeader>
@@ -102,14 +102,14 @@ export default function AddMobileMoneyAccount() {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="network" className="text-xs font-semibold text-gray-600 dark:text-gray-300">
+                <Label htmlFor="network" className="text-xs font-semibold text-sb-ink-2">
                   Network Provider
                 </Label>
                 <Select onValueChange={(v) => setNetwork(v as FundingSourceNetwork)} value={network}>
-                  <SelectTrigger className="w-full bg-gray-50 dark:bg-[#0C0F14] border-black/10 dark:border-white/10 focus:border-[#0D4F3C] dark:focus:border-[#156B53] text-[#0C0F14] dark:text-white rounded-xl py-6">
+                  <SelectTrigger className="w-full bg-gray-50 dark:bg-sb-canvas border-sb-line focus:border-sb-brand-600 text-sb-ink rounded-xl py-6">
                     <SelectValue placeholder="Select network provider" />
                   </SelectTrigger>
-                  <SelectContent className="bg-white dark:bg-[#151A1F] border-black/10 dark:border-white/10 text-[#0C0F14] dark:text-white">
+                  <SelectContent className="bg-sb-surface border-sb-line text-sb-ink">
                     {MOMO_PROVIDERS.map((p) => (
                       <SelectItem key={p.value} value={p.value} className="hover:bg-black/5 dark:hover:bg-white/5 focus:bg-black/5 dark:focus:bg-white/5">
                         {p.label}
@@ -120,18 +120,18 @@ export default function AddMobileMoneyAccount() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone" className="text-xs font-semibold text-gray-600 dark:text-gray-300">
+                <Label htmlFor="phone" className="text-xs font-semibold text-sb-ink-2">
                   Mobile Money Number
                 </Label>
                 <div className="relative">
-                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 dark:text-gray-400" />
+                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-sb-ink-2" />
                   <Input
                     id="phone"
                     type="text"
                     placeholder="e.g. 0241234567"
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
-                    className="bg-gray-50 dark:bg-[#0C0F14] border-black/10 dark:border-white/10 focus-visible:ring-[#0D4F3C] dark:focus-visible:ring-[#156B53] pl-11 py-6 text-[#0C0F14] dark:text-white rounded-xl text-sm"
+                    className="bg-gray-50 dark:bg-sb-canvas border-sb-line focus-visible:ring-sb-brand-600 pl-11 py-6 text-sb-ink rounded-xl text-sm"
                   />
                 </div>
               </div>
@@ -140,7 +140,7 @@ export default function AddMobileMoneyAccount() {
               <Button
                 type="submit"
                 disabled={isConnecting || !phoneNumber || !network}
-                className="w-full bg-[#0D4F3C] text-white font-medium py-3 rounded-xl hover:bg-[#156B53] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-full bg-sb-brand-800 text-white font-medium py-3 rounded-xl hover:bg-sb-brand-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {isConnecting ? (
                   <>
@@ -151,7 +151,7 @@ export default function AddMobileMoneyAccount() {
                   "Add Mobile Money Number"
                 )}
               </Button>
-              <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+              <p className="text-xs text-sb-ink-2 text-center">
                 This number is added as a backup. Set it as your primary from Linked Accounts anytime.
               </p>
             </CardFooter>

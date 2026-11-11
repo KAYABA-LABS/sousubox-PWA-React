@@ -18,7 +18,7 @@ export function ProgressRing({
   size,
   stroke,
   trackClassName = "text-black/10 dark:text-white/10",
-  progressClassName = "text-[#0D4F3C] dark:text-[#156B53]",
+  progressClassName = "text-sb-brand-600",
   children,
   className,
 }: ProgressRingProps) {

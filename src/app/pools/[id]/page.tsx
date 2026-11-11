@@ -25,8 +25,8 @@ export default function PoolDetailPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center">
-          <Loader2 className="w-7 h-7 animate-spin text-[#0D4F3C] dark:text-[#156B53]" />
+        <div className="min-h-screen bg-sb-canvas flex items-center justify-center">
+          <Loader2 className="w-7 h-7 animate-spin text-sb-brand-600" />
         </div>
       }
     >
@@ -91,23 +91,23 @@ function PoolDetailContent() {
 
   if (!isLoaded || isLoading) {
     return (
-      <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center">
-        <Loader2 className="w-7 h-7 animate-spin text-[#0D4F3C] dark:text-[#156B53]" />
+      <div className="min-h-screen bg-sb-canvas flex items-center justify-center">
+        <Loader2 className="w-7 h-7 animate-spin text-sb-brand-600" />
       </div>
     );
   }
 
   if (loadError || !viewMode) {
     return (
-      <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col items-center justify-center p-6 text-center">
-        <Landmark className="w-12 h-12 text-gray-400 dark:text-gray-600 mb-4" />
-        <p className="text-lg font-bold text-[#0C0F14] dark:text-white">Pool Not Found</p>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 mb-6">
+      <div className="min-h-screen bg-sb-canvas flex flex-col items-center justify-center p-6 text-center">
+        <Landmark className="w-12 h-12 text-sb-ink-3 mb-4" />
+        <p className="text-lg font-bold text-sb-ink">Pool Not Found</p>
+        <p className="text-sm text-sb-ink-2 mt-1 mb-6">
           {loadError || "The requested pool does not exist or you lack permission to view it."}
         </p>
         <button
           onClick={() => router.push("/pools")}
-          className="px-6 py-2.5 bg-[#0D4F3C] hover:bg-[#156B53] active:scale-95 text-white font-bold text-xs rounded-full transition-all"
+          className="px-6 py-2.5 bg-sb-brand-800 hover:bg-sb-brand-700 active:scale-95 text-white font-bold text-xs rounded-full transition-all"
         >
           Back to Pools
         </button>
@@ -127,15 +127,15 @@ function StatTile({ icon: Icon, label, value, accent }: { icon: React.ElementTyp
     accent === "gold"
       ? { bg: "bg-[#D4A843]/10 dark:bg-[#D4A843]/15 border border-[#D4A843]/25 dark:border-[#D4A843]/25", text: "text-[#B58A28] dark:text-[#E2BB5C]" }
       : accent === "primary"
-      ? { bg: "bg-[#0D4F3C]/10 dark:bg-[#156B53]/10 border border-[#0D4F3C]/15 dark:border-[#156B53]/15", text: "text-[#0D4F3C] dark:text-[#156B53]" }
-      : { bg: "bg-[#FBF6EF] dark:bg-white/5 border border-black/[0.04] dark:border-white/10", text: "text-gray-500 dark:text-gray-400" };
+      ? { bg: "bg-sb-brand-800/10 dark:bg-sb-brand-700/10 border border-sb-brand-600/15", text: "text-sb-brand-600" }
+      : { bg: "bg-sb-canvas dark:bg-white/5 border border-sb-line", text: "text-sb-ink-2" };
   return (
     <div className={`rounded-xl p-3 ${tone.bg}`}>
       <div className={`flex items-center gap-1.5 mb-1 ${tone.text}`}>
         <Icon className="w-3.5 h-3.5" />
         <span className="text-[9px] font-semibold uppercase tracking-wider">{label}</span>
       </div>
-      <p className={`text-sm font-bold ${accent ? tone.text : "text-[#0C0F14] dark:text-white"}`}>{value}</p>
+      <p className={`text-sm font-bold ${accent ? tone.text : "text-sb-ink"}`}>{value}</p>
     </div>
   );
 }
@@ -151,15 +151,15 @@ function DetailHeader({ title, badgeLabel, badgeTone, onBack }: { title: string;
         <button
           onClick={onBack}
           aria-label="Go back"
-          className="w-10 h-10 rounded-full bg-white dark:bg-[#151A1F] border border-black/10 dark:border-white/10 flex items-center justify-center shrink-0 hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+          className="w-10 h-10 rounded-full bg-sb-surface border border-sb-line flex items-center justify-center shrink-0 hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
         >
-          <ArrowLeft className="w-4 h-4 text-[#0C0F14] dark:text-white" />
+          <ArrowLeft className="w-4 h-4 text-sb-ink" />
         </button>
-        <h1 className="text-lg font-bold text-[#0C0F14] dark:text-white tracking-tight">{title}</h1>
+        <h1 className="text-lg font-bold text-sb-ink tracking-tight">{title}</h1>
       </div>
       <span
         className={`px-2.5 py-1 rounded-full text-[9px] font-bold tracking-wide uppercase ${
-          badgeTone === "emerald" ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400" : "bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400"
+          badgeTone === "emerald" ? "bg-sb-tint dark:bg-sb-brand-500/10 text-sb-brand-700 dark:text-sb-brand-400" : "bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400"
         }`}
       >
         {badgeLabel}
@@ -182,7 +182,7 @@ function ActiveView({
   const payouts = payoutRows(details);
 
   return (
-    <main id="main-content" role="main" className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col pb-36 font-sans">
+    <main id="main-content" role="main" className="min-h-screen bg-sb-canvas flex flex-col pb-36 font-sans">
       <DetailHeader
         title={details.nickname}
         badgeLabel={details.healthLabel === "ON_TRACK" ? "On Track" : "At Risk"}
@@ -214,11 +214,11 @@ function ActiveView({
       </div>
 
       {details.myContribution && !details.myContribution.paidThisCycle && (
-        <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-4 bg-[#FBF6EF]/95 dark:bg-[#0C0F14]/95 backdrop-blur-xl border-t border-black/[0.06] dark:border-white/10 z-30">
+        <div className="fixed bottom-0 left-0 right-0 lg:left-[272px] px-5 pb-8 pt-4 bg-sb-canvas/95 backdrop-blur-xl border-t border-sb-line z-30">
           <div className="max-w-xl mx-auto">
             <button
               onClick={onContribute}
-              className="w-full h-14 bg-[#0D4F3C] hover:bg-[#156B53] active:scale-[0.99] text-white font-bold rounded-2xl transition-all"
+              className="w-full h-14 bg-sb-brand-800 hover:bg-sb-brand-700 active:scale-[0.99] text-white font-bold rounded-2xl transition-all"
             >
               Contribute GHS {details.myContribution.amount}
             </button>
@@ -227,8 +227,8 @@ function ActiveView({
       )}
 
       {details.myContribution?.paidThisCycle && (
-        <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-4 bg-[#FBF6EF]/95 dark:bg-[#0C0F14]/95 backdrop-blur-xl border-t border-black/[0.06] dark:border-white/10 z-30">
-          <div className="max-w-xl mx-auto flex items-center justify-center gap-2 h-14 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-bold rounded-2xl">
+        <div className="fixed bottom-0 left-0 right-0 lg:left-[272px] px-5 pb-8 pt-4 bg-sb-canvas/95 backdrop-blur-xl border-t border-sb-line z-30">
+          <div className="max-w-xl mx-auto flex items-center justify-center gap-2 h-14 bg-sb-tint dark:bg-sb-brand-500/10 text-sb-brand-700 dark:text-sb-brand-400 font-bold rounded-2xl">
             <CheckCircle2 className="w-5 h-5" /> Paid for this cycle
           </div>
         </div>
@@ -241,14 +241,14 @@ function JoinedView({ details, onBack }: { details: JoinedPoolDetails; onBack: (
   const startLabel = formatLongDate(details.startDate);
 
   return (
-    <main id="main-content" role="main" className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col pb-16 font-sans">
+    <main id="main-content" role="main" className="min-h-screen bg-sb-canvas flex flex-col pb-16 font-sans">
       <DetailHeader title={details.template.name} badgeLabel="Forming" badgeTone="amber" onBack={onBack} />
 
       <div className="flex-1 px-5 max-w-xl mx-auto w-full space-y-4">
-        <div className="bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 rounded-[24px] p-5 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20">
-          <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold mb-1">{details.template.tier} Tier</p>
+        <div className="bg-sb-surface border border-sb-line rounded-[24px] p-5 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20">
+          <p className="text-[10px] text-sb-ink-2 uppercase tracking-wider font-semibold mb-1">{details.template.tier} Tier</p>
           {details.template.description && (
-            <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-4">{details.template.description}</p>
+            <p className="text-sm text-sb-ink-2 leading-relaxed mb-4">{details.template.description}</p>
           )}
           <div className="grid grid-cols-3 gap-2">
             <StatTile icon={Landmark} label="Contribution" value={`GHS ${details.contributionAmount}`} />
@@ -257,29 +257,29 @@ function JoinedView({ details, onBack }: { details: JoinedPoolDetails; onBack: (
           </div>
         </div>
 
-        <div className="bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 rounded-[24px] p-5 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20">
-          <h3 className="text-xs font-bold text-[#0C0F14] dark:text-white uppercase tracking-wide mb-3">Membership</h3>
+        <div className="bg-sb-surface border border-sb-line rounded-[24px] p-5 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20">
+          <h3 className="text-xs font-bold text-sb-ink uppercase tracking-wide mb-3">Membership</h3>
           <div className="flex items-center justify-between py-1.5">
-            <span className="text-sm text-gray-500 dark:text-gray-400">Joined</span>
-            <span className="text-sm font-semibold text-[#0C0F14] dark:text-white">{formatLongDate(details.joinedAt) || "—"}</span>
+            <span className="text-sm text-sb-ink-2">Joined</span>
+            <span className="text-sm font-semibold text-sb-ink">{formatLongDate(details.joinedAt) || "—"}</span>
           </div>
           <div className="flex items-center justify-between py-1.5">
-            <span className="text-sm text-gray-500 dark:text-gray-400">Status</span>
-            <span className="text-sm font-semibold text-[#0C0F14] dark:text-white">{details.memberStatus}</span>
+            <span className="text-sm text-sb-ink-2">Status</span>
+            <span className="text-sm font-semibold text-sb-ink">{details.memberStatus}</span>
           </div>
           <div className="flex items-center justify-between py-1.5">
-            <span className="text-sm text-gray-500 dark:text-gray-400">Entry fee</span>
-            <span className="text-sm font-semibold text-[#0C0F14] dark:text-white">GHS {details.template.joiningFee}</span>
+            <span className="text-sm text-sb-ink-2">Entry fee</span>
+            <span className="text-sm font-semibold text-sb-ink">GHS {details.template.joiningFee}</span>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-[#151A1F] border border-black/[0.04] dark:border-white/10 rounded-[24px] p-5 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20">
-          <h3 className="text-xs font-bold text-[#0C0F14] dark:text-white uppercase tracking-wide mb-3">Capacity</h3>
+        <div className="bg-sb-surface border border-sb-line rounded-[24px] p-5 shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-black/20">
+          <h3 className="text-xs font-bold text-sb-ink uppercase tracking-wide mb-3">Capacity</h3>
           <div className="flex items-center justify-between mb-2">
-            <span className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
+            <span className="flex items-center gap-1.5 text-sm text-sb-ink-2">
               <Users className="w-4 h-4" /> {details.currentMemberCount}/{details.template.maxMembers} members
             </span>
-            <span className="px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-xs font-bold">
+            <span className="px-2.5 py-1 rounded-full bg-sb-tint dark:bg-sb-brand-500/10 text-sb-brand-700 dark:text-sb-brand-400 text-xs font-bold">
               {details.spotsRemaining} spots left
             </span>
           </div>
@@ -289,10 +289,10 @@ function JoinedView({ details, onBack }: { details: JoinedPoolDetails; onBack: (
           <div className="flex items-start gap-3">
             <Info className="w-5 h-5 text-amber-700 dark:text-amber-400 mt-0.5 shrink-0" />
             <div>
-              <p className="text-sm text-[#0C0F14] dark:text-white font-medium">
+              <p className="text-sm text-sb-ink font-medium">
                 {startLabel ? `Starts on ${startLabel}` : "Start date to be confirmed once the pool fills"}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              <p className="text-xs text-sb-ink-2 mt-1">
                 You&apos;ll be notified once this pool activates and your first contribution becomes due.
               </p>
             </div>

@@ -70,17 +70,17 @@ export function PoolDetailModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="bg-white dark:bg-[#151A1F] border-gray-200 dark:border-white/10 max-w-lg max-h-[90vh] overflow-hidden flex flex-col p-0 gap-0">
+      <DialogContent className="bg-sb-surface border-sb-line max-w-lg max-h-[90vh] overflow-hidden flex flex-col p-0 gap-0">
         {/* Header */}
-        <DialogHeader className="px-5 pt-5 pb-4 border-b border-gray-200 dark:border-white/10">
+        <DialogHeader className="px-5 pt-5 pb-4 border-b border-sb-line">
           <div className="flex items-start justify-between pr-10">
             <div>
               <DialogTitle className="text-lg font-bold text-gray-900 dark:text-white">{listItem.template.name}</DialogTitle>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              <p className="text-xs text-sb-ink-2 mt-1">
                 {listItem.template.tier} • {getFrequencyLabel(listItem.frequency)}
               </p>
             </div>
-            <Badge className="bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">{spotsRemaining} spots left</Badge>
+            <Badge className="bg-sb-tint dark:bg-sb-brand-500/10 text-sb-brand-600 dark:text-sb-brand-400">{spotsRemaining} spots left</Badge>
           </div>
 
           {details && !detailsError && (
@@ -122,12 +122,12 @@ export function PoolDetailModal({
                     <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-900 dark:text-gray-100">
+                    <p className="text-sm text-sb-ink">
                       <span className="font-semibold">Entry payment:</span>{" "}
                       <span className="text-amber-600 dark:text-amber-400 font-bold">GH₵{joiningAmount.toFixed(2)} per slot</span>
                       {" "} It&apos;s added to your payout when it&apos;s your turn.
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    <p className="text-xs text-sb-ink-2 mt-1">
                       Your first contribution would be due on the group&apos;s start day.
                     </p>
                   </div>
@@ -140,21 +140,21 @@ export function PoolDetailModal({
         {/* Body */}
         {isLoadingDetails && !details && (
           <div className="flex-1 flex items-center justify-center py-16">
-            <Loader2 className="w-6 h-6 animate-spin text-emerald-600 dark:text-emerald-400" />
+            <Loader2 className="w-6 h-6 animate-spin text-sb-brand-600 dark:text-sb-brand-400" />
           </div>
         )}
 
         {detailsError && (
           <div className="flex-1 flex flex-col items-center justify-center py-16 px-5 text-center">
             <XCircle className="w-10 h-10 text-amber-600 dark:text-amber-400 mb-3" />
-            <p className="text-sm text-gray-700 dark:text-gray-300 mb-4">{detailsError}</p>
+            <p className="text-sm text-sb-ink-2 mb-4">{detailsError}</p>
             <Button variant="secondary" onClick={onClose}>Close</Button>
           </div>
         )}
 
         {details && !detailsError && (
           <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 overflow-hidden flex flex-col">
-            <TabsList className="mx-5 mt-4 flex h-auto gap-1 rounded-full bg-emerald-50 p-1.5 dark:bg-emerald-500/10">
+            <TabsList className="mx-5 mt-4 flex h-auto gap-1 rounded-full bg-sb-tint p-1.5 dark:bg-sb-brand-500/10">
               {([
                 { value: "info", label: "Info", icon: Info },
                 { value: "members", label: "Members", icon: Users },
@@ -163,7 +163,7 @@ export function PoolDetailModal({
                 <TabsTrigger
                   key={value}
                   value={value}
-                  className="flex-1 gap-1.5 rounded-full px-5 py-2 text-sm font-medium text-emerald-800/70 shadow-none transition-all hover:text-emerald-900 dark:text-emerald-200/60 dark:hover:text-emerald-100 data-[state=active]:bg-[#0D4F3C] data-[state=active]:text-white data-[state=active]:shadow-md data-[state=active]:shadow-[#0D4F3C]/30 data-[state=active]:hover:bg-[#156B53] dark:data-[state=active]:text-white"
+                  className="flex-1 gap-1.5 rounded-full px-5 py-2 text-sm font-medium text-sb-brand-800/70 shadow-none transition-all hover:text-sb-brand-900 dark:text-sb-tint-2/60 dark:hover:text-sb-tint data-[state=active]:bg-sb-brand-800 data-[state=active]:text-white data-[state=active]:shadow-md data-[state=active]:shadow-sb-brand-800/30 data-[state=active]:hover:bg-sb-brand-700 dark:data-[state=active]:text-white"
                 >
                   <Icon className="h-4 w-4" />
                   {label}
@@ -173,7 +173,7 @@ export function PoolDetailModal({
 
             <div className="flex-1 overflow-y-auto p-5">
               <TabsContent value="info" className="mt-0">
-                <div className="space-y-3 border border-gray-200 dark:border-white/10 rounded-xl p-4">
+                <div className="space-y-3 border border-sb-line rounded-xl p-4">
                   {([
                     [Repeat, "Pay", getFrequencyLabel(details.frequency)],
                     [HandCoins, "Payout", `GH₵${details.payoutAmount}`],
@@ -185,8 +185,8 @@ export function PoolDetailModal({
                     [CalendarDays, "Started", details.startDate ? new Date(details.startDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "TBD"],
                   ] as const).map(([Icon, label, value]) => (
                     <div key={label} className="flex justify-between items-center py-2">
-                      <span className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
-                        <Icon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                      <span className="flex items-center gap-2 text-sm font-semibold text-sb-ink-2">
+                        <Icon className="h-4 w-4 text-sb-ink-2" />
                         {label}
                       </span>
                       <span className="text-sm font-medium text-gray-900 dark:text-white">{value}</span>
@@ -197,12 +197,12 @@ export function PoolDetailModal({
 
               <TabsContent value="members" className="mt-0">
                 <div className="text-center py-8">
-                  <Users className="w-10 h-10 text-gray-500 dark:text-gray-400 mx-auto mb-3" />
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                  <Users className="w-10 h-10 text-sb-ink-2 mx-auto mb-3" />
+                  <p className="text-sm text-sb-ink-2 mb-2">
                     For everyone&apos;s privacy, other members&apos; names and contacts are hidden.
                   </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Slot numbers are revealed when the group starts.</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">
+                  <p className="text-xs text-sb-ink-2">Slot numbers are revealed when the group starts.</p>
+                  <p className="text-sm text-sb-ink-2 mt-4">
                     {details.currentMemberCount} of {details.template.maxMembers} slots filled
                   </p>
                 </div>
@@ -210,15 +210,15 @@ export function PoolDetailModal({
 
               <TabsContent value="rules" className="mt-0">
                 <div className="space-y-4">
-                  <div className="bg-gray-100 dark:bg-white/5 rounded-xl p-4">
-                    <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                  <div className="bg-sb-surface-2 rounded-xl p-4">
+                    <p className="text-sm text-sb-ink-2 leading-relaxed">
                       Pay GH₵{details.contributionAmount.toFixed(2)} {getFrequencyLabel(details.frequency)}. After every cycle
                       one person receives GH₵{details.payoutAmount.toFixed(2)} payout. The cycle continues
                       until everyone in the group has had their turn.
                     </p>
                   </div>
-                  <div className="bg-gray-100 dark:bg-white/5 rounded-xl p-4">
-                    <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                  <div className="bg-sb-surface-2 rounded-xl p-4">
+                    <p className="text-sm text-sb-ink-2 leading-relaxed">
                       <span className="font-semibold text-amber-600 dark:text-amber-400">Entry fee:</span>{" "}
                       GH₵{joiningAmount.toFixed(2)} per slot is required as insurance against defaults.
                       {/* This fee is returned in your payout when it&apos;s your turn. */}
@@ -233,18 +233,18 @@ export function PoolDetailModal({
 
         {/* Footer */}
         {details && !detailsError && (
-          <div className="px-5 pb-5 pt-3 border-t border-gray-200 dark:border-white/10">
+          <div className="px-5 pb-5 pt-3 border-t border-sb-line">
             {/* <div className="flex items-start gap-2 mb-4">
-              <Shield className="w-4 h-4 text-[#0D4F3C] dark:text-[#156B53] mt-0.5 shrink-0" />
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <Shield className="w-4 h-4 text-sb-brand-600 mt-0.5 shrink-0" />
+              <p className="text-xs text-sb-ink-2">
                 Submit your ID verification to join. Your payout is only released once you&apos;re fully verified.{" "}
-                <a href="/kyc" className="text-[#0D4F3C] dark:text-[#156B53] underline">Submit your ID</a>
+                <a href="/kyc" className="text-sb-brand-600 underline">Submit your ID</a>
               </p>
             </div> */}
             <Button
               onClick={() => onJoin(listItem.id, slots)}
               disabled={isJoining}
-              className="w-full h-14 bg-[#0D4F3C] hover:bg-[#156B53] text-white font-semibold rounded-full"
+              className="w-full h-14 bg-sb-brand-800 hover:bg-sb-brand-700 text-white font-semibold rounded-full"
             >
               {isJoining ? <Loader2 className="w-5 h-5 animate-spin" /> : (
                 <><FileText className="w-5 h-5" /> Join Pool</>

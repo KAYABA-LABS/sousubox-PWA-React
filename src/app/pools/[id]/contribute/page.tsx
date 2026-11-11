@@ -116,7 +116,7 @@ export default function PoolContributePage() {
     <main id="main-content" role="main" className="min-h-screen bg-background text-foreground relative overflow-hidden pb-36">
       {/* Background radial glow */}
       <div className="absolute top-[-5%] left-[-10%] w-[60%] h-[40%] rounded-full bg-primary/5 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[20%] right-[-10%] w-[60%] h-[40%] rounded-full bg-emerald-500/5 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[20%] right-[-10%] w-[60%] h-[40%] rounded-full bg-sb-brand-500/5 blur-[120px] pointer-events-none" />
 
       {/* Header */}
       <motion.header
@@ -238,7 +238,7 @@ export default function PoolContributePage() {
       </div>
 
       {/* CTA Floating Action Button */}
-      <div className="fixed bottom-0 left-0 right-0 px-6 pb-8 pt-4 bg-background/80 backdrop-blur-xl border-t border-border/40 z-30 shadow-2xl">
+      <div className="fixed bottom-0 left-0 right-0 lg:left-[272px] px-6 pb-8 pt-4 bg-background/80 backdrop-blur-xl border-t border-border/40 z-30 shadow-2xl">
         <div className="max-w-xl mx-auto">
           <Button
             onClick={handleContribute}
