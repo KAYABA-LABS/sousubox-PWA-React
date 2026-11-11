@@ -96,18 +96,18 @@ export default function LinkedAccounts() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-[#0D4F3C] dark:text-[#156B53] animate-spin" />
+      <div className="min-h-screen bg-sb-canvas flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-sb-brand-600 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] p-6 pb-32">
+    <div className="min-h-screen bg-sb-canvas p-6 pb-32">
       <div className="max-w-2xl mx-auto">
         <button
           onClick={() => router.push("/settings")}
-          className="flex items-center gap-2 text-gray-500 dark:text-gray-400 hover:text-[#0C0F14] dark:hover:text-white mb-6 transition-colors"
+          className="flex items-center gap-2 text-sb-ink-2 hover:text-sb-ink dark:hover:text-white mb-6 transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
           <span>Settings</span>
@@ -115,16 +115,16 @@ export default function LinkedAccounts() {
 
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-[#0C0F14] dark:text-white mb-1">
+            <h1 className="text-2xl font-bold text-sb-ink mb-1">
               Linked Mobile Money
             </h1>
-            <p className="text-gray-500 dark:text-gray-400 text-sm">
+            <p className="text-sb-ink-2 text-sm">
               {accounts.length} {accounts.length === 1 ? "number" : "numbers"} linked
             </p>
           </div>
           <Button
             onClick={() => router.push("/settings/add-account")}
-            className="flex items-center gap-2 bg-[#0D4F3C] text-white px-4 py-2 rounded-xl font-medium hover:bg-[#156B53] transition-colors"
+            className="flex items-center gap-2 bg-sb-brand-800 text-white px-4 py-2 rounded-xl font-medium hover:bg-sb-brand-700 transition-colors"
           >
             <Plus className="w-4 h-4" />
             Add
@@ -132,10 +132,10 @@ export default function LinkedAccounts() {
         </div>
 
         {sortedAccounts.length === 0 ? (
-          <div className="bg-white dark:bg-[#151A1F] rounded-2xl p-8 text-center">
-            <Smartphone className="w-8 h-8 text-gray-400 dark:text-gray-500 mx-auto mb-3" />
-            <p className="text-[#0C0F14] dark:text-white font-medium mb-1">No mobile money numbers linked yet</p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+          <div className="bg-sb-surface rounded-2xl p-8 text-center">
+            <Smartphone className="w-8 h-8 text-sb-ink-3 mx-auto mb-3" />
+            <p className="text-sb-ink font-medium mb-1">No mobile money numbers linked yet</p>
+            <p className="text-sm text-sb-ink-2">
               Add a number to start sending and receiving payments.
             </p>
           </div>
@@ -147,27 +147,27 @@ export default function LinkedAccounts() {
               return (
                 <div
                   key={key}
-                  className="bg-white dark:bg-[#151A1F] rounded-2xl p-4 hover:bg-gray-50 dark:hover:bg-[#1A1F25] transition-colors"
+                  className="bg-sb-surface rounded-2xl p-4 hover:bg-gray-50 dark:hover:bg-sb-surface-2 transition-colors"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-black/5 dark:bg-white/5 rounded-full flex items-center justify-center shrink-0">
-                      <Smartphone className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                    <div className="w-10 h-10 bg-sb-surface-2 rounded-full flex items-center justify-center shrink-0">
+                      <Smartphone className="w-5 h-5 text-sb-ink-2" />
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="text-[#0C0F14] dark:text-white font-medium">
+                        <h3 className="text-sb-ink font-medium">
                           {getNetworkLabel(account.networkId)}
                         </h3>
                         {account.active && (
                           <Badge
                             variant="outline"
-                            className="text-[10px] px-2 py-0.5 font-semibold rounded-md border bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20"
+                            className="text-[10px] px-2 py-0.5 font-semibold rounded-md border bg-sb-tint text-sb-brand-600 border-sb-tint-2 dark:bg-sb-brand-500/10 dark:text-sb-brand-400 dark:border-sb-brand-500/20"
                           >
                             PRIMARY
                           </Badge>
                         )}
                       </div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 font-mono">
+                      <p className="text-sm text-sb-ink-2 font-mono">
                         {maskLast4(extractLast4(account.phoneNumber))}
                       </p>
                     </div>
@@ -187,7 +187,7 @@ export default function LinkedAccounts() {
                           disabled={isPending}
                           variant="outline"
                           size="sm"
-                          className="border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#0C0F14] dark:text-white text-xs uppercase tracking-wide gap-1.5 disabled:opacity-50"
+                          className="border-sb-line bg-sb-surface-2 hover:bg-black/10 dark:hover:bg-white/10 text-sb-ink text-xs uppercase tracking-wide gap-1.5 disabled:opacity-50"
                         >
                           <RefreshCw className={`w-3.5 h-3.5 ${isPending ? "animate-spin" : ""}`} />
                           Switch payment
@@ -201,9 +201,9 @@ export default function LinkedAccounts() {
           </div>
         )}
 
-        <div className="mt-6 bg-white dark:bg-[#151A1F] rounded-2xl p-4">
-          <h3 className="text-[#0C0F14] dark:text-white font-semibold mb-2">Why link accounts?</h3>
-          <ul className="text-sm text-gray-500 dark:text-gray-400 space-y-1">
+        <div className="mt-6 bg-sb-surface rounded-2xl p-4">
+          <h3 className="text-sb-ink font-semibold mb-2">Why link accounts?</h3>
+          <ul className="text-sm text-sb-ink-2 space-y-1">
             <li>• Instant deposits from your mobile wallet</li>
             <li>• No routing or account numbers to remember</li>
             <li>• Switch your primary payment number anytime</li>
@@ -216,16 +216,16 @@ export default function LinkedAccounts() {
         open={!!accountPendingDelete}
         onOpenChange={(open) => !open && setAccountPendingDelete(null)}
       >
-        <AlertDialogContent className="bg-white dark:bg-[#151A1F] border-black/10 dark:border-white/10 text-[#0C0F14] dark:text-white">
+        <AlertDialogContent className="bg-sb-surface border-sb-line text-sb-ink">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-[#0C0F14] dark:text-white">
+            <AlertDialogTitle className="text-sb-ink">
               Remove this number?
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-500 dark:text-gray-400">
+            <AlertDialogDescription className="text-sb-ink-2">
               {accountPendingDelete && (
                 <>
                   This will remove{" "}
-                  <span className="text-[#0C0F14] dark:text-white font-medium">
+                  <span className="text-sb-ink font-medium">
                     {getNetworkLabel(accountPendingDelete.networkId)}{" "}
                     {maskLast4(extractLast4(accountPendingDelete.phoneNumber))}
                   </span>{" "}
@@ -235,7 +235,7 @@ export default function LinkedAccounts() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#0C0F14] dark:text-white">
+            <AlertDialogCancel className="border-sb-line bg-sb-surface-2 hover:bg-black/10 dark:hover:bg-white/10 text-sb-ink">
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction
