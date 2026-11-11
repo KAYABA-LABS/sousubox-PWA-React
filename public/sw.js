@@ -1,10 +1,12 @@
-const CACHE_NAME = "Sousubox-v3";
+const CACHE_NAME = "Sousubox-v4";
 const STATIC_ASSETS = [
   "/",
   "/dashboard",
+  "/plans",
   "/pools",
   "/invest",
   "/profile",
+  "/settings",
   "/manifest.json",
 ];
 
