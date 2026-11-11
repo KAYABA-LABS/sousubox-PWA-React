@@ -66,26 +66,26 @@ function TransferAmountContent() {
 
   if (!transferData) {
     return (
-      <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center">
-        <p className="text-gray-500 dark:text-gray-400">Loading...</p>
+      <div className="min-h-screen bg-sb-canvas flex items-center justify-center">
+        <p className="text-sb-ink-2">Loading...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col">
+    <div className="min-h-screen bg-sb-canvas flex flex-col">
       {/* Header */}
-      <header className="bg-[#FBF6EF] dark:bg-[#0C0F14] px-5 pt-6 pb-4 border-b border-black/5 dark:border-white/5">
+      <header className="bg-sb-canvas px-5 pt-6 pb-4 border-b border-sb-line">
         <div className="flex items-center gap-4 mb-2">
           <button
             onClick={() => router.back()}
-            className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 flex items-center justify-center transition-colors"
+            className="w-10 h-10 rounded-full bg-sb-surface-2 hover:bg-black/10 dark:hover:bg-white/10 flex items-center justify-center transition-colors"
           >
-            <ArrowLeft className="w-5 h-5 text-[#0C0F14] dark:text-white" strokeWidth={2} />
+            <ArrowLeft className="w-5 h-5 text-sb-ink" strokeWidth={2} />
           </button>
           <div>
-            <h1 className="text-xl font-semibold text-[#0C0F14] dark:text-white">Transfer</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Enter amount</p>
+            <h1 className="text-xl font-semibold text-sb-ink">Transfer</h1>
+            <p className="text-sm text-sb-ink-2">Enter amount</p>
           </div>
         </div>
       </header>
@@ -97,23 +97,23 @@ function TransferAmountContent() {
           className="space-y-6 flex-1"
         >
           {/* Transfer Direction Card */}
-          <div className="bg-white dark:bg-[#151A1F] rounded-xl p-4 space-y-3">
+          <div className="bg-sb-surface rounded-xl p-4 space-y-3">
             <div>
-              <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">From</p>
-              <p className="text-[#0C0F14] dark:text-white font-medium">
+              <p className="text-xs text-sb-ink-3 mb-1">From</p>
+              <p className="text-sb-ink font-medium">
                 {transferData?.fromAccount?.name ?? ""}
               </p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-sb-ink-2">
                 {transferData?.fromAccount?.account ?? ""}
               </p>
             </div>
             <div className="h-px bg-black/10 dark:bg-white/10" />
             <div>
-              <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">To</p>
-              <p className="text-[#0C0F14] dark:text-white font-medium">
+              <p className="text-xs text-sb-ink-3 mb-1">To</p>
+              <p className="text-sb-ink font-medium">
                 {transferData?.toAccount?.name ?? ""}
               </p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-sb-ink-2">
                 {transferData?.toAccount?.account ?? ""}
               </p>
             </div>
@@ -123,7 +123,7 @@ function TransferAmountContent() {
           <div className="py-8">
             <div className="text-center">
               <div className="flex items-start justify-center gap-2">
-                <span className="text-4xl font-light text-gray-500 dark:text-gray-400 mt-2">
+                <span className="text-4xl font-light text-sb-ink-2 mt-2">
                   $
                 </span>
                 <input
@@ -133,7 +133,7 @@ function TransferAmountContent() {
                   onChange={(e) =>
                     handleAmountChange(e.target.value.replace(/[^0-9]/g, ""))
                   }
-                  className="text-6xl font-bold text-[#0C0F14] dark:text-white bg-transparent border-none outline-none text-center w-auto min-w-50"
+                  className="text-6xl font-bold text-sb-ink bg-transparent border-none outline-none text-center w-auto min-w-50"
                   placeholder="0.00"
                   autoFocus
                 />
@@ -146,7 +146,7 @@ function TransferAmountContent() {
                 <button
                   key={quickAmount}
                   onClick={() => setAmount((quickAmount * 100).toString())}
-                  className="px-4 py-2 bg-white dark:bg-[#151A1F] hover:bg-gray-50 dark:hover:bg-[#1A1F25] text-gray-600 dark:text-gray-300 rounded-lg text-sm font-medium transition-colors"
+                  className="px-4 py-2 bg-sb-surface hover:bg-gray-50 dark:hover:bg-sb-surface-2 text-sb-ink-2 rounded-lg text-sm font-medium transition-colors"
                 >
                   ${quickAmount}
                 </button>
@@ -154,7 +154,7 @@ function TransferAmountContent() {
             </div>
 
             {/* Balance Hint */}
-            <p className="text-center text-sm text-gray-400 dark:text-gray-500 mt-4">
+            <p className="text-center text-sm text-sb-ink-3 mt-4">
               Available: $
               {availableBalance.toLocaleString("en-US", {
                 minimumFractionDigits: 2,
@@ -184,7 +184,7 @@ function TransferAmountContent() {
         <button
           onClick={handleReview}
           disabled={!canContinue}
-          className="w-full bg-[#0D4F3C] hover:bg-[#156B53] disabled:bg-black/10 dark:disabled:bg-white/10 disabled:text-gray-400 dark:disabled:text-gray-500 text-white font-semibold py-4 rounded-xl transition-colors disabled:cursor-not-allowed"
+          className="w-full bg-sb-brand-800 hover:bg-sb-brand-700 disabled:bg-black/10 dark:disabled:bg-white/10 disabled:text-gray-400 dark:disabled:text-gray-500 text-white font-semibold py-4 rounded-xl transition-colors disabled:cursor-not-allowed"
         >
           Review transfer
         </button>
@@ -197,8 +197,8 @@ export default function TransferAmountPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center">
-          <div className="w-8 h-8 border-2 border-[#0D4F3C] dark:border-[#156B53] border-t-transparent rounded-full animate-spin" />
+        <div className="min-h-screen bg-sb-canvas flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-sb-brand-600 border-t-transparent rounded-full animate-spin" />
         </div>
       }
     >

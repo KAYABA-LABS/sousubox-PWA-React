@@ -165,19 +165,19 @@ function WithdrawAmountContent() {
 
   if (isLoadingSource) {
     return (
-      <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-[#0D4F3C] dark:text-[#156B53]" />
+      <div className="min-h-screen bg-sb-canvas flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-sb-brand-600" />
       </div>
     );
   }
 
   if (notFound || !fundingSource) {
     return (
-      <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col items-center justify-center gap-4 px-5 text-center">
-        <p className="text-[#0C0F14] dark:text-white font-medium">
+      <div className="min-h-screen bg-sb-canvas flex flex-col items-center justify-center gap-4 px-5 text-center">
+        <p className="text-sb-ink font-medium">
           We couldn&apos;t find that withdrawal destination.
         </p>
-        <Button onClick={() => router.push("/withdraw")} className="bg-[#0D4F3C] hover:bg-[#156B53] text-white">
+        <Button onClick={() => router.push("/withdraw")} className="bg-sb-brand-800 hover:bg-sb-brand-700 text-white">
           Choose a destination
         </Button>
       </div>
@@ -185,33 +185,33 @@ function WithdrawAmountContent() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] text-[#0C0F14] dark:text-white flex flex-col">
-      <header className="px-5 pt-6 pb-4 border-b border-black/5 dark:border-white/5">
+    <div className="min-h-screen bg-sb-canvas text-sb-ink flex flex-col">
+      <header className="px-5 pt-6 pb-4 border-b border-sb-line">
         <div className="flex items-center gap-4">
           <button
             onClick={() => router.back()}
-            className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 flex items-center justify-center transition-colors"
+            className="w-10 h-10 rounded-full bg-sb-surface-2 hover:bg-black/10 dark:hover:bg-white/10 flex items-center justify-center transition-colors"
             aria-label="Go back"
           >
             <ArrowLeft className="w-5 h-5" strokeWidth={2} />
           </button>
           <div>
             <h1 className="text-xl font-semibold">Withdraw</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Enter amount</p>
+            <p className="text-sm text-sb-ink-2">Enter amount</p>
           </div>
         </div>
       </header>
 
       <main className="flex-1 px-5 py-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-2xl mx-auto space-y-6">
-          <Card className="bg-white dark:bg-[#151A1F] border-black/5 dark:border-white/5">
+          <Card className="bg-sb-surface border-sb-line">
             <CardContent className="p-4 flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-[#0D4F3C]/10 flex items-center justify-center">
-                <Smartphone className="w-6 h-6 text-[#0D4F3C] dark:text-[#156B53]" strokeWidth={1.5} />
+              <div className="w-12 h-12 rounded-full bg-sb-brand-800/10 flex items-center justify-center">
+                <Smartphone className="w-6 h-6 text-sb-brand-600" strokeWidth={1.5} />
               </div>
               <div>
                 <p className="font-medium">{getNetworkLabel(fundingSource.networkId)}</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400 font-mono">
+                <p className="text-sm text-sb-ink-2 font-mono">
                   {maskLast4(extractLast4(fundingSource.phoneNumber))}
                 </p>
               </div>
@@ -231,7 +231,7 @@ function WithdrawAmountContent() {
                   autoFocus
                 />
               </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+              <p className="text-xs text-sb-ink-2 mt-2">
                 Available: GH₵ {availableBalance.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </p>
             </div>
@@ -240,7 +240,7 @@ function WithdrawAmountContent() {
                 <button
                   key={percentage}
                   onClick={() => handleQuickPercentage(percentage)}
-                  className="px-4 py-2 bg-white dark:bg-[#151A1F] hover:bg-gray-50 dark:hover:bg-[#1A1F25] text-gray-600 dark:text-gray-300 rounded-lg text-sm font-medium transition-colors"
+                  className="px-4 py-2 bg-sb-surface hover:bg-gray-50 dark:hover:bg-sb-surface-2 text-sb-ink-2 rounded-lg text-sm font-medium transition-colors"
                 >
                   {percentage === 100 ? "Max" : `${percentage}%`}
                 </button>
@@ -267,7 +267,7 @@ function WithdrawAmountContent() {
           <Button
             onClick={() => setShowConfirm(true)}
             disabled={!canContinue}
-            className="w-full bg-[#0D4F3C] hover:bg-[#156B53] text-white py-6 rounded-xl"
+            className="w-full bg-sb-brand-800 hover:bg-sb-brand-700 text-white py-6 rounded-xl"
           >
             Review withdrawal
           </Button>
@@ -275,14 +275,14 @@ function WithdrawAmountContent() {
       </main>
 
       <AlertDialog open={showConfirm} onOpenChange={(open) => !isSubmitting && setShowConfirm(open)}>
-        <AlertDialogContent className="bg-white dark:bg-[#151A1F] border-black/10 dark:border-white/10 text-[#0C0F14] dark:text-white">
+        <AlertDialogContent className="bg-sb-surface border-sb-line text-sb-ink">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-[#0C0F14] dark:text-white">Confirm withdrawal</AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-500 dark:text-gray-400">
+            <AlertDialogTitle className="text-sb-ink">Confirm withdrawal</AlertDialogTitle>
+            <AlertDialogDescription className="text-sb-ink-2">
               You&apos;re about to withdraw{" "}
-              <span className="text-[#0C0F14] dark:text-white font-semibold">GH₵ {numericAmount.toFixed(2)}</span>{" "}
+              <span className="text-sb-ink font-semibold">GH₵ {numericAmount.toFixed(2)}</span>{" "}
               to{" "}
-              <span className="text-[#0C0F14] dark:text-white font-medium">
+              <span className="text-sb-ink font-medium">
                 {getNetworkLabel(fundingSource.networkId)} {maskLast4(extractLast4(fundingSource.phoneNumber))}
               </span>
               . This cannot be undone once processed.
@@ -291,7 +291,7 @@ function WithdrawAmountContent() {
           <AlertDialogFooter>
             <AlertDialogCancel
               disabled={isSubmitting}
-              className="border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#0C0F14] dark:text-white"
+              className="border-sb-line bg-sb-surface-2 hover:bg-black/10 dark:hover:bg-white/10 text-sb-ink"
             >
               Cancel
             </AlertDialogCancel>
@@ -301,7 +301,7 @@ function WithdrawAmountContent() {
                 handleConfirmWithdrawal();
               }}
               disabled={isSubmitting}
-              className="bg-[#0D4F3C] hover:bg-[#156B53] text-white"
+              className="bg-sb-brand-800 hover:bg-sb-brand-700 text-white"
             >
               {isSubmitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Processing...</> : "Confirm withdrawal"}
             </AlertDialogAction>
@@ -314,7 +314,7 @@ function WithdrawAmountContent() {
 
 export default function WithdrawAmountPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-[#0D4F3C]" /></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-sb-canvas flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-sb-brand-600" /></div>}>
       <WithdrawAmountContent />
     </Suspense>
   );

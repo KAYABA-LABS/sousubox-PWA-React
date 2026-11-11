@@ -296,19 +296,19 @@ function DepositAmountContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] text-[#0C0F14] dark:text-white flex flex-col">
-      <header className="px-5 pt-6 pb-4 border-b border-black/5 dark:border-white/5">
+    <div className="min-h-screen bg-sb-canvas text-sb-ink flex flex-col">
+      <header className="px-5 pt-6 pb-4 border-b border-sb-line">
         <div className="flex items-center gap-4">
           <button
             onClick={handleBack}
-            className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 flex items-center justify-center transition-colors"
+            className="w-10 h-10 rounded-full bg-sb-surface-2 hover:bg-black/10 dark:hover:bg-white/10 flex items-center justify-center transition-colors"
             aria-label="Go back"
           >
             <ArrowLeft className="w-5 h-5" strokeWidth={2} />
           </button>
           <div>
             <h1 className="text-xl font-semibold">Deposit</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-sb-ink-2">
               {step === "amount" ? "Enter amount" : "Instructions"}
             </p>
           </div>
@@ -317,14 +317,14 @@ function DepositAmountContent() {
 
       <main className="flex-1 px-5 py-6">
         <motion.div key={step} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-2xl mx-auto space-y-6">
-          <Card className="bg-white dark:bg-[#151A1F] border-black/5 dark:border-white/5">
+          <Card className="bg-sb-surface border-sb-line">
             <CardContent className="p-4 flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-[#0D4F3C]/10 flex items-center justify-center">
-                <Icon className="w-6 h-6 text-[#0D4F3C] dark:text-[#156B53]" strokeWidth={1.5} />
+              <div className="w-12 h-12 rounded-full bg-sb-brand-800/10 flex items-center justify-center">
+                <Icon className="w-6 h-6 text-sb-brand-600" strokeWidth={1.5} />
               </div>
               <div>
                 <p className="font-medium">{method.name}</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Deposit method</p>
+                <p className="text-sm text-sb-ink-2">Deposit method</p>
               </div>
             </CardContent>
           </Card>
@@ -347,7 +347,7 @@ function DepositAmountContent() {
                 </div>
                 <div className="flex gap-2 justify-center mt-6">
                   {[20, 50, 100, 250, 500].map((quickAmount) => (
-                    <button key={quickAmount} onClick={() => setAmount((quickAmount * 100).toString())} className="px-4 py-2 bg-white dark:bg-[#151A1F] hover:bg-gray-50 dark:hover:bg-[#1A1F25] text-gray-600 dark:text-gray-300 rounded-lg text-sm font-medium transition-colors">
+                    <button key={quickAmount} onClick={() => setAmount((quickAmount * 100).toString())} className="px-4 py-2 bg-sb-surface hover:bg-gray-50 dark:hover:bg-sb-surface-2 text-sb-ink-2 rounded-lg text-sm font-medium transition-colors">
                       ₵ {quickAmount}
                     </button>
                   ))}
@@ -363,7 +363,7 @@ function DepositAmountContent() {
               )}
 
               {meetsMinimum && (
-                <Alert className="bg-[#0D4F3C]/10 border-[#0D4F3C]/20">
+                <Alert className="bg-sb-brand-800/10 border-sb-brand-600/20">
                   <Check className="w-4 h-4" />
                   <AlertDescription>This deposit will unlock withdrawal functionality.</AlertDescription>
                 </Alert>
@@ -377,13 +377,13 @@ function DepositAmountContent() {
                 </Alert>
               )}
 
-              <Button onClick={handleContinue} disabled={!canContinue || isLoadingFundingSource} className="w-full bg-[#0D4F3C] hover:bg-[#156B53] text-white py-6 rounded-xl">
+              <Button onClick={handleContinue} disabled={!canContinue || isLoadingFundingSource} className="w-full bg-sb-brand-800 hover:bg-sb-brand-700 text-white py-6 rounded-xl">
                 {isLoadingFundingSource ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Loading payment account...</> : "Continue"}
               </Button>
             </>
           ) : (
             <>
-              <Card className="bg-white dark:bg-[#151A1F] border-black/5 dark:border-white/5">
+              <Card className="bg-sb-surface border-sb-line">
                 <CardHeader className="text-center">
                   <CardDescription>Deposit amount</CardDescription>
                   <CardTitle className="text-4xl">GH₵ {numericAmount.toFixed(2)}</CardTitle>
@@ -399,23 +399,23 @@ function DepositAmountContent() {
               )}
 
               {isMomo ? (
-                <Card className="bg-white dark:bg-[#151A1F] border-black/5 dark:border-white/5">
+                <Card className="bg-sb-surface border-sb-line">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2"><Smartphone className="w-5 h-5" />Payment account</CardTitle>
                     <CardDescription>Your active mobile money account will be charged.</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {fundingSource && (
-                      <div className="rounded-xl bg-black/5 dark:bg-white/5 p-4 flex items-center gap-3">
+                      <div className="rounded-xl bg-sb-surface-2 p-4 flex items-center gap-3">
                         <Smartphone className="w-5 h-5 text-gray-500" />
                         <div>
                           <p className="font-medium">{getNetworkLabel(fundingSource.networkId)}</p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400 font-mono">{maskLast4(extractLast4(fundingSource.phoneNumber))}</p>
+                          <p className="text-sm text-sb-ink-2 font-mono">{maskLast4(extractLast4(fundingSource.phoneNumber))}</p>
                         </div>
                       </div>
                     )}
                     {momoPhase === "idle" && (
-                      <Button onClick={handleMomoPayment} disabled={isSubmitting || !fundingSource} className="w-full bg-[#0D4F3C] hover:bg-[#156B53] text-white py-6 rounded-xl">
+                      <Button onClick={handleMomoPayment} disabled={isSubmitting || !fundingSource} className="w-full bg-sb-brand-800 hover:bg-sb-brand-700 text-white py-6 rounded-xl">
                         {isSubmitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Initiating secure charge...</> : "Authorize payment"}
                       </Button>
                     )}
@@ -443,11 +443,11 @@ function DepositAmountContent() {
                             value={otp}
                             onChange={(event) => setOtp(event.target.value.replace(/[^0-9]/g, "").slice(0, 6))}
                             disabled={isSubmitting}
-                            className="w-full rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 px-4 py-4 text-center text-2xl font-mono tracking-[0.5em] outline-none focus:border-[#0D4F3C] dark:focus:border-[#156B53]"
+                            className="w-full rounded-xl bg-sb-surface-2 border border-sb-line px-4 py-4 text-center text-2xl font-mono tracking-[0.5em] outline-none focus:border-sb-brand-600"
                             placeholder="••••••"
                           />
                         </div>
-                        <Button type="submit" disabled={isSubmitting || otp.length !== 6} className="w-full bg-[#0D4F3C] hover:bg-[#156B53] text-white py-6 rounded-xl">
+                        <Button type="submit" disabled={isSubmitting || otp.length !== 6} className="w-full bg-sb-brand-800 hover:bg-sb-brand-700 text-white py-6 rounded-xl">
                           {isSubmitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Verifying...</> : "Confirm"}
                         </Button>
                       </motion.form>
@@ -458,14 +458,14 @@ function DepositAmountContent() {
                         key="momo-waiting"
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="rounded-xl border border-[#0D4F3C]/20 bg-[#0D4F3C]/5 dark:bg-[#156B53]/10 p-5 flex items-start gap-3"
+                        className="rounded-xl border border-sb-brand-600/20 bg-sb-brand-800/5 dark:bg-sb-brand-700/10 p-5 flex items-start gap-3"
                         role="status"
                         aria-live="polite"
                       >
-                        <Loader2 className="w-5 h-5 mt-0.5 shrink-0 animate-spin text-[#0D4F3C] dark:text-[#156B53]" />
+                        <Loader2 className="w-5 h-5 mt-0.5 shrink-0 animate-spin text-sb-brand-600" />
                         <div className="space-y-1">
                           <p className="font-medium">Approve the prompt on your phone</p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                          <p className="text-sm text-sb-ink-2">
                             {waitingText || "We've sent a payment request to your mobile money wallet. Approve it to complete your deposit."}
                           </p>
                         </div>
@@ -475,10 +475,10 @@ function DepositAmountContent() {
                 </Card>
               ) : (
                 <div className="space-y-4">
-                  <Card className="bg-white dark:bg-[#151A1F] border-black/5 dark:border-white/5">
+                  <Card className="bg-sb-surface border-sb-line">
                     <CardContent className="p-5 space-y-3">
                       <h2 className="font-semibold">Copy memo / reference code</h2>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Include this code in your bank transfer description.</p>
+                      <p className="text-sm text-sb-ink-2">Include this code in your bank transfer description.</p>
                       <Button variant="outline" onClick={() => handleCopy("reference", referenceCode)} className="w-full justify-between font-mono">
                         {referenceCode}
                         {copiedField === "reference" ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
@@ -486,11 +486,11 @@ function DepositAmountContent() {
                     </CardContent>
                   </Card>
 
-                  <Card className="bg-white dark:bg-[#151A1F] border-black/5 dark:border-white/5">
+                  <Card className="bg-sb-surface border-sb-line">
                     <CardContent className="p-5 space-y-3">
                       <h2 className="font-semibold">Transfer to the settlement account</h2>
                       {Object.entries(accountDetails).map(([key, value]) => (
-                        <button key={key} onClick={() => handleCopy(key, value)} className="w-full rounded-xl bg-black/5 dark:bg-white/5 p-4 flex items-center justify-between text-left">
+                        <button key={key} onClick={() => handleCopy(key, value)} className="w-full rounded-xl bg-sb-surface-2 p-4 flex items-center justify-between text-left">
                           <div>
                             <p className="text-xs uppercase text-gray-500">{key}</p>
                             <p className="font-medium mt-1">{value}</p>
@@ -498,7 +498,7 @@ function DepositAmountContent() {
                           {copiedField === key ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4 text-gray-500" />}
                         </button>
                       ))}
-                      <Button onClick={handleCompleteBankDeposit} className="w-full bg-[#0D4F3C] hover:bg-[#156B53] text-white py-6 rounded-xl">I&apos;ve completed the deposit</Button>
+                      <Button onClick={handleCompleteBankDeposit} className="w-full bg-sb-brand-800 hover:bg-sb-brand-700 text-white py-6 rounded-xl">I&apos;ve completed the deposit</Button>
                     </CardContent>
                   </Card>
                 </div>
@@ -513,7 +513,7 @@ function DepositAmountContent() {
 
 export default function DepositAmountPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-[#0D4F3C]" /></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-sb-canvas flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-sb-brand-600" /></div>}>
       <DepositAmountContent />
     </Suspense>
   );

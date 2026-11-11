@@ -43,8 +43,8 @@ function WithdrawStatusContent() {
 
   if (!withdrawalData) {
     return (
-      <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-[#0D4F3C] dark:text-[#156B53]" />
+      <div className="min-h-screen bg-sb-canvas flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-sb-brand-600" />
       </div>
     );
   }
@@ -53,9 +53,9 @@ function WithdrawStatusContent() {
   const isFailed = withdrawalData.status?.toLowerCase() === "failed";
 
   return (
-    <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] text-[#0C0F14] dark:text-white flex flex-col relative overflow-hidden">
+    <div className="min-h-screen bg-sb-canvas text-sb-ink flex flex-col relative overflow-hidden">
       {isSuccess ? (
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-emerald-500/5 blur-[120px] pointer-events-none" />
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-sb-brand-500/5 blur-[120px] pointer-events-none" />
       ) : (
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-amber-500/5 blur-[120px] pointer-events-none" />
       )}
@@ -70,8 +70,8 @@ function WithdrawStatusContent() {
           className="mb-6"
         >
           {isSuccess ? (
-            <div className="w-24 h-24 rounded-full bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center border border-emerald-300 dark:border-emerald-500/30">
-              <CheckCircle2 className="w-12 h-12 text-emerald-500 dark:text-emerald-400" strokeWidth={2} />
+            <div className="w-24 h-24 rounded-full bg-sb-tint dark:bg-sb-brand-500/20 flex items-center justify-center border border-sb-brand-300 dark:border-sb-brand-500/30">
+              <CheckCircle2 className="w-12 h-12 text-sb-brand-500 dark:text-sb-brand-400" strokeWidth={2} />
             </div>
           ) : isFailed ? (
             <div className="w-24 h-24 rounded-full bg-red-100 dark:bg-red-500/20 flex items-center justify-center border border-red-300 dark:border-red-500/30">
@@ -96,10 +96,10 @@ function WithdrawStatusContent() {
           transition={{ delay: 0.2 }}
           className="text-center mb-8"
         >
-          <h1 className="text-2xl font-bold tracking-tight text-[#0C0F14] dark:text-white mb-2">
+          <h1 className="text-2xl font-bold tracking-tight text-sb-ink mb-2">
             {isSuccess ? "Withdrawal Successful" : isFailed ? "Withdrawal Failed" : "Withdrawal Pending"}
           </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 px-4">
+          <p className="text-sm text-sb-ink-2 px-4">
             {isSuccess
               ? "Your funds are on their way to your mobile money account"
               : isFailed
@@ -115,17 +115,17 @@ function WithdrawStatusContent() {
           transition={{ delay: 0.3 }}
           className="w-full space-y-4"
         >
-          <Card className="bg-black/[0.02] dark:bg-white/[0.02] backdrop-blur-xl border border-black/[0.06] dark:border-white/[0.06] shadow-xl text-center relative overflow-hidden">
+          <Card className="bg-sb-surface-2 backdrop-blur-xl border border-sb-line shadow-xl text-center relative overflow-hidden">
             <CardHeader className="pb-4">
-              <CardDescription className="text-xs font-semibold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
+              <CardDescription className="text-xs font-semibold uppercase tracking-widest text-sb-brand-600 dark:text-sb-brand-400">
                 Amount
               </CardDescription>
-              <CardTitle className="text-4xl font-bold mt-1 text-[#0C0F14] dark:text-white tracking-tight">
+              <CardTitle className="text-4xl font-bold mt-1 text-sb-ink tracking-tight">
                 GH₵ {parseFloat(withdrawalData.amount).toFixed(2)}
               </CardTitle>
               {withdrawalData.networkLabel && (
                 <div className="mt-2 flex justify-center">
-                  <Badge variant="outline" className="text-xs border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 text-gray-600 dark:text-gray-300 rounded-md">
+                  <Badge variant="outline" className="text-xs border-sb-line bg-sb-surface-2 text-sb-ink-2 rounded-md">
                     {withdrawalData.networkLabel}
                   </Badge>
                 </div>
@@ -133,17 +133,17 @@ function WithdrawStatusContent() {
             </CardHeader>
           </Card>
 
-          <Card className="bg-black/[0.02] dark:bg-white/[0.02] backdrop-blur-xl border border-black/[0.06] dark:border-white/[0.06] divide-y divide-black/5 dark:divide-white/5 overflow-hidden">
+          <Card className="bg-sb-surface-2 backdrop-blur-xl border border-sb-line divide-y divide-black/5 dark:divide-white/5 overflow-hidden">
             <CardContent className="p-0">
               <div className="p-4 flex items-center justify-between text-sm">
-                <span className="text-gray-500 dark:text-gray-400">Reference code</span>
-                <span className="text-[#0C0F14] dark:text-white font-mono font-medium">{withdrawalData.referenceCode}</span>
+                <span className="text-sb-ink-2">Reference code</span>
+                <span className="text-sb-ink font-mono font-medium">{withdrawalData.referenceCode}</span>
               </div>
 
               <div className="p-4 flex items-center justify-between text-sm">
-                <span className="text-gray-500 dark:text-gray-400">Withdrawal status</span>
+                <span className="text-sb-ink-2">Withdrawal status</span>
                 {isSuccess ? (
-                  <Badge variant="outline" className="bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-semibold rounded-md">
+                  <Badge variant="outline" className="bg-sb-tint dark:bg-sb-brand-500/10 border-sb-tint-2 dark:border-sb-brand-500/20 text-sb-brand-600 dark:text-sb-brand-400 font-semibold rounded-md">
                     Success
                   </Badge>
                 ) : isFailed ? (
@@ -159,14 +159,14 @@ function WithdrawStatusContent() {
 
               {withdrawalData.phone && (
                 <div className="p-4 flex items-center justify-between text-sm">
-                  <span className="text-gray-500 dark:text-gray-400">Destination</span>
-                  <span className="text-[#0C0F14] dark:text-white font-mono">{withdrawalData.phone}</span>
+                  <span className="text-sb-ink-2">Destination</span>
+                  <span className="text-sb-ink font-mono">{withdrawalData.phone}</span>
                 </div>
               )}
 
               <div className="p-4 flex items-center justify-between text-sm">
-                <span className="text-gray-500 dark:text-gray-400">Processing speed</span>
-                <span className="text-[#0C0F14] dark:text-white font-medium">
+                <span className="text-sb-ink-2">Processing speed</span>
+                <span className="text-sb-ink font-medium">
                   {isSuccess ? "Completed" : "Typically within 24 hours"}
                 </span>
               </div>
@@ -184,10 +184,10 @@ function WithdrawStatusContent() {
           )}
 
           {!isSuccess && !isFailed && (
-            <Alert className="bg-emerald-50 dark:bg-emerald-500/[0.02] border-emerald-200 dark:border-emerald-500/20 text-emerald-700 dark:text-emerald-300 rounded-2xl p-5">
-              <Info className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+            <Alert className="bg-sb-tint dark:bg-sb-brand-500/[0.02] border-sb-tint-2 dark:border-sb-brand-500/20 text-sb-brand-700 dark:text-sb-brand-300 rounded-2xl p-5">
+              <Info className="w-5 h-5 text-sb-brand-600 dark:text-sb-brand-400" />
               <AlertTitle className="text-sm font-semibold">Next Steps</AlertTitle>
-              <AlertDescription className="text-xs leading-relaxed mt-1 text-gray-500 dark:text-gray-400">
+              <AlertDescription className="text-xs leading-relaxed mt-1 text-sb-ink-2">
                 <ul className="space-y-1.5 list-disc pl-3.5">
                   <li>Funds will be sent to your linked mobile money account.</li>
                   <li>You can track this withdrawal from your dashboard activity log.</li>
@@ -201,7 +201,7 @@ function WithdrawStatusContent() {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="w-full mt-8">
           <Button
             onClick={() => router.push("/dashboard")}
-            className="w-full bg-[#0D4F3C] hover:bg-[#156B53] text-white font-semibold py-6 rounded-xl transition-all duration-300 shadow-lg shadow-[#0D4F3C]/10 flex items-center justify-center gap-2"
+            className="w-full bg-sb-brand-800 hover:bg-sb-brand-700 text-white font-semibold py-6 rounded-xl transition-all duration-300 shadow-lg shadow-sb-brand-800/10 flex items-center justify-center gap-2"
           >
             Return to Dashboard
             <ArrowRight className="w-4 h-4" />
@@ -216,8 +216,8 @@ export default function WithdrawStatusPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center">
-          <Loader2 className="w-8 h-8 animate-spin text-[#0D4F3C] dark:text-[#156B53]" />
+        <div className="min-h-screen bg-sb-canvas flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-sb-brand-600" />
         </div>
       }
     >
