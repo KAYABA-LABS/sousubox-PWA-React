@@ -74,13 +74,13 @@ const FeatureCard = ({
       transition={{ duration: 0.5, delay: index * 0.1 }}
       style={{ gridArea: feature.gridArea }}
     >
-      <Card className="group relative bg-card border border-border rounded-2xl p-6 md:p-8 transition-all duration-300 hover:bg-emerald-50 hover:border-emerald-600/45 h-auto md:h-full">
+      <Card className="group relative bg-card border border-border rounded-2xl p-6 md:p-8 transition-all duration-300 hover:bg-sb-tint hover:border-sb-brand-600/45 h-auto md:h-full">
       {/* Hover glow */}
       <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
       <div className="relative h-full flex flex-col">
         <div className="mb-4">
-          <Icon className="w-8 h-8 text-emerald-600" />
+          <Icon className="w-8 h-8 text-sb-brand-600" />
         </div>
         {/* Title */}
         <h3 className="font-semibold text-lg md:text-xl text-foreground mb-3">
@@ -123,7 +123,7 @@ export const FeaturesSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center max-w-2xl mx-auto mb-16"
         >
-          <span className="inline-block text-xs font-medium text-primary mb-4 uppercase tracking-wider border-emerald-600 border px-3.5 py-1 rounded-full bg-emerald-500">
+          <span className="inline-block text-xs font-medium text-primary mb-4 uppercase tracking-wider border-sb-brand-600 border px-3.5 py-1 rounded-full bg-sb-brand-500">
             Features
           </span>
           <h2 className="text-3xl md:text-5xl text-foreground mb-4">

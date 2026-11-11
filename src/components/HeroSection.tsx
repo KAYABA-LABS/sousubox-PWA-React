@@ -44,8 +44,8 @@ export const HeroSection = () => {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="inline-flex items-center gap-2 mb-8"
           >
-            <Badge variant="outline" className="px-4 py-1.5 rounded-full border-[#0D4F3C]/20 bg-[#0D4F3C]/10 text-sm font-medium text-muted-foreground">
-              <Shield className="w-4 h-4 text-[#0D4F3C] mr-1.5" />
+            <Badge variant="outline" className="px-4 py-1.5 rounded-full border-sb-brand-600/20 bg-sb-brand-800/10 text-sm font-medium text-muted-foreground">
+              <Shield className="w-4 h-4 text-sb-brand-600 mr-1.5" />
               Invite-Only Access
             </Badge>
           </motion.div>
@@ -58,7 +58,7 @@ export const HeroSection = () => {
             className="text-5xl md:text-8xl md:text-display text-foreground mb-6"
           >
             Your Premium{" "}
-            <span className="bg-linear-to-r from-[#0D4F3C] to-[#156B53] bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-sb-brand-800 to-sb-brand-700 bg-clip-text text-transparent">
               Digital Account
             </span>
           </motion.h1>
@@ -85,7 +85,7 @@ export const HeroSection = () => {
               <Button
                 variant="hero"
                 size="xl"
-                className="w-full sm:w-auto cursor-pointer group border bg-[#0D4F3C] text-white font-semibold rounded-2xl"
+                className="w-full sm:w-auto cursor-pointer group border bg-sb-brand-800 text-white font-semibold rounded-2xl"
               >
                 Create Account
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -110,16 +110,16 @@ export const HeroSection = () => {
             className="flex flex-wrap items-center justify-center gap-6 mt-12 text-sm text-muted-foreground"
           >
             <div className="flex items-center gap-2">
-              <Shield className="w-4 h-4 text-[#0D4F3C]" />
+              <Shield className="w-4 h-4 text-sb-brand-600" />
               <span>Bank-Level Security</span>
             </div>
             <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4 text-[#0D4F3C]" />
+              <Zap className="w-4 h-4 text-sb-brand-600" />
               <span>Instant Deposits</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded-full bg-[#0D4F3C]/15 flex items-center justify-center">
-                <div className="w-2 h-2 rounded-full bg-[#0D4F3C]" />
+              <div className="w-4 h-4 rounded-full bg-sb-brand-800/15 flex items-center justify-center">
+                <div className="w-2 h-2 rounded-full bg-sb-brand-800" />
               </div>
               <span>Real-Time Balances</span>
             </div>
