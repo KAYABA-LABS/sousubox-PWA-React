@@ -149,16 +149,16 @@ export default function ScanPage() {
   // Camera Permission Denied
   if (cameraState === "denied") {
     return (
-      <main id="main-content" role="main" className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col">
+      <main id="main-content" role="main" className="min-h-screen bg-sb-canvas flex flex-col">
         <header role="banner" className="px-5 pt-6 pb-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-lg font-semibold text-[#0C0F14] dark:text-white">Scan</h1>
+            <h1 className="text-lg font-semibold text-sb-ink">Scan</h1>
             <button
               onClick={handleClose}
-              className="w-10 h-10 rounded-xl bg-white dark:bg-[#151A1F] hover:bg-gray-50 dark:hover:bg-[#1A1F25] flex items-center justify-center transition-colors"
+              className="w-10 h-10 rounded-xl bg-sb-surface hover:bg-gray-50 dark:hover:bg-sb-surface-2 flex items-center justify-center transition-colors"
               aria-label="Close"
             >
-              <X className="w-5 h-5 text-[#0C0F14] dark:text-white" strokeWidth={2} />
+              <X className="w-5 h-5 text-sb-ink" strokeWidth={2} />
             </button>
           </div>
         </header>
@@ -180,7 +180,7 @@ export default function ScanPage() {
 
   // Active Camera State
   return (
-    <main id="main-content" role="main" className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] relative overflow-hidden">
+    <main id="main-content" role="main" className="min-h-screen bg-sb-canvas relative overflow-hidden">
       {/* Video Background */}
       <video
         ref={videoRef}
@@ -224,17 +224,17 @@ export default function ScanPage() {
       >
         <div className="relative w-64 h-64">
           {/* Corner Indicators */}
-          <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-[#0D4F3C] dark:border-[#156B53] rounded-tl-2xl" />
-          <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-[#0D4F3C] dark:border-[#156B53] rounded-tr-2xl" />
-          <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-[#0D4F3C] dark:border-[#156B53] rounded-bl-2xl" />
-          <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-[#0D4F3C] dark:border-[#156B53] rounded-br-2xl" />
+          <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-sb-brand-600 rounded-tl-2xl" />
+          <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-sb-brand-600 rounded-tr-2xl" />
+          <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-sb-brand-600 rounded-bl-2xl" />
+          <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-sb-brand-600 rounded-br-2xl" />
 
           {/* Scanning Animation */}
           {isScanning && (
             <motion.div
               animate={{ y: [0, 256, 0] }}
               transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
-              className="absolute left-0 right-0 h-1 bg-[#0D4F3C] opacity-50"
+              className="absolute left-0 right-0 h-1 bg-sb-brand-800 opacity-50"
             />
           )}
         </div>
@@ -275,7 +275,7 @@ export default function ScanPage() {
             onClick={handleToggleFlash}
             className={`flex flex-col items-center gap-2 px-6 py-3 rounded-2xl transition-all ${
               flashEnabled
-                ? "bg-[#0D4F3C]/20 dark:bg-[#156B53]/20 text-[#0D4F3C] dark:text-[#156B53]"
+                ? "bg-sb-brand-800/20 dark:bg-sb-brand-700/20 text-sb-brand-600"
                 : "bg-black/30 hover:bg-black/40 dark:bg-[#1C2128] dark:hover:bg-[#252B35] text-white"
             }`}
           >

@@ -40,8 +40,8 @@ function PayConfirmContent() {
 
   if (!paymentData) {
     return (
-      <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center">
-        <p className="text-gray-500 dark:text-gray-400">Loading...</p>
+      <div className="min-h-screen bg-sb-canvas flex items-center justify-center">
+        <p className="text-sb-ink-2">Loading...</p>
       </div>
     );
   }
@@ -58,20 +58,20 @@ function PayConfirmContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col">
+    <div className="min-h-screen bg-sb-canvas flex flex-col">
       {/* Header */}
-      <header className="bg-[#FBF6EF] dark:bg-[#0C0F14] px-5 pt-6 pb-4 border-b border-black/5 dark:border-white/5">
+      <header className="bg-sb-canvas px-5 pt-6 pb-4 border-b border-sb-line">
         <div className="flex items-center gap-4 mb-2">
           <button
             onClick={() => router.back()}
             disabled={isProcessing}
-            className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 disabled:opacity-50 flex items-center justify-center transition-colors"
+            className="w-10 h-10 rounded-full bg-sb-surface-2 hover:bg-black/10 dark:hover:bg-white/10 disabled:opacity-50 flex items-center justify-center transition-colors"
           >
-            <ArrowLeft className="w-5 h-5 text-[#0C0F14] dark:text-white" strokeWidth={2} />
+            <ArrowLeft className="w-5 h-5 text-sb-ink" strokeWidth={2} />
           </button>
           <div>
-            <h1 className="text-xl font-semibold text-[#0C0F14] dark:text-white">Confirm</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Review payment details</p>
+            <h1 className="text-xl font-semibold text-sb-ink">Confirm</h1>
+            <p className="text-sm text-sb-ink-2">Review payment details</p>
           </div>
         </div>
       </header>
@@ -93,44 +93,44 @@ function PayConfirmContent() {
           )}
 
           {/* Amount Summary */}
-          <div className="bg-white dark:bg-[#151A1F] rounded-xl p-6 text-center">
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">You&apos;re paying</p>
-            <p className="text-5xl font-bold text-[#0C0F14] dark:text-white mb-1">
+          <div className="bg-sb-surface rounded-xl p-6 text-center">
+            <p className="text-sm text-sb-ink-2 mb-2">You&apos;re paying</p>
+            <p className="text-5xl font-bold text-sb-ink mb-1">
               ${parseFloat(paymentData.amount).toFixed(2)}
             </p>
           </div>
 
           {/* Payment Details */}
-          <div className="bg-white dark:bg-[#151A1F] rounded-xl divide-y divide-black/5 dark:divide-white/5">
+          <div className="bg-sb-surface rounded-xl divide-y divide-black/5 dark:divide-white/5">
             {/* Biller */}
             <div className="p-4">
-              <p className="text-sm text-gray-400 dark:text-gray-500 mb-2">To</p>
+              <p className="text-sm text-sb-ink-3 mb-2">To</p>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#0D4F3C]/10 dark:bg-[#156B53]/10 flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-full bg-sb-brand-800/10 dark:bg-sb-brand-700/10 flex items-center justify-center shrink-0">
                   <span className="text-xl">{paymentData.biller.logo}</span>
                 </div>
                 <div className="flex-1">
-                  <p className="text-[#0C0F14] dark:text-white font-medium">
+                  <p className="text-sb-ink font-medium">
                     {paymentData.biller.name}
                   </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Bill payment</p>
+                  <p className="text-sm text-sb-ink-2">Bill payment</p>
                 </div>
               </div>
             </div>
 
             {/* From Account */}
             <div className="p-4">
-              <p className="text-xs text-gray-400 dark:text-gray-500 mb-2">From</p>
+              <p className="text-xs text-sb-ink-3 mb-2">From</p>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-[#0C0F14] dark:text-white font-medium">
+                  <p className="text-sb-ink font-medium">
                     {paymentData.fromAccount.name}
                   </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-sm text-sb-ink-2">
                     {paymentData.fromAccount.account}
                   </p>
                 </div>
-                <p className="text-[#0C0F14] dark:text-white font-medium">
+                <p className="text-sb-ink font-medium">
                   ${paymentData.fromAccount.balance.toFixed(2)}
                 </p>
               </div>
@@ -138,8 +138,8 @@ function PayConfirmContent() {
 
             {/* Payment Date */}
             <div className="p-4 flex items-center justify-between">
-              <p className="text-sm text-gray-500 dark:text-gray-400">Payment date</p>
-              <p className="text-[#0C0F14] dark:text-white font-medium">
+              <p className="text-sm text-sb-ink-2">Payment date</p>
+              <p className="text-sb-ink font-medium">
                 {paymentData.timing === "now"
                   ? "Today"
                   : formatDate(paymentData.scheduledDate)}
@@ -148,15 +148,15 @@ function PayConfirmContent() {
 
             {/* Fee */}
             <div className="p-4 flex items-center justify-between">
-              <p className="text-sm text-gray-500 dark:text-gray-400">Processing fee</p>
-              <p className="text-[#0C0F14] dark:text-white font-medium">${fee.toFixed(2)}</p>
+              <p className="text-sm text-sb-ink-2">Processing fee</p>
+              <p className="text-sb-ink font-medium">${fee.toFixed(2)}</p>
             </div>
 
             {/* Note */}
             {paymentData.note && (
               <div className="p-4">
-                <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">Note</p>
-                <p className="text-[#0C0F14] dark:text-white">{paymentData.note}</p>
+                <p className="text-xs text-sb-ink-3 mb-1">Note</p>
+                <p className="text-sb-ink">{paymentData.note}</p>
               </div>
             )}
           </div>
@@ -183,7 +183,7 @@ function PayConfirmContent() {
           <button
             onClick={() => router.back()}
             disabled={isProcessing}
-            className="w-full bg-transparent border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 disabled:opacity-50 text-[#0C0F14] dark:text-white font-medium py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
+            className="w-full bg-transparent border border-sb-line hover:bg-black/5 dark:hover:bg-white/5 disabled:opacity-50 text-sb-ink font-medium py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
           >
             <span>Edit payment</span>
             <ChevronRight className="w-4 h-4" />
@@ -196,7 +196,7 @@ function PayConfirmContent() {
         <button
           onClick={handlePay}
           disabled={isProcessing}
-          className="w-full bg-[#0D4F3C] hover:bg-[#156B53] disabled:bg-black/10 dark:disabled:bg-white/10 disabled:text-gray-400 dark:disabled:text-gray-500 text-white font-semibold py-4 rounded-xl transition-colors disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="w-full bg-sb-brand-800 hover:bg-sb-brand-700 disabled:bg-black/10 dark:disabled:bg-white/10 disabled:text-gray-400 dark:disabled:text-gray-500 text-white font-semibold py-4 rounded-xl transition-colors disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           {isProcessing ? (
             <>
@@ -216,8 +216,8 @@ export default function PayConfirmPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center">
-          <div className="w-8 h-8 border-2 border-[#0D4F3C] dark:border-[#156B53] border-t-transparent rounded-full animate-spin" />
+        <div className="min-h-screen bg-sb-canvas flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-sb-brand-600 border-t-transparent rounded-full animate-spin" />
         </div>
       }
     >

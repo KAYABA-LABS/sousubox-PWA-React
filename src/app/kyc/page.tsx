@@ -57,9 +57,9 @@ const STATUS_CONFIG: Record<
   VERIFIED: {
     label: "Verified Profile",
     icon: CheckCircle,
-    colorClass: "text-[#0D4F3C] dark:text-[#156B53]",
+    colorClass: "text-sb-brand-600",
     glowClass: "shadow-[0_0_30px_rgba(13,79,60,0.2)]",
-    bgClass: "bg-emerald-50 border-[#0D4F3C]/30 dark:border-[#156B53]/30 dark:bg-emerald-950/25 dark:border-[#156B53]/30",
+    bgClass: "bg-sb-tint border-sb-brand-600/30 dark:bg-sb-brand-950/25 dark:border-sb-brand-600/30",
     description: "Your identity has been fully verified. You now have unrestricted access to all services.",
   },
   REJECTED: {
@@ -82,9 +82,9 @@ const STATUS_CONFIG: Record<
 
 function KycLoadingSpinner() {
   return (
-    <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col items-center justify-center relative overflow-hidden">
+    <div className="min-h-screen bg-sb-canvas flex flex-col items-center justify-center relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(13,79,60,0.08),transparent_60%)]" />
-      <Loader2 className="w-10 h-10 animate-spin text-[#0D4F3C] dark:text-[#156B53] z-10" />
+      <Loader2 className="w-10 h-10 animate-spin text-sb-brand-600 z-10" />
       <span className="text-zinc-500 dark:text-zinc-400 text-sm mt-4 font-medium animate-pulse z-10">Loading KYC Details...</span>
     </div>
   );
@@ -209,12 +209,12 @@ function KycPageContent() {
       <main
         id="main-content"
         role="main"
-        className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] text-[#0C0F14] dark:text-white flex flex-col relative overflow-hidden pb-24"
+        className="min-h-screen bg-sb-canvas text-sb-ink flex flex-col relative overflow-hidden pb-24"
       >
         {/* Background glow effects */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(13,79,60,0.08),transparent_60%)]" />
-        <div className="absolute -top-40 -left-40 w-96 h-96 bg-[#0D4F3C]/5 dark:bg-[#156B53]/5 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute top-1/2 -right-40 w-96 h-96 bg-[#0D4F3C]/3 dark:bg-[#156B53]/3 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute -top-40 -left-40 w-96 h-96 bg-sb-brand-800/5 dark:bg-sb-brand-700/5 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute top-1/2 -right-40 w-96 h-96 bg-sb-brand-800/3 dark:bg-sb-brand-700/3 rounded-full blur-[120px] pointer-events-none" />
 
         {/* Header */}
         <motion.header
@@ -222,7 +222,7 @@ function KycPageContent() {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="px-6 pt-8 pb-6 border-b border-black/[0.05] dark:border-white/[0.05] bg-[#FBF6EF]/80 dark:bg-[#0C0F14]/80 backdrop-blur-md sticky top-0 z-20"
+        className="px-6 pt-8 pb-6 border-b border-sb-line bg-sb-canvas/80 backdrop-blur-md sticky top-0 z-20"
       >
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -230,20 +230,20 @@ function KycPageContent() {
               onClick={() => router.back()}
               variant="outline"
               size="icon"
-              className="w-10 h-10 rounded-xl border-black/[0.08] dark:border-white/[0.08] bg-black/[0.02] dark:bg-white/[0.02] hover:bg-black/[0.08] dark:hover:bg-white/[0.08] hover:text-[#0C0F14] dark:hover:text-white text-zinc-500 dark:text-zinc-400 transition-all flex items-center justify-center cursor-pointer"
+              className="w-10 h-10 rounded-xl border-sb-line bg-sb-surface-2 hover:bg-black/[0.08] dark:hover:bg-white/[0.08] hover:text-sb-ink dark:hover:text-white text-zinc-500 dark:text-zinc-400 transition-all flex items-center justify-center cursor-pointer"
               aria-label="Go back"
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
             <div>
-              <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-[#0C0F14] via-zinc-700 to-zinc-500 dark:from-white dark:via-zinc-200 dark:to-zinc-400 bg-clip-text text-transparent">
+              <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-sb-ink via-zinc-700 to-zinc-500 dark:from-white dark:via-zinc-200 dark:to-zinc-400 bg-clip-text text-transparent">
                 Identity Verification
               </h1>
               <p className="text-xs text-zinc-400 dark:text-zinc-500">KYC Compliance Center</p>
             </div>
           </div>
           {kycData?.level && (
-            <Badge className="bg-[#0D4F3C]/10 dark:bg-[#156B53]/10 text-[#0D4F3C] dark:text-[#156B53] border border-[#0D4F3C]/20 dark:border-[#156B53]/20 font-medium px-3 py-1 rounded-full">
+            <Badge className="bg-sb-brand-800/10 dark:bg-sb-brand-700/10 text-sb-brand-600 border border-sb-brand-600/20 font-medium px-3 py-1 rounded-full">
               Tier Level: {kycData.level}
             </Badge>
           )}
@@ -263,11 +263,11 @@ function KycPageContent() {
             {/* Status Card */}
             <Card className={`backdrop-blur-xl border transition-all duration-300 ${config.bgClass} ${config.glowClass}`}>
               <CardHeader className="text-center pt-8 pb-4">
-                <div className="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center bg-black/[0.02] dark:bg-white/[0.02] border border-black/[0.05] dark:border-white/[0.05] relative">
-                  <div className="absolute inset-0 rounded-full animate-ping bg-current opacity-5 pointer-events-none text-[#0C0F14] dark:text-white" />
+                <div className="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center bg-sb-surface-2 border border-sb-line relative">
+                  <div className="absolute inset-0 rounded-full animate-ping bg-current opacity-5 pointer-events-none text-sb-ink" />
                   <StatusIcon className={`w-10 h-10 ${config.colorClass}`} />
                 </div>
-                <CardTitle className="text-2xl font-extrabold tracking-tight text-[#0C0F14] dark:text-white mt-2">
+                <CardTitle className="text-2xl font-extrabold tracking-tight text-sb-ink mt-2">
                   {config.label}
                 </CardTitle>
                 <CardDescription className="text-zinc-500 dark:text-zinc-400 text-sm max-w-md mx-auto mt-2">
@@ -277,15 +277,15 @@ function KycPageContent() {
 
               <CardContent className="px-6 pb-8 flex flex-col items-center">
                 {status === "VERIFIED" && (
-                  <div className="w-full max-w-sm mt-4 p-4 rounded-xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/[0.06] dark:border-white/[0.06] text-center">
+                  <div className="w-full max-w-sm mt-4 p-4 rounded-xl bg-sb-surface-2 border border-sb-line text-center">
                     <span className="text-xs text-zinc-400 dark:text-zinc-500 uppercase tracking-widest block mb-1">Reputation Tier</span>
-                    <span className="text-lg font-bold text-[#0C0F14] dark:text-white tracking-wide">Elite Member status unlocked</span>
+                    <span className="text-lg font-bold text-sb-ink tracking-wide">Elite Member status unlocked</span>
                   </div>
                 )}
 
                 {status === "PENDING" || status === "UNDER_REVIEW" ? (
                   <div className="w-full flex flex-col items-center gap-3 mt-4 text-center">
-                    <div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400 text-sm bg-black/[0.02] dark:bg-white/[0.02] px-4 py-2.5 rounded-full border border-black/[0.05] dark:border-white/[0.05]">
+                    <div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400 text-sm bg-sb-surface-2 px-4 py-2.5 rounded-full border border-sb-line">
                       <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 animate-pulse" />
                       <span>Please keep this page bookmarked for updates</span>
                     </div>
@@ -296,7 +296,7 @@ function KycPageContent() {
                   <Button
                     onClick={handleStartVerification}
                     disabled={isCreating}
-                    className="w-full max-w-md mt-6 py-6 bg-gradient-to-r from-[#0D4F3C] to-[#156B53] hover:from-[#156B53] hover:to-[#156B53] text-white font-semibold text-base rounded-xl transition-all duration-300 shadow-[0_4px_20px_rgba(13,79,60,0.25)] hover:shadow-[0_4px_25px_rgba(13,79,60,0.4)] disabled:opacity-50 flex items-center justify-center gap-3 cursor-pointer border-none"
+                    className="w-full max-w-md mt-6 py-6 bg-gradient-to-r from-sb-brand-800 to-sb-brand-700 hover:from-sb-brand-700 hover:to-sb-brand-700 text-white font-semibold text-base rounded-xl transition-all duration-300 shadow-[0_4px_20px_rgba(13,79,60,0.25)] hover:shadow-[0_4px_25px_rgba(13,79,60,0.4)] disabled:opacity-50 flex items-center justify-center gap-3 cursor-pointer border-none"
                   >
                     {isCreating ? (
                       <>
@@ -333,12 +333,12 @@ function KycPageContent() {
               { title: "Faster Payouts", text: "Get priority settlement on your pool payouts." },
               { title: "Reputation Boost", text: "Build credibility and raise your reliability score." },
             ].map((item, i) => (
-              <Card key={i} className="bg-black/[0.02] dark:bg-white/[0.02] border-black/[0.06] dark:border-white/[0.06] backdrop-blur-md">
+              <Card key={i} className="bg-sb-surface-2 border-sb-line backdrop-blur-md">
                 <CardHeader className="p-4 flex flex-row items-center gap-3 space-y-0">
-                  <div className="w-8 h-8 rounded-lg bg-[#0D4F3C]/10 dark:bg-[#156B53]/10 flex items-center justify-center">
-                    <CheckCircle className="w-4 h-4 text-[#0D4F3C] dark:text-[#156B53]" />
+                  <div className="w-8 h-8 rounded-lg bg-sb-brand-800/10 dark:bg-sb-brand-700/10 flex items-center justify-center">
+                    <CheckCircle className="w-4 h-4 text-sb-brand-600" />
                   </div>
-                  <CardTitle className="text-sm font-bold text-[#0C0F14] dark:text-white">{item.title}</CardTitle>
+                  <CardTitle className="text-sm font-bold text-sb-ink">{item.title}</CardTitle>
                 </CardHeader>
                 <CardContent className="px-4 pb-4 pt-0">
                   <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">{item.text}</p>
@@ -354,18 +354,18 @@ function KycPageContent() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.2 }}
         >
-          <Card className="bg-black/[0.01] dark:bg-white/[0.01] border-black/[0.04] dark:border-white/[0.04] backdrop-blur-md p-5 flex flex-col md:flex-row items-center justify-between gap-4">
+          <Card className="bg-black/[0.01] dark:bg-white/[0.01] border-sb-line backdrop-blur-md p-5 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3 text-left">
               <HelpCircle className="w-6 h-6 text-zinc-400 dark:text-zinc-500 shrink-0" />
               <div>
-                <h4 className="text-sm font-semibold text-[#0C0F14] dark:text-white">Need help verifying your identity?</h4>
+                <h4 className="text-sm font-semibold text-sb-ink">Need help verifying your identity?</h4>
                 <p className="text-xs text-zinc-500 dark:text-zinc-400">Our support team is online to assist you with compliance inquiries.</p>
               </div>
             </div>
             <Button
               variant="outline"
               onClick={() => router.push("/settings/contact")}
-              className="border-black/[0.08] dark:border-white/[0.08] hover:border-black/[0.15] dark:hover:border-white/[0.15] bg-black/[0.02] dark:bg-white/[0.02] hover:bg-black/[0.08] dark:hover:bg-white/[0.08] text-[#0C0F14] dark:text-white text-xs px-4 py-2 h-auto rounded-lg font-medium transition-all"
+              className="border-sb-line hover:border-black/[0.15] dark:hover:border-white/[0.15] bg-sb-surface-2 hover:bg-black/[0.08] dark:hover:bg-white/[0.08] text-sb-ink text-xs px-4 py-2 h-auto rounded-lg font-medium transition-all"
             >
               Contact Support
             </Button>

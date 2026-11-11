@@ -66,7 +66,7 @@ function ScanResultContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex flex-col pb-8">
+    <div className="min-h-screen bg-sb-canvas flex flex-col pb-8">
       {/* Header */}
       <motion.header
         initial={{ opacity: 0, y: -10 }}
@@ -76,11 +76,11 @@ function ScanResultContent() {
         <div className="flex items-center justify-between">
           <button
             onClick={() => router.back()}
-            className="w-10 h-10 rounded-xl bg-white dark:bg-[#151A1F] hover:bg-gray-50 dark:hover:bg-[#1A1F25] flex items-center justify-center transition-colors"
+            className="w-10 h-10 rounded-xl bg-sb-surface hover:bg-gray-50 dark:hover:bg-sb-surface-2 flex items-center justify-center transition-colors"
           >
-            <ArrowLeft className="w-5 h-5 text-[#0C0F14] dark:text-white" strokeWidth={2} />
+            <ArrowLeft className="w-5 h-5 text-sb-ink" strokeWidth={2} />
           </button>
-          <h1 className="text-lg font-semibold text-[#0C0F14] dark:text-white">Confirm Payment</h1>
+          <h1 className="text-lg font-semibold text-sb-ink">Confirm Payment</h1>
           <div className="w-10" />
         </div>
       </motion.header>
@@ -93,29 +93,29 @@ function ScanResultContent() {
           className="space-y-6"
         >
           {/* Recipient Card */}
-          <div className="bg-white dark:bg-[#151A1F] rounded-3xl p-6">
+          <div className="bg-sb-surface rounded-3xl p-6">
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-12 h-12 rounded-full bg-[#0D4F3C]/10 dark:bg-[#156B53]/10 flex items-center justify-center">
-                <User className="w-6 h-6 text-[#0D4F3C] dark:text-[#156B53]" strokeWidth={2} />
+              <div className="w-12 h-12 rounded-full bg-sb-brand-800/10 dark:bg-sb-brand-700/10 flex items-center justify-center">
+                <User className="w-6 h-6 text-sb-brand-600" strokeWidth={2} />
               </div>
               <div className="flex-1">
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Paying to</p>
-                <p className="text-lg font-semibold text-[#0C0F14] dark:text-white">
+                <p className="text-sm text-sb-ink-2 mb-1">Paying to</p>
+                <p className="text-lg font-semibold text-sb-ink">
                   {recipientName}
                 </p>
               </div>
             </div>
-            <div className="pt-4 border-t border-black/5 dark:border-white/5">
-              <p className="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-1">
+            <div className="pt-4 border-t border-sb-line">
+              <p className="text-xs text-sb-ink-3 uppercase tracking-wide mb-1">
                 Type
               </p>
-              <p className="text-sm text-[#0C0F14] dark:text-white capitalize">{recipientType}</p>
+              <p className="text-sm text-sb-ink capitalize">{recipientType}</p>
             </div>
           </div>
 
           {/* Amount Input */}
-          <div className="bg-white dark:bg-[#151A1F] rounded-3xl p-6">
-            <label className="text-sm text-gray-500 dark:text-gray-400 mb-3 block">Amount</label>
+          <div className="bg-sb-surface rounded-3xl p-6">
+            <label className="text-sm text-sb-ink-2 mb-3 block">Amount</label>
             <div className="flex items-center gap-3">
               <DollarSign className="w-6 h-6 text-gray-400" strokeWidth={1.5} />
               <input
@@ -123,7 +123,7 @@ function ScanResultContent() {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="0.00"
-                className="flex-1 bg-transparent text-3xl font-bold text-[#0C0F14] dark:text-white focus:outline-none"
+                className="flex-1 bg-transparent text-3xl font-bold text-sb-ink focus:outline-none"
                 step="0.01"
                 min="0"
               />
@@ -131,16 +131,16 @@ function ScanResultContent() {
           </div>
 
           {/* Account Balance */}
-          <div className="bg-white dark:bg-[#151A1F] rounded-3xl p-6">
+          <div className="bg-sb-surface rounded-3xl p-6">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-sm text-gray-500 dark:text-gray-400">From Account</span>
-              <span className="text-sm font-medium text-[#0C0F14] dark:text-white">
+              <span className="text-sm text-sb-ink-2">From Account</span>
+              <span className="text-sm font-medium text-sb-ink">
                 Deposit Account
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-500 dark:text-gray-400">Available Balance</span>
-              <span className="text-sm font-medium text-[#0C0F14] dark:text-white">
+              <span className="text-sm text-sb-ink-2">Available Balance</span>
+              <span className="text-sm font-medium text-sb-ink">
                 $
                 {balance.toLocaleString("en-US", {
                   minimumFractionDigits: 2,
@@ -176,7 +176,7 @@ function ScanResultContent() {
         <button
           onClick={handlePay}
           disabled={isProcessing || !amount || parseFloat(amount) <= 0}
-          className="w-full bg-[#0D4F3C] hover:bg-[#156B53] disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-4 rounded-xl transition-all"
+          className="w-full bg-sb-brand-800 hover:bg-sb-brand-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-4 rounded-xl transition-all"
         >
           {isProcessing ? (
             <span className="flex items-center justify-center gap-2">
@@ -190,7 +190,7 @@ function ScanResultContent() {
 
         <button
           onClick={() => router.back()}
-          className="w-full bg-white dark:bg-[#151A1F] hover:bg-gray-50 dark:hover:bg-[#1A1F25] text-[#0C0F14] dark:text-white font-semibold py-4 rounded-xl transition-all"
+          className="w-full bg-sb-surface hover:bg-gray-50 dark:hover:bg-sb-surface-2 text-sb-ink font-semibold py-4 rounded-xl transition-all"
         >
           Cancel
         </button>
@@ -203,8 +203,8 @@ export default function ScanResultPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#FBF6EF] dark:bg-[#0C0F14] flex items-center justify-center">
-          <div className="w-8 h-8 border-2 border-[#0D4F3C] dark:border-[#156B53] border-t-transparent rounded-full animate-spin" />
+        <div className="min-h-screen bg-sb-canvas flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-sb-brand-600 border-t-transparent rounded-full animate-spin" />
         </div>
       }
     >
