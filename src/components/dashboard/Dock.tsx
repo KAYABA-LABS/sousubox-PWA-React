@@ -23,7 +23,7 @@ const dockItems: DockItemType[] = [
 
 export const Dock = ({ activeItem, onItemClick }: DockProps) => {
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 lg:hidden">
       <MotionDock size={48} className={`${dock()} gap-6 px-6`}>
         {dockItems.map((item) => {
           const Icon = item.icon;
@@ -35,10 +35,10 @@ export const Dock = ({ activeItem, onItemClick }: DockProps) => {
                 aria-label={item.label}
                 active={isActive}
                 onClick={() => onItemClick(item.href)}
-                className={`w-12 h-12 rounded-full transition-colors ${isActive ? "bg-[#0D4F3C]" : ""}`}
+                className={`w-12 h-12 rounded-full transition-colors ${isActive ? "bg-sb-brand-800" : ""}`}
               >
                 <Icon
-                  className={isActive ? "w-5 h-5 text-white" : "w-5 h-5 text-gray-500 dark:text-gray-400"}
+                  className={isActive ? "w-5 h-5 text-white" : "w-5 h-5 text-sb-ink-2"}
                   strokeWidth={isActive ? 2 : 1.75}
                 />
               </DockItem>
@@ -46,7 +46,7 @@ export const Dock = ({ activeItem, onItemClick }: DockProps) => {
                 aria-hidden="true"
                 onClick={() => onItemClick(item.href)}
                 className={`mt-3 text-[10px] leading-none font-medium cursor-pointer select-none ${
-                  isActive ? "text-[#0D4F3C] dark:text-emerald-400" : "text-gray-500 dark:text-gray-400"
+                  isActive ? "text-sb-brand-600 dark:text-sb-brand-400" : "text-sb-ink-2"
                 }`}
               >
                 {item.label}

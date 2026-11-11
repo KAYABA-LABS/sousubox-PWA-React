@@ -1,6 +1,7 @@
 import { Suspense, type ReactNode } from "react";
 import { AppShell } from "@/components/shell/AppShell";
 import { ComingSoon } from "@/components/plans/ComingSoon";
+import { FlowShell } from "@/components/shell/FlowShell";
 import { INVEST_ENABLED } from "@/lib/features";
 
 /**
@@ -16,5 +17,9 @@ export default function InvestLayout({ children }: { children: ReactNode }) {
     );
   }
   // Some invest pages read search params, which needs a Suspense boundary to prerender.
-  return <Suspense fallback={<div className="min-h-dvh bg-sb-canvas" />}>{children}</Suspense>;
+  return (
+    <FlowShell skip={["/invest"]}>
+      <Suspense fallback={<div className="min-h-dvh bg-sb-canvas" />}>{children}</Suspense>
+    </FlowShell>
+  );
 }
